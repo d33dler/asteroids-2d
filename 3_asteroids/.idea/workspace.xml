@@ -1,6 +1,132 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="asteroids:jar" />
+    </artifacts-to-build>
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="b16a8932-5f16-4224-8abd-b559f6c8c9ae" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/artifacts/asteroids_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/game/META-INF/MANIFEST.MF" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/asteroids_jar/asteroids.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/nl/rug/aoop/asteroids/network/clients/ClientConnection.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/nl/rug/aoop/asteroids/network/data/ConfigData.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/nl/rug/aoop/asteroids/network/data/DataPackage.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/nl/rug/aoop/asteroids/network/data/PackageHolder.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/nl/rug/aoop/asteroids/network/data/ProtocolParameters.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/nl/rug/aoop/asteroids/network/host/HostingServer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/nl/rug/aoop/asteroids/network/protocol/ConnectionProtocol.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/META-INF/MANIFEST.MF" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/nl/rug/aoop/asteroids/model/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/nl/rug/aoop/asteroids/model/Game.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="1zUra8ue1s7QkUlR69UyOf1EohW" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="android.sdk.path" value="$USER_HOME$/Android/Sdk" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/out/artifacts/asteroids_jar/asteroids.jar" />
+    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="nl.rug.aoop.asteroids.network" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Multirun.Unnamed">
+    <configuration name="Asteroids" type="Application" factoryName="Application" nameIsGenerated="true">
+      <option name="ALTERNATIVE_JRE_PATH" value="1.8" />
+      <option name="MAIN_CLASS_NAME" value="nl.rug.aoop.asteroids.Asteroids" />
+      <module name="asteroids" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="nl.rug.aoop.asteroids.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="asteroidsgame" type="JarApplication">
+      <option name="JAR_PATH" value="$PROJECT_DIR$/out/artifacts/asteroids_jar/asteroids.jar" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method v="2">
+        <option name="BuildArtifacts" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Unnamed" type="Multirun" singleton="false" separateTabs="false" reuseTabsWithFailures="false" startOneByOne="true" markFailedProcess="true" hideSuccessProcess="false" delayTime="0.0">
+      <runConfiguration name="asteroidsgame" type="JAR Application" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Application.Asteroids" />
+      <item itemvalue="JAR Application.asteroidsgame" />
+      <item itemvalue="Multirun.Unnamed" />
+    </list>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b16a8932-5f16-4224-8abd-b559f6c8c9ae" name="Changes" comment="" />
+      <created>1634213572338</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1634213572338</updated>
+      <workItem from="1634213574668" duration="20455000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
   </component>
 </project>

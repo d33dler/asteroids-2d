@@ -8,16 +8,24 @@
     </modelVersion>
 
     <!-- Project settings -->
-    <groupId>nl.rug.aoop</groupId>
-    <artifactId>asteroids</artifactId>
-    <version>1.0</version>
+
+        <groupId>nl.rug.aoop</groupId>
+        <artifactId>Asteroids</artifactId>
+        <version>1.0</version>
+
     <name>asteroids</name>
+
+
+
 
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>16</maven.compiler.source>
         <maven.compiler.target>16</maven.compiler.target>
+        <maven.assembly.plugin.version>2.4</maven.assembly.plugin.version>
+        <!-- dependencies -->
+        <dep.version>1.0-SNAPSHOT</dep.version>
     </properties>
 
     <build>
@@ -30,6 +38,10 @@
                     <source>16</source>
                     <target>16</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
             </plugin>
             <!-- Maven support for JUnit5 Testing -->
             <plugin>
@@ -49,6 +61,35 @@
                 </configuration>
             </plugin>
         </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${maven.assembly.plugin.version}</version>
+                    <configuration>
+                        <descriptorRefs>
+                            <descriptorRef>jar-with-dependencies</descriptorRef>
+                        </descriptorRefs>
+                        <archive>
+                            <manifest>
+                                <mainClass>Asteroids</mainClass>
+                            </manifest>
+                        </archive>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>make-assembly</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
     </build>
 
     <repositories>
@@ -69,7 +110,7 @@
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.34.0</version>
+            <version>3.36.0.2</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
         <dependency>
@@ -92,7 +133,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.20</version>
+            <version>1.18.22</version>
         </dependency>
 
         <!-- JUnit unit testing framework -->
