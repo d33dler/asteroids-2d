@@ -6,7 +6,7 @@ import nl.rug.aoop.asteroids.model.gameobjects.Asteroid;
 import nl.rug.aoop.asteroids.model.gameobjects.Bullet;
 import nl.rug.aoop.asteroids.model.gameobjects.Spaceship;
 import lombok.Getter;
-
+import nl.rug.aoop.asteroids.control.GameUpdater;
 import java.util.ArrayList;
 import java.util.Collection;
 
