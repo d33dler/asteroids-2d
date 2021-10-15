@@ -7,7 +7,8 @@ import java.io.Serializable;
 public class DataPackage implements Serializable {
     @Getter
     private final String id;
-
+    @Getter
+    private final long timestamp;
     /**
      * Payload of the request.
      */
@@ -19,7 +20,8 @@ public class DataPackage implements Serializable {
      * @param type The unique identifier of this request.
      * @param body The payload of this request.
      */
-    public DataPackage(String type, Serializable body) {
+    public DataPackage(long time, String type, Serializable body) {
+        timestamp = time;
         this.id = type;
         this.body = body;
     }
@@ -29,9 +31,10 @@ public class DataPackage implements Serializable {
      *
      * @param type The unique identifier of this request.
      */
-    public DataPackage(String type) {
+    public DataPackage(long time, String type) {
+        timestamp = time;
         this.id = type;
-        body = null;
+        this.body = null;
     }
 
     /**
@@ -49,5 +52,12 @@ public class DataPackage implements Serializable {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public long getLatency() {
+        return System.currentTimeMillis() - timestamp;
+    }
+    public boolean isAcceptedLatency(long bound) {
+        return getLatency() <= bound;
     }
 }

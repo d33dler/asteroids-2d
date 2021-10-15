@@ -2,6 +2,7 @@ package nl.rug.aoop.asteroids.network.data;
 
 import lombok.Getter;
 import lombok.Setter;
+import nl.rug.aoop.asteroids.network.data.types.ConfigData;
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.net.DatagramPacket;
@@ -16,32 +17,38 @@ public class PackageHolder {
     @Setter
     private DataPackage dataPackage = null;
     @Getter
-    private final ProtocolParameters parameters;
-
-
+    private final ConnectionParameters parameters;
+    @Setter
     private byte[] data;
 
-    private PackageHolder(DataPackage dataPackage, ProtocolParameters parameters) {
+    private PackageHolder(DataPackage dataPackage, ConnectionParameters parameters) {
         this(parameters);
         this.dataPackage = dataPackage;
     }
 
-    private PackageHolder(ProtocolParameters parameters) {
+    private PackageHolder(ConnectionParameters parameters) {
         this.parameters = parameters;
         data = new byte[parameters.getDataLength()];
     }
 
-    public static PackageHolder newEmptyHolder(ProtocolParameters param) {
+    public static PackageHolder newEmptyHolder(ConnectionParameters param) {
         return new PackageHolder(param);
 
     }
 
-    public byte[] getDataBytes() {
+    public byte[] getDataInBytes() {
         byte[] data = SerializationUtils.serialize(dataPackage);
         if (data.length <= parameters.getDataLength()) {
             return data;
         }
         return null;
+    }
+
+    public void updateDataPackage() {
+        DataPackage newPackage = SerializationUtils.deserialize(data);
+        if (newPackage.isAcceptedLatency(parameters.LAT_MAX_millis)) { //TODO verify
+            dataPackage = newPackage;
+        }
     }
 
     public int getPort() {
@@ -71,7 +78,7 @@ public class PackageHolder {
         return parameters.getInet();
     }
 
-    public byte[] getEmptyData() {
+    public byte[] getData() {
         return data;
     }
 }

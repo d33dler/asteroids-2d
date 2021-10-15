@@ -1,4 +1,4 @@
-package nl.rug.aoop.asteroids.network.data;
+package nl.rug.aoop.asteroids.network.data.types;
 
 import java.io.Serializable;
 

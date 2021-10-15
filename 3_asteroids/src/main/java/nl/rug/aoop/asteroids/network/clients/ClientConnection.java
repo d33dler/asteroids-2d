@@ -1,56 +1,62 @@
 package nl.rug.aoop.asteroids.network.clients;
 
+import nl.rug.aoop.asteroids.network.data.ConnectionParameters;
+import nl.rug.aoop.asteroids.network.data.types.GameData;
+import nl.rug.aoop.asteroids.network.host.HostListener;
+import nl.rug.aoop.asteroids.network.host.HostingDevice;
+import nl.rug.aoop.asteroids.network.protocol.IO;
 
-import lombok.Getter;
-import lombok.extern.java.Log;
-import nl.rug.aoop.asteroids.network.data.DataPackage;
-import nl.rug.aoop.asteroids.network.data.PackageHolder;
-import nl.rug.aoop.asteroids.network.protocol.ConnectionProtocol;
+public class ClientConnection implements HostListener, Runnable {
+    private final HostingDevice hostingDevice;
+    private final ConnectionParameters parameters;
+    private IO io;
 
-import java.net.DatagramSocket;
-import java.net.InetSocketAddress;
-import java.net.SocketException;
-
-@Log
-public class ClientConnection {
-    private DatagramSocket client;
-    private ConnectionProtocol protocol;
-    @Getter
-    private PackageHolder holder;
-
-    public ClientConnection(String hostAddress, int port) {
-        initSocket();
-        attemptConnect(hostAddress, port);
+    public ClientConnection(HostingDevice host) {
+        this.hostingDevice = host;
+        this.parameters = host.getConnectionParameters();
+        initIO();
+    }
+    private void initIO(){
+        this.io = new IO(hostingDevice.getServerSocket(), parameters.getCallerAddress());
     }
 
-    private void initSocket() {
-        try {
-            client = new DatagramSocket();
-            protocol = new ConnectionProtocol(client);
-        } catch (SocketException e) {
-            e.printStackTrace();
+    @Override
+    public void run() {
+        new Consumer(parameters.LAT_SERVER_millis).run();
+    }
+
+    private class Consumer implements Runnable {
+        private final int LATENCY;
+
+        public Consumer(int maxLat) {
+            this.LATENCY = maxLat;
+        }
+
+        @Override
+        public void run() {
+            listen();
+        }
+
+        private void listen() {
+            io.receive();
+            try {
+                wait(LATENCY);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    private void attemptConnect(String hostAddress, int port) {
-        if (hostAddress != null) {
-            holder = protocol.handshake(new InetSocketAddress(hostAddress, port));
-        }
-        if (holder == null) {
-            log.warning("Failed connection"); //TODO interface
-        }
+    public void fireUpdate(byte[] data) {
+        io.updateHolder(data);
+        io.send();
     }
 
-    public void send(DataPackage data) {
-        holder.setDataPackage(data);
-        protocol.send(holder);
+    public GameData getClientInput() {
+        return io.getLastDataPackage().getBody();
     }
 
-    public void receive() {
-        protocol.receive(holder);
-    }
-
-    public boolean isConnected() {
-        return (!client.isClosed() && holder != null);
+    public boolean checkPingAbuse() {
+        return io.getLastDataPackage().getLatency() > parameters.LAT_MAX_millis;
     }
 }
