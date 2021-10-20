@@ -1,10 +1,9 @@
 package nl.rug.aoop.asteroids.network.protocol;
 
 import lombok.extern.java.Log;
+import nl.rug.aoop.asteroids.network.data.ConnectionParameters;
 import nl.rug.aoop.asteroids.network.data.PackageHandler;
 import nl.rug.aoop.asteroids.network.data.deltas_changes.ConfigData;
-import nl.rug.aoop.asteroids.network.data.types.DeltaManager;
-import nl.rug.aoop.asteroids.network.data.types.DeltasData;
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.io.IOException;
@@ -16,14 +15,14 @@ import java.net.InetSocketAddress;
 
 public class DefaultHandshake {
     private final DatagramSocket socket;
-    public static final int HANDSHAKE_LEN = 1024;
+    public static final int HANDSHAKE_LEN = 1490;
 
     public DefaultHandshake(DatagramSocket socket) {
         this.socket = socket;
     }
 
-    public IO handshake(DeltaManager manager, InetSocketAddress receptor) {
-        IO io = new IO(socket, receptor);
+    public IOProtocol handshake(ConnectionParameters parameters) {
+        IO io = new IO(parameters);
         PackageHandler holder = io.getHolder();
         io.send();
         byte[] data = holder.getData();
@@ -35,16 +34,15 @@ public class DefaultHandshake {
             log.warning("Handshake protocol failed");
             return null;
         }
-        passHandshakeConfigs(manager, handshake);
+        passHandshakeConfigs(holder, handshake);
         socket.connect(holder.getInet(), holder.getPort());
         return io;
     }
 
-    private void passHandshakeConfigs(DeltaManager manager, DatagramPacket handshake) {
-        DeltasData configData = SerializationUtils.deserialize(handshake.getData());
+    private void passHandshakeConfigs(PackageHandler handler, DatagramPacket handshake) {
+        ConfigData configData = SerializationUtils.deserialize(handshake.getData());
         if (configData != null) {
-            configData.injectChanges(manager);
+            handler.loadHandshakeConfigs(configData.setup);
         }
-
     }
 }

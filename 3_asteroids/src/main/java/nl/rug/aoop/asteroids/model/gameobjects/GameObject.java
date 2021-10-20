@@ -121,4 +121,6 @@ public abstract class GameObject {
      * @return The number of steps, or game ticks, for which this object is immune from collisions.
      */
     protected abstract int getDefaultStepsUntilCollisionPossible();
+
+    protected abstract String getObjectId();
 }

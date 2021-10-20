@@ -1,7 +1,7 @@
 package nl.rug.aoop.asteroids.network.clients;
 
 import nl.rug.aoop.asteroids.network.data.ConnectionParameters;
-import nl.rug.aoop.asteroids.network.data.deltas_changes.GameplayDeltas;
+import nl.rug.aoop.asteroids.network.data.types.DeltasData;
 import nl.rug.aoop.asteroids.network.host.listeners.HostListener;
 import nl.rug.aoop.asteroids.network.host.HostingDevice;
 import nl.rug.aoop.asteroids.network.protocol.IO;
@@ -21,12 +21,11 @@ public class ClientConnection implements HostListener, Runnable {
         initIO();
     }
     private void initParameters(InetSocketAddress clientAddress){
-        ConnectionParameters serverParameters = hostingDevice.getConnectionParameters();
-        this.parameters = new ConnectionParameters(clientAddress,
-                hostingDevice.getInetSocketAddress(), serverParameters.getDataLength());
+        ConnectionParameters serverParameters = hostingDevice.getRawConnectionParameters();
+        this.parameters = new ConnectionParameters(hostingDevice.getServerSocket(), clientAddress, serverParameters.getDataLength());
     }
     private void initIO(){
-        this.io = new IO(hostingDevice.getServerSocket(), parameters.getCallerAddress());
+        this.io = new IO(parameters);
     }
 
     @Override
@@ -47,7 +46,7 @@ public class ClientConnection implements HostListener, Runnable {
         }
 
         private synchronized void listen() {
-            while(true){
+            while(isConnected()){
                 io.receive();
                 try {
                     wait(LATENCY_ms);
@@ -58,11 +57,11 @@ public class ClientConnection implements HostListener, Runnable {
         }
     }
 
-    public void initFlux() {
+    public synchronized void initFlux() {
         run();
-        while (true) {
+        while (isConnected()) {
             if(hostingDevice.updateReady()){
-                io.receive();
+                fireUpdate(hostingDevice.getLastDeltas());
                 try {
                     wait(INTERVAL_ms);
                 } catch (InterruptedException e) {
@@ -77,8 +76,8 @@ public class ClientConnection implements HostListener, Runnable {
         io.send();
     }
 
-    public GameplayDeltas getClientDeltas() {
-        return io.getLastDataPackage().getBody();
+    public DeltasData getClientDeltas() {
+        return io.getLastDataPackage().getData();
     }
 
     public boolean checkPingAbuse() {

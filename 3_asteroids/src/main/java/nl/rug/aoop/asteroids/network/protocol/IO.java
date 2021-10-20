@@ -17,9 +17,9 @@ public class IO implements IOProtocol {
     private final PackageHandler holder;
     private final DatagramSocket socket;
 
-    public IO(DatagramSocket socket, InetSocketAddress receptor) {
-        this.socket = socket;
-        holder = PackageHandler.newEmptyHolder(new ConnectionParameters(new InetSocketAddress(socket.getInetAddress(),socket.getPort()), receptor, HANDSHAKE_LEN));
+    public IO(ConnectionParameters parameters) {
+        this.socket = parameters.getCallerSocket();
+        holder = PackageHandler.newEmptyHolder(parameters);
     }
 
     public void send() {

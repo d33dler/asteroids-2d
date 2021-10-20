@@ -13,6 +13,7 @@ public interface HostingDevice {
     int getHostDefaultLatency();
     int getHostMaxLatency();
     boolean updateReady();
+    byte[] getLastDeltas();
     StatisticCalculator getStatisticCalculator();
-    ConnectionParameters getConnectionParameters();
+    ConnectionParameters getRawConnectionParameters();
 }

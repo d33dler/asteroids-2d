@@ -1,4 +1,4 @@
-package nl.rug.aoop.asteroids.view;
+package nl.rug.aoop.asteroids.view.panels;
 
 import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
 import nl.rug.aoop.asteroids.model.Game;
@@ -109,6 +109,7 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
              * If you do want to fix it yourself, you are of course free to do so.
              */
             new SpaceshipViewModel(game.getSpaceShip()).drawObject(graphics2D, timeSinceLastTick);
+            game.getPlayers().values().forEach(spaceship -> new SpaceshipViewModel(spaceship).drawObject(graphics2D,timeSinceLastTick)); //TODO verify
             game.getAsteroids().forEach(asteroid -> new AsteroidViewModel(asteroid).drawObject(graphics2D, timeSinceLastTick));
             game.getBullets().forEach(bullet -> new BulletViewModel(bullet).drawObject(graphics2D, timeSinceLastTick));
         }

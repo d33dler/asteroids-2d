@@ -2,6 +2,7 @@ package nl.rug.aoop.asteroids.network.data;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.SerializationException;
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.net.DatagramPacket;
@@ -47,10 +48,15 @@ public class PackageHandler {
     }
 
     public void updateDataPackage() {
-        DataPackage newPackage = SerializationUtils.deserialize(data);
-        if (newPackage.isAcceptedLatency(parameters.LAT_MAX_millis)) { //TODO verify
-            dataPackage = newPackage;
+        try {
+            DataPackage newPackage = new DataPackage(SerializationUtils.deserialize(data));
+            if (newPackage.isAcceptedLatency(parameters.LAT_MAX_millis)) { //TODO verify
+                dataPackage = newPackage;
+            }
+        } catch (SerializationException e) {
+            e.printStackTrace();
         }
+
     }
 
     public int getPort() {

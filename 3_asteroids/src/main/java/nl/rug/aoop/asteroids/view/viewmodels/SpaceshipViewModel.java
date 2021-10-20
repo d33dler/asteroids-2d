@@ -1,6 +1,6 @@
 package nl.rug.aoop.asteroids.view.viewmodels;
 
-import nl.rug.aoop.asteroids.model.gameobjects.Spaceship;
+import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
 import nl.rug.aoop.asteroids.util.PolarCoordinate;
 
 import java.awt.*;

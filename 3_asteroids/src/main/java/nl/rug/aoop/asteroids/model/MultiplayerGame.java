@@ -3,22 +3,62 @@ package nl.rug.aoop.asteroids.model;
 import lombok.Getter;
 import nl.rug.aoop.asteroids.network.clients.User;
 import nl.rug.aoop.asteroids.network.data.ConnectionParameters;
+import nl.rug.aoop.asteroids.network.data.DeltaProcessor;
 import nl.rug.aoop.asteroids.network.data.PackageHandler;
+import nl.rug.aoop.asteroids.network.data.types.DeltaManager;
+import nl.rug.aoop.asteroids.network.host.HostingDevice;
+import nl.rug.aoop.asteroids.network.host.HostingServer;
 
-import java.awt.*;
-import java.awt.geom.Point2D;
+import java.net.InetAddress;
 import java.util.HashMap;
 
-public class MultiplayerGame implements MultiplayerRenderer {
+public class MultiplayerGame implements MultiplayerManager {
     @Getter
     private ConnectionParameters parameters;
     private PackageHandler packageHandler;
     @Getter
     private final int MAX_CLIENTS = 10;
     private final User user;
+    @Getter
+    private final Game game;
+    @Getter
+    private HostingDevice hostingDevice;
+    @Getter
+    private final DeltaManager deltaManager;
 
-    public MultiplayerGame(User user) {
+    private MultiplayerGame(Game game, User user) {
+        this.game = game;
         this.user = user;
+        this.deltaManager = new DeltaProcessor(this, user);
+    }
+
+
+    public static MultiplayerManager multiplayerClient(Game game, User user) {
+        MultiplayerGame multiplayerManager = new MultiplayerGame(game, user);
+        multiplayerManager.launchAsClient();
+        return new MultiplayerGame(game,user);
+    }
+
+    public static MultiplayerManager multiplayerServer(Game game, User user, InetAddress address){
+        MultiplayerGame multiplayerManager = new MultiplayerGame(game,user);
+        multiplayerManager.launchAsHost(address);
+        return multiplayerManager;
+    }
+
+    private void launchAsClient() {
+        initClientComponents();
+    }
+    private void launchAsHost(InetAddress address){
+        initHostingDevice(address);
+    }
+
+    private void initClientComponents(){
+        parameters = user.getIoHolder().getParameters();
+        packageHandler = user.getIoHolder();
+    }
+    private void initHostingDevice(InetAddress address){
+        hostingDevice = new HostingServer(this,address ) ;
+        parameters = hostingDevice.getRawConnectionParameters();
     }
 
     @Override
@@ -27,17 +67,8 @@ public class MultiplayerGame implements MultiplayerRenderer {
     }
 
     @Override
-    public void updateObjectsVectors(String id, Point.Double pos, Point2D.Double velocity) {
-
-    }
-
-    @Override
-    public void updatePlayerVectors(String id, Point.Double pos, Point.Double velocity) {
-
-    }
-
-    @Override
     public boolean isUpdating() {
-        return false;
+        return game.isRendererBusy();
     }
+
 }

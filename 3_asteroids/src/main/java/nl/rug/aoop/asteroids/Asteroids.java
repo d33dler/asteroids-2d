@@ -4,7 +4,7 @@ import nl.rug.aoop.asteroids.control.GameUpdater;
 import nl.rug.aoop.asteroids.control.actions.NewGameAction;
 import nl.rug.aoop.asteroids.model.Game;
 import nl.rug.aoop.asteroids.view.AsteroidsFrame;
-import nl.rug.aoop.asteroids.view.AsteroidsPanel;
+import nl.rug.aoop.asteroids.view.panels.AsteroidsPanel;
 import com.formdev.flatlaf.FlatDarculaLaf;
 
 import java.awt.event.ActionEvent;
@@ -46,10 +46,14 @@ public class Asteroids {
 		Game game = new Game();
 		AsteroidsFrame frame = new AsteroidsFrame(game);
 
-		// Generate a new action event so that we can use the NewGameAction to start a new game.
+	/*	// Generate a new action event so that we can use the NewGameAction to start a new game.
 		new NewGameAction(game).actionPerformed(
 				// Just use a dummy action; NewGameAction doesn't care about the action event's properties.
 				new ActionEvent(frame, ActionEvent.ACTION_PERFORMED, null)
 		);
+
+	 */
 	}
+
+
 }

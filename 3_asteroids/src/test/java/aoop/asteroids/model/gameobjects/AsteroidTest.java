@@ -1,7 +1,7 @@
 package nl.rug.aoop.asteroids.model.gameobjects;
 
 import nl.rug.aoop.asteroids.model.AsteroidSize;
-import nl.rug.aoop.asteroids.model.gameobjects.Asteroid;
+import nl.rug.aoop.asteroids.model.gameobjects.asteroid.Asteroid;
 import nl.rug.aoop.asteroids.view.AsteroidsFrame;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;

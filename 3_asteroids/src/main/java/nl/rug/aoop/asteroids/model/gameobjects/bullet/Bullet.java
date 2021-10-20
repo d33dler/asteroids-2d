@@ -1,4 +1,6 @@
-package nl.rug.aoop.asteroids.model.gameobjects;
+package nl.rug.aoop.asteroids.model.gameobjects.bullet;
+
+import nl.rug.aoop.asteroids.model.gameobjects.GameObject;
 
 /**
  * The bullet is the ultimate weapon of the player. It has the same mechanics
@@ -9,6 +11,7 @@ package nl.rug.aoop.asteroids.model.gameobjects;
 public class Bullet extends GameObject {
 
 
+    public final static String OBJECT_ID = "bullet";
 
     /**
      * The number of steps, or game ticks, that a bullet stays alive for, before it is destroyed.
@@ -81,5 +84,10 @@ public class Bullet extends GameObject {
     @Override
     protected int getDefaultStepsUntilCollisionPossible() {
         return IMMUNITY_TICKS;
+    }
+
+    @Override
+    protected String getObjectId() {
+        return OBJECT_ID;
     }
 }

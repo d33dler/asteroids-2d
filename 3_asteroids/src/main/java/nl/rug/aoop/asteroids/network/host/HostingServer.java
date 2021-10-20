@@ -1,7 +1,6 @@
 package nl.rug.aoop.asteroids.network.host;
 
-import nl.rug.aoop.asteroids.model.MultiplayerRenderer;
-import nl.rug.aoop.asteroids.model.MultiplayerGame;
+import nl.rug.aoop.asteroids.model.MultiplayerManager;
 import nl.rug.aoop.asteroids.network.clients.ClientConnection;
 import nl.rug.aoop.asteroids.network.data.ConnectionParameters;
 import nl.rug.aoop.asteroids.network.data.PackageHandler;
@@ -18,9 +17,9 @@ import java.util.concurrent.Executors;
 
 public class HostingServer implements HostingDevice, Runnable {
 
-    private MultiplayerRenderer multiplayerGame;
-    private List<SocketAddress> clientConnections = new ArrayList<>();
-    private List<HostListener> hostListeners = new ArrayList<>();
+    private final MultiplayerManager multiplayerGame;
+    private final List<SocketAddress> clientConnections = new ArrayList<>();
+    private final List<HostListener> hostListeners = new ArrayList<>();
     private ConnectionParameters parameters;
     private DatagramSocket server_socket;
     private int server_port;
@@ -28,21 +27,26 @@ public class HostingServer implements HostingDevice, Runnable {
     private ExecutorService executorService;
     private ConnectionStatistic connectionStatistic = new ConnectionStatistic();
 
-    public HostingServer(MultiplayerGame multiplayer, String host_name) {
+    private final InetAddress socketAddress;
+    private InetSocketAddress inetSocketAddress;
+
+    public HostingServer(MultiplayerManager multiplayer, InetAddress address) {
         this.multiplayerGame = multiplayer;
-        this.parameters = multiplayer.getParameters();
-        this.host_name = host_name;
+        this.socketAddress = address;
+        this.host_name = address.getHostName();
         init();
     }
 
     private void init() {
         executorService = Executors.newFixedThreadPool(multiplayerGame.getMAX_CLIENTS());
         try {
-            server_socket = new DatagramSocket(0, parameters.getInet());
+            server_socket = new DatagramSocket(0, socketAddress);
             server_port = server_socket.getPort();
+            inetSocketAddress = new InetSocketAddress(socketAddress,server_port);
         } catch (SocketException e) {
             e.printStackTrace();
         }
+        parameters = ConnectionParameters.rawDataParameters();
     }
 
     @Override
@@ -52,8 +56,7 @@ public class HostingServer implements HostingDevice, Runnable {
 
     private void acceptConnections() {
         while (clientConnections.size() < multiplayerGame.getMAX_CLIENTS()) {
-            PackageHandler holder = PackageHandler.newEmptyHolder(parameters);
-            byte[] data = holder.getData();
+            byte[] data = new byte[ConnectionParameters.PKG_SIZE_LIM];
             DatagramPacket handshakePacket = new DatagramPacket(data, data.length);
             try {
                 server_socket.receive(handshakePacket);
@@ -80,11 +83,16 @@ public class HostingServer implements HostingDevice, Runnable {
 
     @Override
     public InetSocketAddress getInetSocketAddress() {
-        return parameters.getReceptorAddress(); //TODO server must be receptor
+        return inetSocketAddress;
     }
 
     public boolean updateReady() {
        return !multiplayerGame.isUpdating();
+    }
+
+    @Override
+    public byte[] getLastDeltas() {
+        return new byte[0];
     }
 
     @Override
@@ -103,7 +111,7 @@ public class HostingServer implements HostingDevice, Runnable {
     }
 
     @Override
-    public ConnectionParameters getConnectionParameters() {
+    public ConnectionParameters getRawConnectionParameters() {
         return parameters;
     }
 }

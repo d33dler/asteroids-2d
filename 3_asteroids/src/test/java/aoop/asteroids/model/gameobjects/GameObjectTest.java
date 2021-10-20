@@ -181,6 +181,11 @@ class GameObjectTest {
 			protected int getDefaultStepsUntilCollisionPossible() {
 				return stepsUntilCollision;
 			}
+
+			@Override
+			protected String getObjectId() {
+				return "null";
+			}
 		}
 
 		return new GameObjectImpl(location, velocity, radius);

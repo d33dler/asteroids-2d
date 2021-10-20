@@ -1,14 +1,20 @@
 package nl.rug.aoop.asteroids.model;
 
 import lombok.Getter;
+import lombok.Setter;
 import nl.rug.aoop.asteroids.control.GameUpdater;
 import nl.rug.aoop.asteroids.gameobserver.ObservableGame;
-import nl.rug.aoop.asteroids.model.gameobjects.Asteroid;
-import nl.rug.aoop.asteroids.model.gameobjects.Bullet;
-import nl.rug.aoop.asteroids.model.gameobjects.Spaceship;
+import nl.rug.aoop.asteroids.model.gameobjects.asteroid.Asteroid;
+import nl.rug.aoop.asteroids.model.gameobjects.bullet.Bullet;
+import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
+import nl.rug.aoop.asteroids.model.obj_factory.GameObjectFactory;
+import nl.rug.aoop.asteroids.model.obj_factory.GeneralObjectsFactory;
+import nl.rug.aoop.asteroids.network.clients.User;
 
+import java.net.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
 /**
  * This class is the main model for the Asteroids game. It contains all game objects, and has methods to start and stop
@@ -24,8 +30,8 @@ public class Game extends ObservableGame {
      */
     @Getter
     private Spaceship spaceShip;
-
-    private Collection<Spaceship> players;
+    @Getter
+    private HashMap<String, Spaceship> players = new HashMap<>();
     /**
      * The list of all bullets currently active in the game.
      */
@@ -38,6 +44,7 @@ public class Game extends ObservableGame {
     @Getter
     private Collection<Asteroid> asteroids;
 
+
     /**
      * Indicates whether or not the game is running. Setting this to false causes the game to exit its loop and quit.
      */
@@ -48,6 +55,12 @@ public class Game extends ObservableGame {
      */
     private Thread gameUpdaterThread;
 
+    private User user;
+    @Getter
+    private GameObjectFactory objectFactory;
+    @Setter
+    @Getter
+    private boolean isRendererBusy = true;
     /**
      * Number of milliseconds to wait for the game updater to exit its game loop.
      */
@@ -60,6 +73,18 @@ public class Game extends ObservableGame {
     public Game() {
         spaceShip = new Spaceship();
         initializeGameData();
+        try {
+            InetAddress a = InetAddress.getByName("asteroidsonline.mooo.com");
+            System.out.println(a);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        try {
+            DatagramSocket socket = new DatagramSocket();
+            System.out.println(socket.getInetAddress());
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -96,7 +121,16 @@ public class Game extends ObservableGame {
             gameUpdaterThread = new Thread(new GameUpdater(this));
             gameUpdaterThread.start();
         }
-        
+
+    }
+    public final static String default_OBJ_PKG = "nl.rug.aoop.asteroids.model.gameobjects";
+
+    public void initMultiplayerAsHost(InetAddress address) { //TODO command pattern
+        user = User.newHostUser(this, address);
+        objectFactory = new GeneralObjectsFactory(this, default_OBJ_PKG); //TODO move all obj creation to factory?
+    }
+    public void initMultiplayerAsClient(InetSocketAddress address) {
+        user = User.newClientUser(this, address);
     }
 
     /**

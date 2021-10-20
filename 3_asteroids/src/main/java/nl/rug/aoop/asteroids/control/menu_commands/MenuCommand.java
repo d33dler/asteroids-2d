@@ -1,12 +1,8 @@
 package nl.rug.aoop.asteroids.control.menu_commands;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import nl.rug.aoop.asteroids.view.ViewManager;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface MenuCommand {
-    String id();
+public interface MenuCommand {
+    String getName();
+    void execute(ViewManager manipulator);
 }

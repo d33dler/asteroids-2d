@@ -1,8 +1,11 @@
-package nl.rug.aoop.asteroids.model.gameobjects;
+package nl.rug.aoop.asteroids.model.gameobjects.spaceship;
 
+import nl.rug.aoop.asteroids.model.gameobjects.GameObject;
 import nl.rug.aoop.asteroids.view.AsteroidsFrame;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.awt.*;
 
 /**
  * This class represents a player's ship. Like all other game objects, it has a location and velocity, but additionally,
@@ -16,6 +19,9 @@ import lombok.Setter;
  * to perform some action, the spaceship will simply remain idle until it has recharged its batteries.
  */
 public class Spaceship extends GameObject {
+
+    public final static String OBJECT_ID = "spaceship";
+
     /**
      * The maximum speed that the spaceship is allowed to reach before extra acceleration will not do anything.
      */
@@ -132,7 +138,10 @@ public class Spaceship extends GameObject {
                 0, 0, SHIP_SIZE);
         reset();
     }
-
+    public Spaceship(double locationX, double locationY, double velocityX, double velocityY) {
+        super(locationX, locationY, velocityX, velocityY, SHIP_SIZE);
+        reset();
+    }
     /**
      * Resets all parameters to default values, so a new game can be started.
      */
@@ -237,6 +246,11 @@ public class Spaceship extends GameObject {
         return IMMUNITY_TICKS;
     }
 
+    @Override
+    protected String getObjectId() {
+        return null;
+    }
+
     /**
      * @return The percentage of energy that is available on the ship, out of the total capacity.
      */
@@ -276,4 +290,13 @@ public class Spaceship extends GameObject {
         score++;
     }
 
+    public void updatePosition(double x, double y){
+        getLocation().x = x;
+        getLocation().y = y;
+    }
+
+    public void updateVelocity(double x, double y){
+        getVelocity().x = x;
+        getVelocity().y = y;
+    }
 }

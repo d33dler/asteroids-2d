@@ -1,6 +1,6 @@
 package nl.rug.aoop.asteroids.control;
 
-import nl.rug.aoop.asteroids.model.gameobjects.Spaceship;
+import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

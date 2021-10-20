@@ -6,6 +6,7 @@ import lombok.Getter;
  * This enumeration defines the different possible sizes of asteroids.
  */
 public enum AsteroidSize {
+    X(0),
     SMALL(10),
     MEDIUM(20),
     LARGE(40);
@@ -24,7 +25,13 @@ public enum AsteroidSize {
     AsteroidSize(double radius) {
         this.radius = radius;
     }
-
+    public AsteroidSize getSize(double radius) {
+        return switch((int) radius) {
+            case 10  -> SMALL;
+            case 20 -> MEDIUM;
+            default -> LARGE;
+        };
+    }
     /**
      * @return The size of asteroids that are produced when this one is destroyed. May return null if this asteroid is
      * too small to produce successors.

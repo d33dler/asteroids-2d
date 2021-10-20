@@ -1,6 +1,6 @@
 package nl.rug.aoop.asteroids.network.data.deltas_changes;
-import nl.rug.aoop.asteroids.network.data.types.DeltaManager;
 import nl.rug.aoop.asteroids.network.data.types.DeltasData;
+
 import java.io.Serializable;
 import java.util.HashMap;
 
@@ -12,10 +12,6 @@ public class ConfigData implements Serializable, DeltasData {
         this.setup = setup;
     }
 
-    @Override
-    public void injectChanges(DeltaManager manager) {
-        manager.setupConfig(this);
-    }
 }
 
 

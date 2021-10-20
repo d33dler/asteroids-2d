@@ -1,6 +1,6 @@
 package nl.rug.aoop.asteroids.model.gameobjects;
 
-import nl.rug.aoop.asteroids.model.gameobjects.Bullet;
+import nl.rug.aoop.asteroids.model.gameobjects.bullet.Bullet;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;

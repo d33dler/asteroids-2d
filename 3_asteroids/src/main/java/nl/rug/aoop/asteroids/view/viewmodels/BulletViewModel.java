@@ -1,6 +1,6 @@
 package nl.rug.aoop.asteroids.view.viewmodels;
 
-import nl.rug.aoop.asteroids.model.gameobjects.Bullet;
+import nl.rug.aoop.asteroids.model.gameobjects.bullet.Bullet;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;

@@ -1,6 +1,6 @@
 package nl.rug.aoop.asteroids.model.gameobjects;
 
-import nl.rug.aoop.asteroids.model.gameobjects.Spaceship;
+import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
 import nl.rug.aoop.asteroids.view.AsteroidsFrame;
 import org.junit.jupiter.api.Test;
 

@@ -1,10 +1,10 @@
 package nl.rug.aoop.asteroids.control;
 
 import nl.rug.aoop.asteroids.model.*;
-import nl.rug.aoop.asteroids.model.gameobjects.Asteroid;
-import nl.rug.aoop.asteroids.model.gameobjects.Bullet;
+import nl.rug.aoop.asteroids.model.gameobjects.asteroid.Asteroid;
+import nl.rug.aoop.asteroids.model.gameobjects.bullet.Bullet;
 import nl.rug.aoop.asteroids.model.gameobjects.GameObject;
-import nl.rug.aoop.asteroids.model.gameobjects.Spaceship;
+import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -66,6 +66,7 @@ public class GameUpdater implements Runnable {
      */
     private int asteroidsLimit;
 
+    private boolean isBusy;
     /**
      * Constructs a new game updater with the given game.
      *
@@ -96,9 +97,11 @@ public class GameUpdater implements Runnable {
             timeSinceLastTick += elapsedTime;
             timeSinceLastDisplayFrame += elapsedTime;
 
-            if (timeSinceLastTick >= MILLISECONDS_PER_TICK) { // Check if enough time has passed to update the physics.
+            if (timeSinceLastTick >= MILLISECONDS_PER_TICK) {// Check if enough time has passed to update the physics.
+                game.setRendererBusy(true);
                 updatePhysics(); // Perform one 'step' in the game.
                 timeSinceLastTick = 0L;
+                game.setRendererBusy(false);
             }
             if (timeSinceLastDisplayFrame >= millisecondsPerDisplayFrame) { // Check if enough time has passed to refresh the display.
                 game.notifyListeners(timeSinceLastTick); // Tell the asteroids panel that it should refresh.

@@ -1,7 +1,7 @@
 package nl.rug.aoop.asteroids.model;
 
-import nl.rug.aoop.asteroids.model.gameobjects.Asteroid;
-import nl.rug.aoop.asteroids.model.gameobjects.Bullet;
+import nl.rug.aoop.asteroids.model.gameobjects.asteroid.Asteroid;
+import nl.rug.aoop.asteroids.model.gameobjects.bullet.Bullet;
 import org.junit.jupiter.api.Test;
 
 import java.awt.*;

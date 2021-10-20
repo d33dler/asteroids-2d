@@ -1,6 +1,7 @@
-package nl.rug.aoop.asteroids.model.gameobjects;
+package nl.rug.aoop.asteroids.model.gameobjects.asteroid;
 
 import nl.rug.aoop.asteroids.model.AsteroidSize;
+import nl.rug.aoop.asteroids.model.gameobjects.GameObject;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -13,6 +14,9 @@ import java.util.concurrent.ThreadLocalRandom;
  * when that one is destroyed.
  */
 public class Asteroid extends GameObject {
+
+    public final static String OBJECT_ID = "asteroid";
+
     /**
      * By how much (both positive and negative) can the successor asteroids that spawn when an asteroid is destroyed
      * vary in velocity compared to their parent.
@@ -89,5 +93,10 @@ public class Asteroid extends GameObject {
     @Override
     protected int getDefaultStepsUntilCollisionPossible() {
         return IMMUNITY_TICKS;
+    }
+
+    @Override
+    protected String getObjectId() {
+        return OBJECT_ID;
     }
 }

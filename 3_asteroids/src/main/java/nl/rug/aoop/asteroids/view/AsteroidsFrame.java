@@ -4,6 +4,8 @@ import nl.rug.aoop.asteroids.control.actions.NewGameAction;
 import nl.rug.aoop.asteroids.control.PlayerKeyListener;
 import nl.rug.aoop.asteroids.control.actions.QuitAction;
 import nl.rug.aoop.asteroids.model.Game;
+import nl.rug.aoop.asteroids.view.menus.main_menu.MainMenu;
+import nl.rug.aoop.asteroids.view.panels.AsteroidsPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,6 +29,7 @@ public class AsteroidsFrame extends JFrame {
      */
     private final Game game;
 
+    private final ViewManager viewManager;
     /**
      * Constructs the game's main window.
      *
@@ -34,6 +37,7 @@ public class AsteroidsFrame extends JFrame {
      */
     public AsteroidsFrame(Game game) {
         this.game = game;
+        this.viewManager = new ViewManager(game, this);
         initSwingUI();
     }
 
@@ -56,9 +60,15 @@ public class AsteroidsFrame extends JFrame {
         menu.add(new QuitAction());
         menu.add(new NewGameAction(game));
         setJMenuBar(menuBar);
-
+        viewManager.displayMainMenu();
         // Add the custom panel that the game will be drawn to.
-        add(new AsteroidsPanel(game));
+
+        //add(new AsteroidsPanel(game));
         setVisible(true);
+    }
+    private void initMainMenu() {
+
+      //  MainMenu mainMenu = new MainMenu()
+    //    add(new MainMenu())
     }
 }
