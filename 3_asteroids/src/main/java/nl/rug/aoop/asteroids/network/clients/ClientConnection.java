@@ -1,20 +1,29 @@
 package nl.rug.aoop.asteroids.network.clients;
 
 import nl.rug.aoop.asteroids.network.data.ConnectionParameters;
-import nl.rug.aoop.asteroids.network.data.types.GameData;
-import nl.rug.aoop.asteroids.network.host.HostListener;
+import nl.rug.aoop.asteroids.network.data.deltas_changes.GameplayDeltas;
+import nl.rug.aoop.asteroids.network.host.listeners.HostListener;
 import nl.rug.aoop.asteroids.network.host.HostingDevice;
 import nl.rug.aoop.asteroids.network.protocol.IO;
 
-public class ClientConnection implements HostListener, Runnable {
-    private final HostingDevice hostingDevice;
-    private final ConnectionParameters parameters;
-    private IO io;
+import java.net.InetSocketAddress;
 
-    public ClientConnection(HostingDevice host) {
+public class ClientConnection implements HostListener, Runnable {
+
+    private final HostingDevice hostingDevice;
+    private ConnectionParameters parameters;
+    private IO io;
+    private final static int INTERVAL_ms = 10;
+
+    public ClientConnection(HostingDevice host, InetSocketAddress clientAddress) {
         this.hostingDevice = host;
-        this.parameters = host.getConnectionParameters();
+        initParameters(clientAddress);
         initIO();
+    }
+    private void initParameters(InetSocketAddress clientAddress){
+        ConnectionParameters serverParameters = hostingDevice.getConnectionParameters();
+        this.parameters = new ConnectionParameters(clientAddress,
+                hostingDevice.getInetSocketAddress(), serverParameters.getDataLength());
     }
     private void initIO(){
         this.io = new IO(hostingDevice.getServerSocket(), parameters.getCallerAddress());
@@ -26,10 +35,10 @@ public class ClientConnection implements HostListener, Runnable {
     }
 
     private class Consumer implements Runnable {
-        private final int LATENCY;
+        private final int LATENCY_ms;
 
         public Consumer(int maxLat) {
-            this.LATENCY = maxLat;
+            this.LATENCY_ms = maxLat;
         }
 
         @Override
@@ -37,12 +46,28 @@ public class ClientConnection implements HostListener, Runnable {
             listen();
         }
 
-        private void listen() {
-            io.receive();
-            try {
-                wait(LATENCY);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        private synchronized void listen() {
+            while(true){
+                io.receive();
+                try {
+                    wait(LATENCY_ms);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void initFlux() {
+        run();
+        while (true) {
+            if(hostingDevice.updateReady()){
+                io.receive();
+                try {
+                    wait(INTERVAL_ms);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -52,11 +77,15 @@ public class ClientConnection implements HostListener, Runnable {
         io.send();
     }
 
-    public GameData getClientInput() {
+    public GameplayDeltas getClientDeltas() {
         return io.getLastDataPackage().getBody();
     }
 
     public boolean checkPingAbuse() {
         return io.getLastDataPackage().getLatency() > parameters.LAT_MAX_millis;
+    }
+
+    public boolean isConnected() {
+        return true; //TODO statistic packet loss % + time threshold
     }
 }

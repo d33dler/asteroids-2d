@@ -25,6 +25,7 @@ public class Game extends ObservableGame {
     @Getter
     private Spaceship spaceShip;
 
+    private Collection<Spaceship> players;
     /**
      * The list of all bullets currently active in the game.
      */
@@ -95,6 +96,7 @@ public class Game extends ObservableGame {
             gameUpdaterThread = new Thread(new GameUpdater(this));
             gameUpdaterThread.start();
         }
+        
     }
 
     /**

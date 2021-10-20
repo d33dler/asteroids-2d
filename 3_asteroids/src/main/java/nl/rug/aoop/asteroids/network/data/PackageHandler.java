@@ -2,16 +2,18 @@ package nl.rug.aoop.asteroids.network.data;
 
 import lombok.Getter;
 import lombok.Setter;
-import nl.rug.aoop.asteroids.network.data.types.ConfigData;
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.util.HashMap;
+
+import static nl.rug.aoop.asteroids.network.ConfigCodes.PACKET_SIZE;
 
 /**
  * PackageHolder class : (uses Decorator pattern)
  */
-public class PackageHolder {
+public class PackageHandler {
 
     @Getter
     @Setter
@@ -21,18 +23,18 @@ public class PackageHolder {
     @Setter
     private byte[] data;
 
-    private PackageHolder(DataPackage dataPackage, ConnectionParameters parameters) {
+    private PackageHandler(DataPackage dataPackage, ConnectionParameters parameters) {
         this(parameters);
         this.dataPackage = dataPackage;
     }
 
-    private PackageHolder(ConnectionParameters parameters) {
+    private PackageHandler(ConnectionParameters parameters) {
         this.parameters = parameters;
         data = new byte[parameters.getDataLength()];
     }
 
-    public static PackageHolder newEmptyHolder(ConnectionParameters param) {
-        return new PackageHolder(param);
+    public static PackageHandler newEmptyHolder(ConnectionParameters param) {
+        return new PackageHandler(param);
 
     }
 
@@ -55,11 +57,9 @@ public class PackageHolder {
         return parameters.getReceptorPort();
     }
 
-    public void loadHandshakeConfigs(DatagramPacket packet) {
+    public void loadHandshakeConfigs(HashMap<String, Integer> config) {
         try {
-            dataPackage = SerializationUtils.deserialize(packet.getData());
-            ConfigData config = dataPackage.getBody();
-            parameters.updateDataLength(config.data_size);
+            parameters.updateDataLength(config.get(PACKET_SIZE));
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -3,7 +3,7 @@ package nl.rug.aoop.asteroids.network.protocol;
 import lombok.Getter;
 import nl.rug.aoop.asteroids.network.data.ConnectionParameters;
 import nl.rug.aoop.asteroids.network.data.DataPackage;
-import nl.rug.aoop.asteroids.network.data.PackageHolder;
+import nl.rug.aoop.asteroids.network.data.PackageHandler;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -14,12 +14,12 @@ import static nl.rug.aoop.asteroids.network.protocol.DefaultHandshake.HANDSHAKE_
 
 public class IO implements IOProtocol {
     @Getter
-    private final PackageHolder holder;
+    private final PackageHandler holder;
     private final DatagramSocket socket;
 
     public IO(DatagramSocket socket, InetSocketAddress receptor) {
         this.socket = socket;
-        holder = PackageHolder.newEmptyHolder(new ConnectionParameters(new InetSocketAddress(socket.getInetAddress(),socket.getPort()), receptor, HANDSHAKE_LEN));
+        holder = PackageHandler.newEmptyHolder(new ConnectionParameters(new InetSocketAddress(socket.getInetAddress(),socket.getPort()), receptor, HANDSHAKE_LEN));
     }
 
     public void send() {
