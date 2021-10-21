@@ -1,9 +1,12 @@
 package nl.rug.aoop.asteroids.model;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.Setter;
+import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.control.updaters.GameUpdater;
+import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
 import nl.rug.aoop.asteroids.gameobserver.ObservableGame;
 import nl.rug.aoop.asteroids.model.gameobjects.GameObject;
 import nl.rug.aoop.asteroids.model.gameobjects.asteroid.Asteroid;
@@ -81,7 +84,8 @@ public class Game extends ObservableGame {
      */
     private static final int EXIT_TIMEOUT_MILLIS = 100;
 
-
+    @Setter
+    private ViewController viewController;
     /**
      * Constructs a new game, with a new spaceship and all other model data in its default starting state.
      */
@@ -102,7 +106,7 @@ public class Game extends ObservableGame {
         }
         InetAddress address = new InetSocketAddress(0).getAddress();
         System.out.println(address);
-        dbManager = new DatabaseManager("prod");
+        //dbManager = new DatabaseManager("prod");
     }
 
     /**
@@ -135,14 +139,14 @@ public class Game extends ObservableGame {
      * user input and physics updates. Only if the game isn't currently running, that is.
      */
     public void start(boolean online, boolean onlineHost) {
+        initializeObjMap();
         if (!running) {
             running = true;
-            gameUpdaterThread = new Thread(new GameUpdater(this, online, onlineHost));
+            gameUpdaterThread = new Thread(new GameUpdater(this,viewController, online, onlineHost));
             gameUpdaterThread.start();
         }
     }
     public void start(){                    //TODO clean ugly mess
-        initializeObjMap();
         start(false,false);
     }
 
@@ -181,14 +185,14 @@ public class Game extends ObservableGame {
      */
     public void endGame(){
         notifyEnd();
-        dbManager.addScore(new Score("player", spaceShip.getScore()));
+        //dbManager.addScore(new Score("player", spaceShip.getScore()));
     }
 
     /**
      * Notifies view to render the endgame panel
      */
     private void notifyEnd(){
-        listeners.forEach(l -> l.onGameEnd(spaceShip.getScore()));
+        listeners.forEach(GameUpdateListener::onGameEnd);
     }
 
     /**
@@ -216,7 +220,8 @@ public class Game extends ObservableGame {
         objMap.put(Bullet.OBJECT_ID, new ArrayList<>());
     }
     public List<GameObject> getAllGameObj(){
-        return new ArrayList<>((Collection<? extends GameObject>) Iterables.concat(asteroids, playerBullets, onlineBullets));
+        Iterable<GameObject> allObj = Iterables.unmodifiableIterable(Iterables.concat(asteroids, playerBullets, onlineBullets));
+        return Lists.newArrayList(allObj);
     }
     public List<Tuple.T2<String, double[]>> getAllPlayers(){
         List<Tuple.T2<String, double[]>> playersList = new ArrayList<>();

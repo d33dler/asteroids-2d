@@ -33,6 +33,7 @@ public class ViewController {
     public ViewController(Game game, AsteroidsFrame frame) {
         this.game = game;
         this.frame = frame;
+        game.setViewController(this);
         initAllCommands();
     }
 
@@ -58,9 +59,9 @@ public class ViewController {
     }
 
 
-    public void displayEndGame(int score) {
+    public void displayEndGame() {
         removePanels();
-        EndgameMenu egMenu = new EndgameMenu(this, score);
+        EndgameMenu egMenu = new EndgameMenu(this, game.getSpaceShip().getScore());
         activePanels.add(egMenu);
         frame.add(egMenu);
         frame.revalidate();

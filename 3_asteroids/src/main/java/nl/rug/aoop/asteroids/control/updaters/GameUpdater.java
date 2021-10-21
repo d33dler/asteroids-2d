@@ -1,5 +1,6 @@
 package nl.rug.aoop.asteroids.control.updaters;
 
+import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.model.*;
 import nl.rug.aoop.asteroids.model.gameobjects.asteroid.Asteroid;
 import nl.rug.aoop.asteroids.model.gameobjects.bullet.Bullet;
@@ -65,7 +66,7 @@ public class GameUpdater implements Runnable {
      * no new asteroids will spawn.
      */
     private int asteroidsLimit;
-
+    private final ViewController viewController;
     private boolean isOnlineHost;
     private boolean online;
     /**
@@ -73,10 +74,11 @@ public class GameUpdater implements Runnable {
      *
      * @param game The game that this updater will update when it's running.
      */
-    public GameUpdater(Game game,boolean online, boolean onlineHost) {
+    public GameUpdater(Game game, ViewController viewController, boolean online, boolean onlineHost) {
         this.isOnlineHost = onlineHost;
         this.online = online;
         this.game = game;
+        this.viewController = viewController;
         updateCounter = 0;
         asteroidsLimit = ASTEROIDS_LIMIT_DEFAULT;
     }
@@ -113,7 +115,7 @@ public class GameUpdater implements Runnable {
 
             previousTime = currentTime;
         }
-        game.endGame();
+        viewController.displayEndGame();
     }
 
     /**

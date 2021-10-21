@@ -136,7 +136,7 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
     }
 
     @Override
-    public void onGameEnd(int score) {
-        viewController.displayEndGame(score);
+    public void onGameEnd() {
+        remove(this);
     }
 }

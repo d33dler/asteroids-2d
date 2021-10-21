@@ -49,19 +49,22 @@ public class HostingServer implements HostingDevice, Runnable {
         this.multiplayerGame = multiplayer;
         this.socketAddress = address;
         this.host_name = address.getHostName();
+        logHost();
         init();
     }
 
     private void logHost() {
         hostDeltas = multiplayerGame.getHost().getUserDeltas();
+        new HostingUserUpdater(multiplayerGame.getHost()).run();
     }
 
     private void init() {
         executorService = Executors.newFixedThreadPool(multiplayerGame.getMAX_CLIENTS());
         try {
-            server_socket = new DatagramSocket(0, socketAddress);
-            server_port = server_socket.getPort();
-            inetSocketAddress = new InetSocketAddress(socketAddress, server_port);
+            server_socket = new DatagramSocket();
+            server_port = server_socket.getLocalPort(); //TODO this is for local networks
+            System.out.println(server_port);
+            //  inetSocketAddress = new InetSocketAddress(socketAddress, server_port);
         } catch (SocketException e) {
             e.printStackTrace();
         }
@@ -109,12 +112,18 @@ public class HostingServer implements HostingDevice, Runnable {
         public HostingUserUpdater(User user) {
             hostingUser = user;
         }
+
         @Override
         public synchronized void run() {
             Game hostGame = multiplayerGame.getGame();
             while (hostGame.isRunning()) {
                 multiplayerGame.getDeltaManager().collectPlayerDeltas(deltasMap);
                 hostDeltas = hostingUser.getHostDeltas(hostId);
+                try {
+                    wait(5);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

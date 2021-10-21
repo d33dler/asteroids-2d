@@ -14,5 +14,5 @@ public interface GameUpdateListener {
 	 */
 	void onGameUpdated(long timeSinceLastTick);
 
-	void onGameEnd(int score);
+	void onGameEnd();
 }

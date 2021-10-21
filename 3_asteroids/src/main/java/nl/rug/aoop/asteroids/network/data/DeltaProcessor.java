@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DeltaProcessor implements DeltaManager, Serializable, Runnable {
+public class DeltaProcessor implements DeltaManager, Serializable {
 
     private final User user;
     private final MultiplayerManager multiplayerBase;
@@ -59,8 +59,4 @@ public class DeltaProcessor implements DeltaManager, Serializable, Runnable {
 
     }
 
-    @Override
-    public void run() {
-
-    }
 }
