@@ -1,27 +1,30 @@
 package nl.rug.aoop.asteroids.network.data.deltas_changes;
 
+import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
-
+@NoArgsConstructor
 public class Tuple<K> implements Serializable {
-    public final K x;
+    public K a;
     public Tuple(K k) {
-        this.x = k;
+        this.a = k;
     }
+    @NoArgsConstructor
     public static class T2<K,V> extends Tuple<K> {
-        public final V y;
+        public V b;
 
-        public T2(K x, V y) {
+        public T2(K x, V b) {
             super(x);
-            this.y = y;
+            this.b = b;
         }
     }
-
+    @NoArgsConstructor
     public static class T3<K,V,Z> extends Tuple.T2<K,V> {
-        public final Z z;
+        public Z c;
 
-        public T3(K x, V y, Z z) {
+        public T3(K x, V y, Z c) {
             super(x,y);
-            this.z = z;
+            this.c = c;
         }
     }
 

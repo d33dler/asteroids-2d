@@ -1,4 +1,4 @@
-package nl.rug.aoop.asteroids.control;
+package nl.rug.aoop.asteroids.control.updaters;
 
 import nl.rug.aoop.asteroids.model.*;
 import nl.rug.aoop.asteroids.model.gameobjects.asteroid.Asteroid;
@@ -66,12 +66,16 @@ public class GameUpdater implements Runnable {
      */
     private int asteroidsLimit;
 
+    private boolean isOnlineHost;
+    private boolean online;
     /**
      * Constructs a new game updater with the given game.
      *
      * @param game The game that this updater will update when it's running.
      */
-    public GameUpdater(Game game) {
+    public GameUpdater(Game game,boolean online, boolean onlineHost) {
+        this.isOnlineHost = onlineHost;
+        this.online = online;
         this.game = game;
         updateCounter = 0;
         asteroidsLimit = ASTEROIDS_LIMIT_DEFAULT;
@@ -147,7 +151,7 @@ public class GameUpdater implements Runnable {
         removeDestroyedObjects();
 
         // Every 200 game ticks, try and spawn a new asteroid.
-        if (updateCounter % ASTEROID_SPAWN_RATE == 0 && asteroids.size() < asteroidsLimit) {
+        if ((isOnlineHost || !online) && updateCounter % ASTEROID_SPAWN_RATE == 0 && asteroids.size() < asteroidsLimit ) {
             addRandomAsteroid();
         }
         updateCounter++;

@@ -4,7 +4,6 @@ import lombok.Getter;
 import nl.rug.aoop.asteroids.network.clients.User;
 import nl.rug.aoop.asteroids.network.data.ConnectionParameters;
 import nl.rug.aoop.asteroids.network.data.DeltaProcessor;
-import nl.rug.aoop.asteroids.network.data.PackageHandler;
 import nl.rug.aoop.asteroids.network.data.types.DeltaManager;
 import nl.rug.aoop.asteroids.network.host.HostingDevice;
 import nl.rug.aoop.asteroids.network.host.HostingServer;
@@ -15,7 +14,6 @@ import java.util.HashMap;
 public class MultiplayerGame implements MultiplayerManager {
     @Getter
     private ConnectionParameters parameters;
-    private PackageHandler packageHandler;
     @Getter
     private final int MAX_CLIENTS = 10;
     private final User user;
@@ -55,7 +53,6 @@ public class MultiplayerGame implements MultiplayerManager {
 
     private void initClientComponents() {
         parameters = user.getIoHolder().getParameters();
-        packageHandler = user.getIoHolder();
     }
 
     private void initHostingDevice(InetAddress address){
@@ -66,6 +63,11 @@ public class MultiplayerGame implements MultiplayerManager {
     @Override
     public HashMap<String, Double[]> getPlayerVectors() {
         return null;
+    }
+
+    @Override
+    public User getHost() {
+        return user;
     }
 
     @Override

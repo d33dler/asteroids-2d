@@ -67,8 +67,6 @@ public class User {
         } else ioHolder = io.getHolder();
     }
 
-
-
     private void initClientMultiplayer() {
         multiplayerManager = MultiplayerGame.multiplayerClient(game,this);
     }

@@ -8,6 +8,9 @@ import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
 import nl.rug.aoop.asteroids.network.data.types.DeltaManager;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DeltaProcessor implements DeltaManager, Serializable, Runnable {
 
@@ -21,16 +24,18 @@ public class DeltaProcessor implements DeltaManager, Serializable, Runnable {
         this.factory = multiplayerBase.getGame().getObjectFactory();
     }
 
-    private void updatePlayers(Tuple.T2<String, double[]>[] playerVectors) {
-       for(int i = playerVectors.length - 1; i >= 0; i--) {
-            factory.createNewObject(playerVectors[i].x, playerVectors[i].y);
-       }
+    private void updatePlayers(List<Tuple.T2<String, double[]>> playerVectors) {
+        for (int i = playerVectors.size() - 1; i >= 0; i--) {
+            factory.createNewObject(playerVectors.get(i).a, playerVectors.get(i).b);
+        }
     }
 
-    private void updateObjects(Tuple.T2<String, double[][]>[] objectVectors) { //TODO needs 1 obj per tuple?
-        for (int i = objectVectors.length - 1; i >= 0; i--) {
-            for (int x = 0; x < objectVectors[i].y.length; i++){
-                factory.createNewObject(objectVectors[i].x, objectVectors[i].y[x]);
+    private void updateObjects(HashMap<String, double[][]> objectVectors) { //TODO needs 1 obj per tuple?
+        for (Map.Entry<String, double[][]> entry : objectVectors.entrySet()) {
+            String objId = entry.getKey();
+            double[][] matrix = entry.getValue();
+            for (double[] params : matrix) {
+                factory.createNewObject(objId, params);
             }
         }
     }

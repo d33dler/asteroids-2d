@@ -1,6 +1,7 @@
 package nl.rug.aoop.asteroids.network.host;
 
 import nl.rug.aoop.asteroids.network.data.ConnectionParameters;
+import nl.rug.aoop.asteroids.network.data.types.DeltasData;
 import nl.rug.aoop.asteroids.network.statistics.StatisticCalculator;
 
 import java.net.DatagramSocket;
@@ -13,7 +14,9 @@ public interface HostingDevice {
     int getHostDefaultLatency();
     int getHostMaxLatency();
     boolean updateReady();
-    byte[] getLastDeltas();
+    byte[] getLastDeltas(String id);
+    void addNewDelta(String clientIp, DeltasData data);
+    void run();
     StatisticCalculator getStatisticCalculator();
     ConnectionParameters getRawConnectionParameters();
 }

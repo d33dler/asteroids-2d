@@ -1,6 +1,6 @@
 package nl.rug.aoop.asteroids.view.viewmodels;
 
-import nl.rug.aoop.asteroids.control.GameUpdater;
+import nl.rug.aoop.asteroids.control.updaters.GameUpdater;
 import nl.rug.aoop.asteroids.model.gameobjects.GameObject;
 
 import java.awt.*;

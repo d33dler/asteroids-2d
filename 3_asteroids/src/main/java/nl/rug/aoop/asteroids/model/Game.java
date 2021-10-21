@@ -2,7 +2,7 @@ package nl.rug.aoop.asteroids.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import nl.rug.aoop.asteroids.control.GameUpdater;
+import nl.rug.aoop.asteroids.control.updaters.GameUpdater;
 import nl.rug.aoop.asteroids.gameobserver.ObservableGame;
 import nl.rug.aoop.asteroids.model.gameobjects.asteroid.Asteroid;
 import nl.rug.aoop.asteroids.model.gameobjects.bullet.Bullet;
@@ -10,6 +10,7 @@ import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
 import nl.rug.aoop.asteroids.model.obj_factory.GameObjectFactory;
 import nl.rug.aoop.asteroids.model.obj_factory.GeneralObjectsFactory;
 import nl.rug.aoop.asteroids.network.clients.User;
+import nl.rug.aoop.asteroids.view.AsteroidsFrame;
 
 import java.net.*;
 import java.util.ArrayList;
@@ -51,6 +52,12 @@ public class Game extends ObservableGame {
     private volatile boolean running = false;
 
     /**
+     * Indicates if the game updater is computing the physics tick.
+     */
+    @Setter
+    @Getter
+    private volatile boolean isRendererBusy = true;
+    /**
      * The game updater thread, which is responsible for updating the game's state as time goes on.
      */
     private Thread gameUpdaterThread;
@@ -58,9 +65,7 @@ public class Game extends ObservableGame {
     private User user;
     @Getter
     private GameObjectFactory objectFactory;
-    @Setter
-    @Getter
-    private boolean isRendererBusy = true;
+
     /**
      * Number of milliseconds to wait for the game updater to exit its game loop.
      */
@@ -85,6 +90,8 @@ public class Game extends ObservableGame {
         } catch (SocketException e) {
             e.printStackTrace();
         }
+        InetAddress address = new InetSocketAddress(0).getAddress();
+        System.out.println(address);
     }
 
     /**
@@ -115,21 +122,44 @@ public class Game extends ObservableGame {
      * Using this game's current model, spools up a new game updater thread to begin a game loop and start processing
      * user input and physics updates. Only if the game isn't currently running, that is.
      */
-    public void start() {
+    public void start(boolean online, boolean onlineHost) {
         if (!running) {
             running = true;
-            gameUpdaterThread = new Thread(new GameUpdater(this));
+            gameUpdaterThread = new Thread(new GameUpdater(this, online, onlineHost));
             gameUpdaterThread.start();
         }
-
     }
+    public void start(){         //TODO clean ugly mess
+        start(false,false);
+    }
+
+    public void startOnline(InetSocketAddress address) {
+        initMultiplayerAsClient(address);
+        start(true, false);
+    }
+
+    public void startSpectating(InetSocketAddress address) {
+        initMultiplayerAsSpectator(address);
+        start(true, false);
+    }
+
+    public void startHosting(InetAddress address) {
+        initMultiplayerAsHost(address);
+        start(true, true);
+    }
+
     public final static String default_OBJ_PKG = "nl.rug.aoop.asteroids.model.gameobjects";
 
     public void initMultiplayerAsHost(InetAddress address) { //TODO command pattern
         user = User.newHostUser(this, address);
         objectFactory = new GeneralObjectsFactory(this, default_OBJ_PKG); //TODO move all obj creation to factory?
     }
+
     public void initMultiplayerAsClient(InetSocketAddress address) {
+        user = User.newClientUser(this, address);
+    }
+
+    public void initMultiplayerAsSpectator(InetSocketAddress address) {
         user = User.newClientUser(this, address);
     }
 

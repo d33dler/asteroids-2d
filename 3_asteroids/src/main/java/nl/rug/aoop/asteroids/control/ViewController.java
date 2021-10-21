@@ -1,8 +1,9 @@
-package nl.rug.aoop.asteroids.view;
+package nl.rug.aoop.asteroids.control;
 
 import lombok.Getter;
 import nl.rug.aoop.asteroids.model.Game;
 import nl.rug.aoop.asteroids.util.ReflectionUtils;
+import nl.rug.aoop.asteroids.view.AsteroidsFrame;
 import nl.rug.aoop.asteroids.view.menus.main_menu.MainMenu;
 import nl.rug.aoop.asteroids.view.menus.pause_menu.PauseMenu;
 import nl.rug.aoop.asteroids.view.panels.AsteroidsPanel;
@@ -11,9 +12,10 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ViewManager {
+public class ViewController {
     @Getter
     private final Game game;
+    @Getter
     private final AsteroidsFrame frame;
 
     private List<AbstractAction> mainMenuActions;
@@ -24,12 +26,10 @@ public class ViewManager {
 
     private final static String MAIN_M_BG = "images/menu_bg.png";
     private AsteroidsPanel asteroidsPanel;
-    private MainMenu mainMenu;
-    private PauseMenu pauseMenu;
 
-    private List<JPanel> activePanels = new ArrayList<>();
+    private final List<JPanel> activePanels = new ArrayList<>();
 
-    public ViewManager(Game game, AsteroidsFrame frame) {
+    public ViewController(Game game, AsteroidsFrame frame) {
         this.game = game;
         this.frame = frame;
         initAllCommands();
@@ -67,7 +67,6 @@ public class ViewManager {
     private void removePanels() {
         for (JPanel activePanel : activePanels) {
             frame.remove(activePanel);
-
         }
     }
 

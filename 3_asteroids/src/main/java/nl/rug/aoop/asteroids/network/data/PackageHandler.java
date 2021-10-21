@@ -2,14 +2,13 @@ package nl.rug.aoop.asteroids.network.data;
 
 import lombok.Getter;
 import lombok.Setter;
+import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
 import org.apache.commons.lang3.SerializationException;
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.net.DatagramPacket;
 import java.net.InetAddress;
-import java.util.HashMap;
-
-import static nl.rug.aoop.asteroids.network.ConfigCodes.PACKET_SIZE;
+import java.util.List;
 
 /**
  * PackageHolder class : (uses Decorator pattern)
@@ -63,9 +62,9 @@ public class PackageHandler {
         return parameters.getReceptorPort();
     }
 
-    public void loadHandshakeConfigs(HashMap<String, Integer> config) {
+    public void loadHandshakeConfigs(List<Tuple.T2<String, Integer>> config) {
         try {
-            parameters.updateDataLength(config.get(PACKET_SIZE));
+            parameters.updateDataLength((config.get(0).b));
         } catch (Exception e) {
             e.printStackTrace();
         }

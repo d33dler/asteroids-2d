@@ -1,13 +1,10 @@
 package nl.rug.aoop.asteroids;
 
-import nl.rug.aoop.asteroids.control.GameUpdater;
-import nl.rug.aoop.asteroids.control.actions.NewGameAction;
+import nl.rug.aoop.asteroids.control.updaters.GameUpdater;
 import nl.rug.aoop.asteroids.model.Game;
 import nl.rug.aoop.asteroids.view.AsteroidsFrame;
 import nl.rug.aoop.asteroids.view.panels.AsteroidsPanel;
 import com.formdev.flatlaf.FlatDarculaLaf;
-
-import java.awt.event.ActionEvent;
 
 /**
  * Main class of the Asteroids program.
@@ -44,7 +41,7 @@ public class Asteroids {
 
 		// Create the game model and display frame.
 		Game game = new Game();
-		AsteroidsFrame frame = new AsteroidsFrame(game);
+		AsteroidsFrame frame = new AsteroidsFrame(game) ;
 
 	/*	// Generate a new action event so that we can use the NewGameAction to start a new game.
 		new NewGameAction(game).actionPerformed(

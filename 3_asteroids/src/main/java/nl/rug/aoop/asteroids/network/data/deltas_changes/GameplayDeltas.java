@@ -4,15 +4,17 @@ import nl.rug.aoop.asteroids.network.data.types.DeltaManager;
 import nl.rug.aoop.asteroids.network.data.types.DeltasData;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
 
 public class GameplayDeltas implements DeltasData, Serializable {
 
     public final long timestamp;
-    public final Tuple.T2<String, double[]>[] playerVecMap;
-    public final Tuple.T2<String, double[][]>[] objectVecMap;
+    public final List<Tuple.T2<String, double[]>> playerVecMap;
+    public final HashMap<String, double[][]> objectVecMap;
 
-    public GameplayDeltas(Tuple.T2<String, double[]>[] vecMap,
-                          Tuple.T2<String, double[][]>[] objectVecMap,
+    public GameplayDeltas(List<Tuple.T2<String, double[]>> vecMap,
+                          HashMap<String, double[][]> objectVecMap,
                           long timestamp) {
         this.playerVecMap = vecMap;
         this.objectVecMap = objectVecMap;

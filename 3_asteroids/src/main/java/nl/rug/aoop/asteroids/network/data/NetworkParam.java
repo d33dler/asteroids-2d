@@ -1,2 +1,12 @@
-package nl.rug.aoop.asteroids.network.data;public @interface NetworkParam {
+package nl.rug.aoop.asteroids.network.data;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface NetworkParam {
+    String id();
 }

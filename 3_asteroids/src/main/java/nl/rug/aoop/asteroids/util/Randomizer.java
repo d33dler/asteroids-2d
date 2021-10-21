@@ -1,4 +1,4 @@
-package nl.rug.aoop.stockscore.model.random_gen;
+package nl.rug.aoop.asteroids.util;
 
 import java.security.SecureRandom;
 import java.util.Locale;
@@ -72,7 +72,8 @@ public class Randomizer {
 
     }
 
-    public Randomizer() {
+    public Randomizer(int length){
+        this(length,rand,allchar);
     }
 
     public Randomizer(int length, Random random) {

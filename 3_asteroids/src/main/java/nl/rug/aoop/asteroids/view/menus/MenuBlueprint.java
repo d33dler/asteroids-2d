@@ -1,7 +1,7 @@
 package nl.rug.aoop.asteroids.view.menus;
 
 import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
-import nl.rug.aoop.asteroids.view.ViewManager;
+import nl.rug.aoop.asteroids.control.ViewController;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -15,12 +15,12 @@ import java.util.List;
 public abstract class MenuBlueprint extends JPanel {
 
     public BufferedImage background;
-    private final ViewManager viewManager;
+    private final ViewController viewController;
     private Graphics g;
     protected int ITEMS_DIST_X = 0, ITEM_DIST_Y = 110;
 
-    public MenuBlueprint(ViewManager viewManager) {
-        this.viewManager = viewManager;
+    public MenuBlueprint(ViewController viewController) {
+        this.viewController = viewController;
     }
 
     private final List<Tuple.T3<AbstractAction, Rectangle, Font>> buttons = new ArrayList<>();
@@ -58,7 +58,7 @@ public abstract class MenuBlueprint extends JPanel {
         g.drawImage(background, 0, 0, null);
         g.setColor(new Color(249, 252, 205, 224));
         for (Tuple.T3<AbstractAction, Rectangle, Font> t : buttons) {
-            MenuButton menuButton = new MenuButton(t.x, t.y, t.z,g);
+            MenuButton menuButton = new MenuButton(t.a, t.b, t.c,g);
             menuButtons.add(menuButton);
         }
     }

@@ -14,8 +14,10 @@ public class ClientConnection implements HostListener, Runnable {
     private ConnectionParameters parameters;
     private IO io;
     private final static int INTERVAL_ms = 10;
+    private final String clientID;
 
-    public ClientConnection(HostingDevice host, InetSocketAddress clientAddress) {
+    public ClientConnection(HostingDevice host, String clientID, InetSocketAddress clientAddress) {
+        this.clientID = clientID;
         this.hostingDevice = host;
         initParameters(clientAddress);
         initIO();
@@ -48,6 +50,7 @@ public class ClientConnection implements HostListener, Runnable {
         private synchronized void listen() {
             while(isConnected()){
                 io.receive();
+                hostingDevice.addNewDelta(clientID, io.getLastDataPackage().getData());
                 try {
                     wait(LATENCY_ms);
                 } catch (InterruptedException e) {
@@ -61,7 +64,7 @@ public class ClientConnection implements HostListener, Runnable {
         run();
         while (isConnected()) {
             if(hostingDevice.updateReady()){
-                fireUpdate(hostingDevice.getLastDeltas());
+                fireUpdate(hostingDevice.getLastDeltas(clientID));
                 try {
                     wait(INTERVAL_ms);
                 } catch (InterruptedException e) {
