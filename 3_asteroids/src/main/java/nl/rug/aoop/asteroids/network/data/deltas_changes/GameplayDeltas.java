@@ -6,6 +6,7 @@ import nl.rug.aoop.asteroids.network.data.types.DeltasData;
 import java.io.Serializable;
 
 public class GameplayDeltas implements DeltasData, Serializable {
+
     public final long timestamp;
     public final Tuple.T2<String, double[]>[] playerVecMap;
     public final Tuple.T2<String, double[][]>[] objectVecMap;

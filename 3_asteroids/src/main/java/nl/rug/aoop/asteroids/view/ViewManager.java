@@ -1,6 +1,6 @@
 package nl.rug.aoop.asteroids.view;
 
-import nl.rug.aoop.asteroids.Asteroids;
+import lombok.Getter;
 import nl.rug.aoop.asteroids.model.Game;
 import nl.rug.aoop.asteroids.util.ReflectionUtils;
 import nl.rug.aoop.asteroids.view.menus.main_menu.MainMenu;
@@ -8,12 +8,11 @@ import nl.rug.aoop.asteroids.view.menus.pause_menu.PauseMenu;
 import nl.rug.aoop.asteroids.view.panels.AsteroidsPanel;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class ViewManager {
+    @Getter
     private final Game game;
     private final AsteroidsFrame frame;
 
@@ -22,6 +21,7 @@ public class ViewManager {
 
     private final static String MAIN_M_PKG = "nl.rug.aoop.asteroids.control.menu_commands.main",
             PAUSE_M_PKG = "nl.rug.aoop.asteroids.control.menu_commands.pause";
+
     private final static String MAIN_M_BG = "images/menu_bg.png";
     private AsteroidsPanel asteroidsPanel;
     private MainMenu mainMenu;

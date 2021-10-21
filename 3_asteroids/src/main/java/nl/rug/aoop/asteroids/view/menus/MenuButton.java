@@ -75,7 +75,7 @@ public class MenuButton {
      */
     public void clicked(MouseEvent e) {
         int clickX = e.getX(), clickY = e.getY();
-        if(clickX >= x && clickX <= (x + width)
+        if (clickX >= x && clickX <= (x + width)
                 && clickY >= (y - height) && clickY <= y){
             action.actionPerformed(null);
         };

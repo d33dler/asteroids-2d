@@ -1,6 +1,5 @@
 package nl.rug.aoop.asteroids.model;
 
-import nl.rug.aoop.asteroids.model.gameobjects.StandardObjParams;
 import nl.rug.aoop.asteroids.network.data.ConnectionParameters;
 import nl.rug.aoop.asteroids.network.data.types.DeltaManager;
 import nl.rug.aoop.asteroids.network.host.HostingDevice;

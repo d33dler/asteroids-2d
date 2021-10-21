@@ -66,7 +66,6 @@ public class GameUpdater implements Runnable {
      */
     private int asteroidsLimit;
 
-    private boolean isBusy;
     /**
      * Constructs a new game updater with the given game.
      *

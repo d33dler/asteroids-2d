@@ -48,14 +48,16 @@ public class MultiplayerGame implements MultiplayerManager {
     private void launchAsClient() {
         initClientComponents();
     }
+
     private void launchAsHost(InetAddress address){
         initHostingDevice(address);
     }
 
-    private void initClientComponents(){
+    private void initClientComponents() {
         parameters = user.getIoHolder().getParameters();
         packageHandler = user.getIoHolder();
     }
+
     private void initHostingDevice(InetAddress address){
         hostingDevice = new HostingServer(this,address ) ;
         parameters = hostingDevice.getRawConnectionParameters();

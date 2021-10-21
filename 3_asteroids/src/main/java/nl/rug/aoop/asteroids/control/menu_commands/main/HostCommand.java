@@ -1,6 +1,5 @@
 package nl.rug.aoop.asteroids.control.menu_commands.main;
 
-import nl.rug.aoop.asteroids.control.menu_commands.MenuCommand;
 import nl.rug.aoop.asteroids.control.menu_commands.MenuCommands;
 import nl.rug.aoop.asteroids.view.ViewManager;
 

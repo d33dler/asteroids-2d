@@ -2,7 +2,6 @@ package nl.rug.aoop.asteroids.model.gameobjects.asteroid;
 
 import nl.rug.aoop.asteroids.model.AsteroidSize;
 import nl.rug.aoop.asteroids.model.Game;
-import nl.rug.aoop.asteroids.model.gameobjects.StandardObjParams;
 import nl.rug.aoop.asteroids.model.obj_factory.FactoryCommand;
 import nl.rug.aoop.asteroids.model.obj_factory.ObjectCommand;
 
