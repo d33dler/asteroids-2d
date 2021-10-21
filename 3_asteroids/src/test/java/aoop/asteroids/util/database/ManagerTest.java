@@ -31,7 +31,7 @@ class ManagerTest {
 
     @Test
     void DBTest(){
-        DatabaseManager manager = new DatabaseManager("test");
+        DatabaseManager manager = DatabaseManager.getInstance();
         assertNotNull(manager);
         Score score1 = new Score("player1", 200);
         Score score2 = new Score("player2", 201);
@@ -40,25 +40,22 @@ class ManagerTest {
         List<Score> retrievedScores = manager.getAllScores();
         assertNotNull(retrievedScores);
         retrievedScores.forEach(score -> System.out.println(score.toString()));
-        manager.closeDatabase();
     }
 
     @Test
     void getListTest(){
-        DatabaseManager manager = new DatabaseManager("test");
+        DatabaseManager manager = DatabaseManager.getInstance();
         assertNotNull(manager);
         List<Score> retrievedScores = manager.getAllScores();
         assertNotNull(retrievedScores);
         retrievedScores.forEach(score -> System.out.println(score.toString()));
-        manager.closeDatabase();
     }
 
     @Test
     void liveDBCheck(){
-        DatabaseManager manager = new DatabaseManager("prod");
+        DatabaseManager manager = DatabaseManager.getInstance();
 
         List<Score> retrievedScores = manager.getAllScores();
         retrievedScores.forEach(score -> System.out.println(score.toString()));
-        manager.closeDatabase();
     }
 }
