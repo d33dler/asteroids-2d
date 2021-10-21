@@ -103,10 +103,6 @@ public class HostingServer implements HostingDevice, Runnable {
     }
 
 
-    private byte[] createDelta(HashMap<String, GameplayDeltas> deltas, GameplayDeltas hostDeltas) {
-
-    }
-
     private class HostingUserUpdater implements Runnable {
         private final User hostingUser;
 

@@ -30,6 +30,7 @@ public abstract class MenuBlueprint extends JPanel implements MouseListener {
 
     private final List<Tuple.T3<AbstractAction, Rectangle, Font>> buttons = new ArrayList<>();
     private final List<MenuButton> menuButtons = new ArrayList<>();
+    private final List<JLabel> labels = new ArrayList<>();
     private int buff_x = 0, buff_y = 0;
 
     public void addNewButton(AbstractAction r, int w, int h, Font f) {
@@ -46,9 +47,14 @@ public abstract class MenuBlueprint extends JPanel implements MouseListener {
         }
     }
 
+    protected void addText(String text){
+        labels.add(new JLabel(text));
+    }
+
     public void render(int w, int h) {
         setBackground(new Color(118, 18, 18));
         setLayout(new BorderLayout());
+        labels.forEach(this::add);
         JPanel menuPanel = new JPanel();
         menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.PAGE_AXIS));
         menuPanel.setSize(w, h);

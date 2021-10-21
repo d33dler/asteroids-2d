@@ -113,6 +113,7 @@ public class GameUpdater implements Runnable {
 
             previousTime = currentTime;
         }
+        game.endGame();
     }
 
     /**
