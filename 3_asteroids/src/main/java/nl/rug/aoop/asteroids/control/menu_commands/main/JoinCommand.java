@@ -22,14 +22,19 @@ public class JoinCommand extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         Tuple.T2<String, Integer> input = getUserInput();
-        InetSocketAddress address = new InetSocketAddress(input.a, input.b);
-        manager.getGame().startOnline(address);
-        manager.displayGame();
+        if (input!=null) {
+            InetSocketAddress address = new InetSocketAddress(input.a, input.b);
+            manager.getGame().startOnline(address);
+            manager.displayGame();
+        }
     }
 
-    private Tuple.T2<String,Integer> getUserInput(){
+    private Tuple.T2<String, Integer> getUserInput() {
         String hostAddress = JOptionPane.showInputDialog(manager.getFrame(), "Enter host DNS/IP address");
-        Integer port = Integer.valueOf(JOptionPane.showInputDialog(manager.getFrame(), "Enter host port"));
-        return new Tuple.T2<>(hostAddress,port);
+        String port = JOptionPane.showInputDialog(manager.getFrame(), "Enter host port");
+        if(hostAddress != null && !port.isEmpty()){
+            return new Tuple.T2<>(hostAddress, Integer.valueOf(port));
+        }
+        return null;
     }
 }
