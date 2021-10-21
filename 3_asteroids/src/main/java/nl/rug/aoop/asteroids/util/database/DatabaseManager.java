@@ -13,34 +13,27 @@ public class DatabaseManager {
 
     public static final String EXTENSION = ".odb";
     public static final String FOLDER = "db";
+    public static final String DB = "prod";
 
-    private EntityManagerFactory managerFactory;
-    private EntityManager manager;
 
-    /**
-     * The constructor initialise the database
-     */
-    public DatabaseManager(String dbName) {
-        initDatabase(dbName);
-    }
+    private final Path dbPath;
+    private static DatabaseManager instance;
 
     /**
-     * This method initializes the database
+     * Implementation of singleton design pattern for thread safety
      *
-     * @param filename the name of the database file
+     * @return The instance of the DataBase manager
      */
-    private void initDatabase(String filename){
-        Path dbPath = Path.of(FOLDER, filename, filename + EXTENSION);
-        managerFactory = Persistence.createEntityManagerFactory(dbPath.toString());
-        manager = managerFactory.createEntityManager();
+    public static DatabaseManager getInstance(){
+        if (instance == null) instance = new DatabaseManager();
+        return instance;
     }
 
     /**
-     * This method performs closing operations and can be called when application stops
+     * Private constructor for singleton pattern
      */
-    public void closeDatabase(){
-        manager.close();
-        managerFactory.close();
+    private DatabaseManager() {
+        this.dbPath = Path.of(FOLDER, DatabaseManager.DB, DatabaseManager.DB + EXTENSION);
     }
 
     /**
@@ -48,10 +41,14 @@ public class DatabaseManager {
      *
      * @param score The score to add to the database
      */
-    public void addScore(Score score){
+    public synchronized void addScore(Score score){
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory(dbPath.toString());
+        EntityManager manager = emf.createEntityManager();
         manager.getTransaction().begin();
         manager.persist(score);
         manager.getTransaction().commit();
+        manager.close();
+        emf.close();
     }
 
     /**
@@ -59,8 +56,13 @@ public class DatabaseManager {
      *
      * @return A collection of all the scores in the database
      */
-    public List<Score> getAllScores(){
+    public synchronized List<Score> getAllScores(){
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory(dbPath.toString());
+        EntityManager manager = emf.createEntityManager();
         var query = manager.createQuery("SELECT s FROM Score s", Score.class);
-        return query.getResultList();
+        var ret = query.getResultList();
+        manager.close();
+        emf.close();
+        return ret;
     }
 }
