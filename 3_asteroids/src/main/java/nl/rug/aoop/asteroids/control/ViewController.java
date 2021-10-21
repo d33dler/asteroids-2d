@@ -1,6 +1,7 @@
 package nl.rug.aoop.asteroids.control;
 
 import lombok.Getter;
+import lombok.Setter;
 import nl.rug.aoop.asteroids.model.Game;
 import nl.rug.aoop.asteroids.util.ReflectionUtils;
 import nl.rug.aoop.asteroids.view.AsteroidsFrame;
@@ -15,7 +16,8 @@ import java.util.List;
 
 public class ViewController {
     @Getter
-    private final Game game;
+    @Setter
+    private Game game;
     @Getter
     private final AsteroidsFrame frame;
 
@@ -60,6 +62,7 @@ public class ViewController {
 
 
     public void displayEndGame() {
+        game.endGame();
         removePanels();
         EndgameMenu egMenu = new EndgameMenu(this, game.getSpaceShip().getScore());
         activePanels.add(egMenu);
@@ -74,6 +77,10 @@ public class ViewController {
 
     public void displayScoreboards() {
 
+    }
+    private void requestGameReset(){
+        this.game = new Game();
+        frame.setGame(game);
     }
 
     private void removePanels() {

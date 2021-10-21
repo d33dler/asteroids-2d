@@ -1,6 +1,7 @@
 package nl.rug.aoop.asteroids.view.menus;
 
 import nl.rug.aoop.asteroids.control.ViewController;
+import nl.rug.aoop.asteroids.control.menu_commands.pause.ExitCommand;
 import nl.rug.aoop.asteroids.control.menu_commands.pause.ReturnCommand;
 
 import java.awt.*;

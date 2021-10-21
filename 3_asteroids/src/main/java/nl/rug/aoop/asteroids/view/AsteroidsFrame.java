@@ -1,5 +1,6 @@
 package nl.rug.aoop.asteroids.view;
 
+import lombok.Setter;
 import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.control.actions.NewGameAction;
 import nl.rug.aoop.asteroids.control.PlayerKeyListener;
@@ -8,6 +9,7 @@ import nl.rug.aoop.asteroids.model.Game;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyListener;
 
 /**
  * The main window that's used for displaying the game.
@@ -26,9 +28,13 @@ public class AsteroidsFrame extends JFrame {
     /**
      * The game model.
      */
-    private final Game game;
+    @Setter
+    private Game game;
 
     private final ViewController viewController;
+
+    private PlayerKeyListener playerKeyListener;
+
     /**
      * Constructs the game's main window.
      *
@@ -50,7 +56,8 @@ public class AsteroidsFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Add a key listener that can control the game's spaceship.
-        addKeyListener(new PlayerKeyListener(game.getSpaceShip()));
+        playerKeyListener = new PlayerKeyListener(game.getSpaceShip());
+        addKeyListener(playerKeyListener);
 
         // Add a menu bar with some simple actions.
         JMenuBar menuBar = new JMenuBar();
@@ -60,15 +67,22 @@ public class AsteroidsFrame extends JFrame {
         menu.add(new NewGameAction(game));
         setJMenuBar(menuBar);
         viewController.displayMainMenu();
-       // viewManager.displayGame();
         // Add the custom panel that the game will be drawn to.
         setResizable(false);
         //add(new AsteroidsPanel(game));
         setVisible(true);
     }
-    private void initMainMenu() {
 
-      //  MainMenu mainMenu = new MainMenu()
-    //    add(new MainMenu())
+
+    public void resetGame(Game game) {
+        this.game = game;
+        resetPlayerKeyListener();
     }
+
+    private void resetPlayerKeyListener() {
+        removeKeyListener(playerKeyListener);
+        playerKeyListener = new PlayerKeyListener(game.getSpaceShip());
+        addKeyListener(playerKeyListener);
+    }
+
 }
