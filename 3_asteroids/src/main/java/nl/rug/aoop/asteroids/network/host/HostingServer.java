@@ -7,7 +7,6 @@ import nl.rug.aoop.asteroids.network.clients.User;
 import nl.rug.aoop.asteroids.network.data.ConnectionParameters;
 import nl.rug.aoop.asteroids.network.data.deltas_changes.ConfigData;
 import nl.rug.aoop.asteroids.network.data.deltas_changes.GameplayDeltas;
-import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
 import nl.rug.aoop.asteroids.network.data.types.DeltasData;
 import nl.rug.aoop.asteroids.network.host.listeners.HostListener;
 import nl.rug.aoop.asteroids.network.statistics.ConnectionStatistic;
@@ -21,7 +20,6 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -33,7 +31,7 @@ public class HostingServer implements HostingDevice, Runnable {
     private DatagramSocket server_socket;
     private int server_port;
     private final String host_name;
-    private ExecutorService executorService;
+    private ExecutorService executorService = Executors.newFixedThreadPool(40);
     private ConnectionStatistic connectionStatistic = new ConnectionStatistic();
 
     private final InetAddress socketAddress;
@@ -55,7 +53,7 @@ public class HostingServer implements HostingDevice, Runnable {
 
     private void logHost() {
         hostDeltas = multiplayerGame.getHost().getUserDeltas();
-        new HostingUserUpdater(multiplayerGame.getHost()).run();
+        new Thread(new HostingUserUpdater(multiplayerGame.getHost())).start();
     }
 
     private void init() {
@@ -99,8 +97,8 @@ public class HostingServer implements HostingDevice, Runnable {
             e.printStackTrace();
         }
         String id = randomizer.generateId();
-        HostListener newListener = new ClientConnection(this, id, inetAddress);
-        deltasMap.put(id, null);
+        ClientConnection newListener = new ClientConnection(this, id, inetAddress);
+        executorService.execute(newListener);
         newListener.initFlux();
         hostListeners.add(newListener);
     }

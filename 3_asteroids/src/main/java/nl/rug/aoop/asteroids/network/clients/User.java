@@ -44,8 +44,8 @@ public class User implements Runnable{
     private User(Game game, InetSocketAddress address) {
         this.game = game;
         initSocket();
-        initClientMultiplayer();
         attemptConnect(address);
+        initClientMultiplayer();
     }
 
     private User(Game game, InetAddress inetAddress) {
@@ -73,10 +73,13 @@ public class User implements Runnable{
         if (address != null) {
             connectionParameters = new ConnectionParameters(userSocket, address,0); //TODO !!!!!
             io = new DefaultHandshake(userSocket).handshake(connectionParameters);
+            System.out.println("Connected");
         }
         if (io == null || io.getHolder() == null) {
-            log.warning("Failed connection"); //TODO interface
-        } else ioHolder = io.getHolder();
+            log.warning("Failed connection");               //TODO interface
+        } else {
+            ioHolder = io.getHolder();
+        }
     }
 
     private void initClientMultiplayer() {

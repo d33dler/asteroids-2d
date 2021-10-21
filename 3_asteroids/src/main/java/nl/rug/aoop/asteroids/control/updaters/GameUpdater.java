@@ -108,6 +108,7 @@ public class GameUpdater implements Runnable {
                 timeSinceLastTick = 0L;
                 game.setRendererBusy(false);
             }
+
             if (timeSinceLastDisplayFrame >= millisecondsPerDisplayFrame) { // Check if enough time has passed to refresh the display.
                 game.notifyListeners(timeSinceLastTick); // Tell the asteroids panel that it should refresh.
                 timeSinceLastDisplayFrame = 0L;

@@ -62,14 +62,6 @@ public class PackageHandler {
         return parameters.getReceptorPort();
     }
 
-    public void loadHandshakeConfigs(List<Tuple.T2<String, Integer>> config) {
-        try {
-            parameters.updateDataLength((config.get(0).b));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        initData();
-    }
 
     public void initData() {
         data = new byte[parameters.getDataLength()];

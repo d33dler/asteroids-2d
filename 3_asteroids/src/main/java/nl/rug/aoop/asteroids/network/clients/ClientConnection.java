@@ -32,7 +32,7 @@ public class ClientConnection implements HostListener, Runnable {
 
     @Override
     public void run() {
-        new Consumer(parameters.LAT_SERVER_millis).run();
+        new Thread(new Consumer(parameters.LAT_SERVER_millis)).start();
     }
 
     private class Consumer implements Runnable {
@@ -49,6 +49,7 @@ public class ClientConnection implements HostListener, Runnable {
 
         private synchronized void listen() {
             while(isConnected()){
+                System.out.println("READING FROM USER");
                 io.receive();
                 hostingDevice.addNewDelta(clientID, io.getLastDataPackage().getData());
                 try {
@@ -61,7 +62,6 @@ public class ClientConnection implements HostListener, Runnable {
     }
 
     public synchronized void initFlux() {
-        run();
         while (isConnected()) {
             if(hostingDevice.updateReady()){
                 fireUpdate(hostingDevice.getLastDeltas());
@@ -75,6 +75,7 @@ public class ClientConnection implements HostListener, Runnable {
     }
 
     public void fireUpdate(byte[] data) {
+        System.out.println("SENDING TO USER");
         io.updateHolder(data);
         io.send();
     }

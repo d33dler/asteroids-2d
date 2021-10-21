@@ -151,18 +151,18 @@ public class Game extends ObservableGame {
     }
 
     public void startOnline(InetSocketAddress address) {
-        initMultiplayerAsClient(address);
         start(true, false);
+        initMultiplayerAsClient(address);
     }
 
     public void startSpectating(InetSocketAddress address) {
-        initMultiplayerAsSpectator(address);
         start(true, false);
+        initMultiplayerAsSpectator(address);
     }
 
     public void startHosting(InetAddress address) {
-        initMultiplayerAsHost(address);
         start(true, true);
+        initMultiplayerAsHost(address);
     }
 
     public final static String default_OBJ_PKG = "nl.rug.aoop.asteroids.model.gameobjects";

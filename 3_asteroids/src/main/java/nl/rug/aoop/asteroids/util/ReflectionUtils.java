@@ -21,7 +21,7 @@ public class ReflectionUtils {
 
     public static List<Tuple.T2<String, Integer>> getNetworkParams(Object c) {
         List<Tuple.T2<String, Integer>> map = new ArrayList<>();
-        Set<Field> fields = new Reflections(c).getFieldsAnnotatedWith(NetworkParam.class);
+        Set<Field> fields = new Reflections(c.getClass()).getFieldsAnnotatedWith(NetworkParam.class);
         for(Field f : fields){
             NetworkParam param = f.getAnnotation(NetworkParam.class);
             try {

@@ -25,6 +25,7 @@ public class IO implements IOProtocol {
     public void send() {
         byte[] data = holder.getDataInBytes();
         DatagramPacket packet = new DatagramPacket(data, data.length, holder.getInet(), holder.getPort());
+        System.out.println(holder.getInet());
         try {
             socket.send(packet);
         } catch (IOException e) {

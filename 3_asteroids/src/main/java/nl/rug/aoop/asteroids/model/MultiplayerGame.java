@@ -61,6 +61,7 @@ public class MultiplayerGame implements MultiplayerManager {
 
     private void initHostingDevice(InetAddress address){
         hostingDevice = new HostingServer(this,address ) ;
+        new Thread((Runnable) hostingDevice).start();
         parameters = hostingDevice.getRawConnectionParameters();
     }
 

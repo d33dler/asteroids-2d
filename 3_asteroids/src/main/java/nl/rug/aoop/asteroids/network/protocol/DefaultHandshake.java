@@ -42,7 +42,7 @@ public class DefaultHandshake {
     private void passHandshakeConfigs(PackageHandler handler, DatagramPacket handshake) {
         ConfigData configData = SerializationUtils.deserialize(handshake.getData());
         if (configData != null) {
-            handler.loadHandshakeConfigs(configData.setup);
+            handler.initData();
         }
     }
 }
