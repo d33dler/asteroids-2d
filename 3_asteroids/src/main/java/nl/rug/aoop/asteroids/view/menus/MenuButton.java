@@ -73,11 +73,12 @@ public class MenuButton {
      * @param e the mouse event containing the coordinates of the click.
      * @return true if it was clicked, false otherwise.
      */
-    public void clicked(MouseEvent e) {
+    public boolean clicked(MouseEvent e) {
         int clickX = e.getX(), clickY = e.getY();
-        if (clickX >= x && clickX <= (x + width)
-                && clickY >= (y - height) && clickY <= y){
-            action.actionPerformed(null);
-        };
+        return (clickX >= x && clickX <= (x + width)
+                && clickY >= (y - height) && clickY <= y);
+    }
+    public void executeAction() {
+        action.actionPerformed(null);
     }
 }

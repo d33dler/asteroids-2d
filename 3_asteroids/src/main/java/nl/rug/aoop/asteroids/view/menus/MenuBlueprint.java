@@ -6,13 +6,17 @@ import nl.rug.aoop.asteroids.control.ViewController;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class MenuBlueprint extends JPanel {
+public abstract class MenuBlueprint extends JPanel implements MouseListener {
+
+
 
     public BufferedImage background;
     private final ViewController viewController;
@@ -21,6 +25,7 @@ public abstract class MenuBlueprint extends JPanel {
 
     public MenuBlueprint(ViewController viewController) {
         this.viewController = viewController;
+        addMouseListener(this);
     }
 
     private final List<Tuple.T3<AbstractAction, Rectangle, Font>> buttons = new ArrayList<>();
@@ -61,5 +66,35 @@ public abstract class MenuBlueprint extends JPanel {
             MenuButton menuButton = new MenuButton(t.a, t.b, t.c,g);
             menuButtons.add(menuButton);
         }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        for (MenuButton button : menuButtons) {
+            if(button.clicked(e)) {
+                button.executeAction();
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 }
