@@ -7,11 +7,11 @@ import java.io.Serializable;
 
 public class GameplayDeltas implements DeltasData, Serializable {
     public final long timestamp;
-    public final Tuple2<String, double[]>[] playerVecMap;
-    public final Tuple2<String, double[][]>[] objectVecMap;
+    public final Tuple.T2<String, double[]>[] playerVecMap;
+    public final Tuple.T2<String, double[][]>[] objectVecMap;
 
-    public GameplayDeltas(Tuple2<String, double[]>[] vecMap,
-                          Tuple2<String, double[][]>[] objectVecMap,
+    public GameplayDeltas(Tuple.T2<String, double[]>[] vecMap,
+                          Tuple.T2<String, double[][]>[] objectVecMap,
                           long timestamp) {
         this.playerVecMap = vecMap;
         this.objectVecMap = objectVecMap;

@@ -22,7 +22,7 @@ public class AsteroidsFrame extends JFrame {
     /**
      * The size that the window should be.
      */
-    public static final Dimension WINDOW_SIZE = new Dimension(800, 800);
+    public static final Dimension WINDOW_SIZE = new Dimension(1000, 950);
 
     /**
      * The game model.
@@ -61,8 +61,9 @@ public class AsteroidsFrame extends JFrame {
         menu.add(new NewGameAction(game));
         setJMenuBar(menuBar);
         viewManager.displayMainMenu();
+       // viewManager.displayGame();
         // Add the custom panel that the game will be drawn to.
-
+        setResizable(false);
         //add(new AsteroidsPanel(game));
         setVisible(true);
     }
