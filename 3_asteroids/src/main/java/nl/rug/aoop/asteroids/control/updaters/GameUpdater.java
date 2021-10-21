@@ -127,11 +127,13 @@ public class GameUpdater implements Runnable {
      */
     private void updatePhysics() {
         Spaceship ship = game.getSpaceShip();
-        Collection<Bullet> bullets = game.getBullets();
+        Collection<Bullet> bullets = game.getPlayerBullets();
         Collection<Asteroid> asteroids = game.getAsteroids();
 
         asteroids.forEach(GameObject::nextStep);
         bullets.forEach(GameObject::nextStep);
+        game.getOnlineBullets().forEach(GameObject::nextStep); //TODO this was changed
+        game.getPlayers().values().forEach(GameObject::nextStep); //TODO check this for conflicts?
         ship.nextStep();
 
         if (ship.canFireWeapon()) {
@@ -190,7 +192,7 @@ public class GameUpdater implements Runnable {
      */
     private void checkCollisions() {
         // First check collisions between bullets and other objects.
-        game.getBullets().forEach(bullet -> {
+        game.getPlayerBullets().forEach(bullet -> {
             game.getAsteroids().forEach(asteroid -> { // Check collision with any of the asteroids.
                 if (asteroid.collides(bullet)) {
                     asteroid.destroy();
@@ -248,6 +250,8 @@ public class GameUpdater implements Runnable {
         // Remove all asteroids that are destroyed.
         game.getAsteroids().removeIf(GameObject::isDestroyed);
         // Remove any bullets that are destroyed.
-        game.getBullets().removeIf(GameObject::isDestroyed);
+        game.getPlayerBullets().removeIf(GameObject::isDestroyed);
+        game.getOnlineBullets().removeIf(GameObject::isDestroyed);
+        game.getPlayers().values().removeIf(GameObject::isDestroyed);
     }
 }

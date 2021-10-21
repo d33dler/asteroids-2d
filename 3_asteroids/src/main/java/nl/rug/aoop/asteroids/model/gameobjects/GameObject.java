@@ -4,6 +4,9 @@ import nl.rug.aoop.asteroids.view.AsteroidsFrame;
 import lombok.Getter;
 
 import java.awt.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * This class represents any object that is present in a game, such as a bullet, asteroid, or a player's ship. As an
@@ -122,5 +125,9 @@ public abstract class GameObject {
      */
     protected abstract int getDefaultStepsUntilCollisionPossible();
 
-    protected abstract String getObjectId();
+    public double[] getObjParameters(){
+        return new double[]{getLocation().x,getLocation().y,getVelocity().x,getVelocity().y};
+    };
+
+    public abstract String getObjectId();
 }

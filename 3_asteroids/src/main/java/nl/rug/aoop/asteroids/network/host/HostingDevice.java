@@ -14,7 +14,7 @@ public interface HostingDevice {
     int getHostDefaultLatency();
     int getHostMaxLatency();
     boolean updateReady();
-    byte[] getLastDeltas(String id);
+    byte[] getLastDeltas();
     void addNewDelta(String clientIp, DeltasData data);
     void run();
     StatisticCalculator getStatisticCalculator();

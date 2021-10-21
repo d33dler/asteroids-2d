@@ -1,21 +1,21 @@
 package nl.rug.aoop.asteroids.model;
 
+import com.google.common.collect.Iterables;
 import lombok.Getter;
 import lombok.Setter;
 import nl.rug.aoop.asteroids.control.updaters.GameUpdater;
 import nl.rug.aoop.asteroids.gameobserver.ObservableGame;
+import nl.rug.aoop.asteroids.model.gameobjects.GameObject;
 import nl.rug.aoop.asteroids.model.gameobjects.asteroid.Asteroid;
 import nl.rug.aoop.asteroids.model.gameobjects.bullet.Bullet;
 import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
 import nl.rug.aoop.asteroids.model.obj_factory.GameObjectFactory;
 import nl.rug.aoop.asteroids.model.obj_factory.GeneralObjectsFactory;
 import nl.rug.aoop.asteroids.network.clients.User;
-import nl.rug.aoop.asteroids.view.AsteroidsFrame;
+import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
 
 import java.net.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * This class is the main model for the Asteroids game. It contains all game objects, and has methods to start and stop
@@ -37,7 +37,10 @@ public class Game extends ObservableGame {
      * The list of all bullets currently active in the game.
      */
     @Getter
-    private Collection<Bullet> bullets;
+    private Collection<Bullet> playerBullets;
+
+    @Getter
+    private Collection<Bullet> onlineBullets;
 
     /**
      * The list of all asteroids in the game.
@@ -99,7 +102,8 @@ public class Game extends ObservableGame {
      * default starting state before beginning a new game.
      */
     public void initializeGameData() {
-        bullets = new ArrayList<>();
+        playerBullets = new ArrayList<>();
+        onlineBullets = new ArrayList<>();
         asteroids = new ArrayList<>();
         spaceShip.reset();
     }
@@ -129,7 +133,8 @@ public class Game extends ObservableGame {
             gameUpdaterThread.start();
         }
     }
-    public void start(){         //TODO clean ugly mess
+    public void start(){                    //TODO clean ugly mess
+        initializeObjMap();
         start(false,false);
     }
 
@@ -179,5 +184,22 @@ public class Game extends ObservableGame {
                 gameUpdaterThread = null;
             }
         }
+    }
+    @Getter
+    private final HashMap<String, List<double[]>> objMap = new HashMap<>();
+
+    private void initializeObjMap() {
+        objMap.put(Asteroid.OBJECT_ID, new ArrayList<>());
+        objMap.put(Bullet.OBJECT_ID, new ArrayList<>());
+    }
+    public List<GameObject> getAllGameObj(){
+        return new ArrayList<>((Collection<? extends GameObject>) Iterables.concat(asteroids, playerBullets, onlineBullets));
+    }
+    public List<Tuple.T2<String, double[]>> getAllPlayers(){
+        List<Tuple.T2<String, double[]>> playersList = new ArrayList<>();
+        for (Map.Entry<String, Spaceship> player : players.entrySet()) {
+            playersList.add(new Tuple.T2<>(player.getKey(),player.getValue().getObjParameters()));
+        }
+        return playersList;
     }
 }

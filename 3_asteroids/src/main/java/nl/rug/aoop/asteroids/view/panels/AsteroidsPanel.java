@@ -111,7 +111,8 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
             new SpaceshipViewModel(game.getSpaceShip()).drawObject(graphics2D, timeSinceLastTick);
             game.getPlayers().values().forEach(spaceship -> new SpaceshipViewModel(spaceship).drawObject(graphics2D,timeSinceLastTick)); //TODO verify
             game.getAsteroids().forEach(asteroid -> new AsteroidViewModel(asteroid).drawObject(graphics2D, timeSinceLastTick));
-            game.getBullets().forEach(bullet -> new BulletViewModel(bullet).drawObject(graphics2D, timeSinceLastTick));
+            game.getPlayerBullets().forEach(bullet -> new BulletViewModel(bullet).drawObject(graphics2D, timeSinceLastTick));
+            game.getOnlineBullets().forEach(bullet -> new BulletViewModel(bullet).drawObject(graphics2D, timeSinceLastTick)); //TODO Verify
         }
     }
 

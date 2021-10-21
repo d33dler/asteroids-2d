@@ -1,7 +1,9 @@
 package nl.rug.aoop.asteroids.network.host;
 
+import nl.rug.aoop.asteroids.model.Game;
 import nl.rug.aoop.asteroids.model.MultiplayerManager;
 import nl.rug.aoop.asteroids.network.clients.ClientConnection;
+import nl.rug.aoop.asteroids.network.clients.User;
 import nl.rug.aoop.asteroids.network.data.ConnectionParameters;
 import nl.rug.aoop.asteroids.network.data.deltas_changes.ConfigData;
 import nl.rug.aoop.asteroids.network.data.deltas_changes.GameplayDeltas;
@@ -38,8 +40,10 @@ public class HostingServer implements HostingDevice, Runnable {
     private InetSocketAddress inetSocketAddress;
 
     private final Randomizer randomizer = new Randomizer(6);
-    private HashMap<String, GameplayDeltas> deltasMap = new HashMap<>();
-    private final int DELAY = 5;
+    private final HashMap<String, GameplayDeltas> deltasMap = new HashMap<>();
+    private final String hostId = randomizer.generateId();
+    private GameplayDeltas hostDeltas;
+
 
     public HostingServer(MultiplayerManager multiplayer, InetAddress address) {
         this.multiplayerGame = multiplayer;
@@ -48,8 +52,8 @@ public class HostingServer implements HostingDevice, Runnable {
         init();
     }
 
-    private void logHost(){
-        //multiplayerGame.getHost().
+    private void logHost() {
+        hostDeltas = multiplayerGame.getHost().getUserDeltas();
     }
 
     private void init() {
@@ -99,12 +103,24 @@ public class HostingServer implements HostingDevice, Runnable {
     }
 
 
-    private byte[] createDelta(HashMap<String, GameplayDeltas> deltas, GameplayDeltas hostDeltas){
-        List<Tuple.T2<String, double[]>> playerVec = new ArrayList<>();
-        for (GameplayDeltas gpDs : deltas.values()) {
-            playerVec.add(gpDs.playerVecMap.get(0));
+    private byte[] createDelta(HashMap<String, GameplayDeltas> deltas, GameplayDeltas hostDeltas) {
+
+    }
+
+    private class HostingUserUpdater implements Runnable {
+        private final User hostingUser;
+
+        public HostingUserUpdater(User user) {
+            hostingUser = user;
         }
-        return SerializationUtils.serialize(new GameplayDeltas(playerVec,hostDeltas.objectVecMap,System.currentTimeMillis()));
+        @Override
+        public synchronized void run() {
+            Game hostGame = multiplayerGame.getGame();
+            while (hostGame.isRunning()) {
+                multiplayerGame.getDeltaManager().collectPlayerDeltas(deltasMap);
+                hostDeltas = hostingUser.getHostDeltas(hostId);
+            }
+        }
     }
 
     @Override
@@ -122,10 +138,8 @@ public class HostingServer implements HostingDevice, Runnable {
     }
 
     @Override
-    public byte[] getLastDeltas(String id) {
-        HashMap<String, GameplayDeltas> newDeltaPacket = new HashMap<>(deltasMap);
-        newDeltaPacket.remove(id);
-        return createDelta(newDeltaPacket, null);// multiplayerGame.getHost().get)
+    public byte[] getLastDeltas() {
+        return SerializationUtils.serialize(hostDeltas);
     }
 
     @Override

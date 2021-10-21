@@ -30,10 +30,10 @@ public class DeltaProcessor implements DeltaManager, Serializable, Runnable {
         }
     }
 
-    private void updateObjects(HashMap<String, double[][]> objectVectors) { //TODO needs 1 obj per tuple?
-        for (Map.Entry<String, double[][]> entry : objectVectors.entrySet()) {
+    private void updateObjects(HashMap<String, List<double[]>> objectVectors) { //TODO needs 1 obj per tuple?
+        for (Map.Entry<String, List<double[]>> entry : objectVectors.entrySet()) {
             String objId = entry.getKey();
-            double[][] matrix = entry.getValue();
+            List<double[]> matrix = entry.getValue();
             for (double[] params : matrix) {
                 factory.createNewObject(objId, params);
             }
@@ -46,10 +46,18 @@ public class DeltaProcessor implements DeltaManager, Serializable, Runnable {
         updateObjects(gameplayDeltas.objectVecMap);
     }
 
-    private void compareChanges() {
+    public void collectPlayerDeltas(HashMap<String, GameplayDeltas> deltas) {
+        while (true) { //TODO check this
+            if (!multiplayerBase.getGame().isRendererBusy()) {
+                for (GameplayDeltas delta : deltas.values()) {
+                    updatePlayers(delta.playerVecMap);
+                    updateObjects(delta.objectVecMap);
+                }
+                break;
+            }
+        }
 
     }
-
 
     @Override
     public void run() {

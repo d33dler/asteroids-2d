@@ -6,6 +6,8 @@ import nl.rug.aoop.asteroids.model.gameobjects.GameObject;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -96,7 +98,13 @@ public class Asteroid extends GameObject {
     }
 
     @Override
-    protected String getObjectId() {
+    public double[] getObjParameters() {
+        return new double[]{getLocation().x,getLocation().y,getVelocity().x,getVelocity().y, getRadius()};
+    }
+
+
+    @Override
+    public String getObjectId() {
         return OBJECT_ID;
     }
 }

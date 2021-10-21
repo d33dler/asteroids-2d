@@ -47,6 +47,10 @@ public class MultiplayerGame implements MultiplayerManager {
         initClientComponents();
     }
 
+    private void launchAsSpectator() {
+        initClientComponents();
+    }
+
     private void launchAsHost(InetAddress address){
         initHostingDevice(address);
     }

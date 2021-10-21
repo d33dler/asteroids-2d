@@ -7,4 +7,5 @@ import java.util.HashMap;
 
 public interface DeltaManager {
     void setupGame(GameplayDeltas gameplayDeltas);
+    void collectPlayerDeltas(HashMap<String, GameplayDeltas> deltas);
 }

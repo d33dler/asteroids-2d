@@ -1,6 +1,5 @@
 package nl.rug.aoop.asteroids.model.gameobjects;
 
-import nl.rug.aoop.asteroids.model.gameobjects.GameObject;
 import nl.rug.aoop.asteroids.view.AsteroidsFrame;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
@@ -183,7 +182,7 @@ class GameObjectTest {
 			}
 
 			@Override
-			protected String getObjectId() {
+			public String getObjectId() {
 				return "null";
 			}
 		}

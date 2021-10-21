@@ -11,10 +11,10 @@ public class GameplayDeltas implements DeltasData, Serializable {
 
     public final long timestamp;
     public final List<Tuple.T2<String, double[]>> playerVecMap;
-    public final HashMap<String, double[][]> objectVecMap;
+    public final HashMap<String, List<double[]>> objectVecMap;
 
     public GameplayDeltas(List<Tuple.T2<String, double[]>> vecMap,
-                          HashMap<String, double[][]> objectVecMap,
+                          HashMap<String, List<double[]>> objectVecMap,
                           long timestamp) {
         this.playerVecMap = vecMap;
         this.objectVecMap = objectVecMap;

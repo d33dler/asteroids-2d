@@ -64,7 +64,7 @@ public class ClientConnection implements HostListener, Runnable {
         run();
         while (isConnected()) {
             if(hostingDevice.updateReady()){
-                fireUpdate(hostingDevice.getLastDeltas(clientID));
+                fireUpdate(hostingDevice.getLastDeltas());
                 try {
                     wait(INTERVAL_ms);
                 } catch (InterruptedException e) {

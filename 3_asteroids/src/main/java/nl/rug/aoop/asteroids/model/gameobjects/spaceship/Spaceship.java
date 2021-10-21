@@ -5,8 +5,6 @@ import nl.rug.aoop.asteroids.view.AsteroidsFrame;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.awt.*;
-
 /**
  * This class represents a player's ship. Like all other game objects, it has a location and velocity, but additionally,
  * the spaceship has a weapon that can be used to shoot bullets to destroy asteroids. The spaceship also slows down over
@@ -247,8 +245,13 @@ public class Spaceship extends GameObject {
     }
 
     @Override
-    protected String getObjectId() {
-        return null;
+    public double[] getObjParameters() {
+        return super.getObjParameters();
+    }
+
+    @Override
+    public String getObjectId() {
+        return OBJECT_ID;
     }
 
     /**

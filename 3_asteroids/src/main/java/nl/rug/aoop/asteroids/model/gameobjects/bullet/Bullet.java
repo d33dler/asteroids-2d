@@ -87,7 +87,12 @@ public class Bullet extends GameObject {
     }
 
     @Override
-    protected String getObjectId() {
+    public double[] getObjParameters() {
+        return super.getObjParameters(); //TODO stepsleft??
+    }
+
+    @Override
+    public String getObjectId() {
         return OBJECT_ID;
     }
 }

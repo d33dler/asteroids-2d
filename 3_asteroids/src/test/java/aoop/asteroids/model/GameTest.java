@@ -32,7 +32,7 @@ class GameTest {
 	@Test
 	void testInitializeGameData() {
 		Game game = new Game(); // The constructor calls initializeGameData().
-		assertTrue(game.getBullets().isEmpty());
+		assertTrue(game.getPlayerBullets().isEmpty());
 		assertTrue(game.getAsteroids().isEmpty());
 		// We test the spaceship's reset functionality in a separate test, so don't worry too much about testing it here.
 		assertFalse(game.getSpaceShip().isDestroyed());
@@ -44,14 +44,14 @@ class GameTest {
 				new Point.Double(5.0, 5.0),
 				AsteroidSize.MEDIUM
 		));
-		game.getBullets().add(new Bullet(400.0, 400.0, 25.0, -25.0));
+		game.getPlayerBullets().add(new Bullet(400.0, 400.0, 25.0, -25.0));
 		game.getSpaceShip().destroy();
 		for (int i = 0; i < 10; i++) {
 			game.getSpaceShip().increaseScore();
 		}
 		game.initializeGameData();
 		// Test once more that everything has returned to normal.
-		assertTrue(game.getBullets().isEmpty());
+		assertTrue(game.getPlayerBullets().isEmpty());
 		assertTrue(game.getAsteroids().isEmpty());
 		assertFalse(game.getSpaceShip().isDestroyed());
 		assertEquals(0, game.getSpaceShip().getScore());
