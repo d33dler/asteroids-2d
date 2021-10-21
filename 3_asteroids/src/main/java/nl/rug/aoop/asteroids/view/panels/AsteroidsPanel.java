@@ -1,5 +1,6 @@
 package nl.rug.aoop.asteroids.view.panels;
 
+import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
 import nl.rug.aoop.asteroids.model.Game;
 import nl.rug.aoop.asteroids.view.viewmodels.AsteroidViewModel;
@@ -32,14 +33,17 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
      */
     private long timeSinceLastTick = 0L;
 
+    private final ViewController viewController;
+
     /**
      * Constructs a new game panel, based on the given model. Also starts listening to the game to check for updates, so
      * that it can repaint itself if necessary.
      *
      * @param game The model which will be drawn in this panel.
      */
-    public AsteroidsPanel(Game game) {
+    public AsteroidsPanel(Game game, ViewController viewController) {
         this.game = game;
+        this.viewController = viewController;
         game.addListener(this);
     }
 
@@ -128,5 +132,10 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
     public void onGameUpdated(long timeSinceLastTick) {
         this.timeSinceLastTick = timeSinceLastTick;
         repaint();
+    }
+
+    @Override
+    public void onGameEnd(int score) {
+        viewController.displayEndGame(score);
     }
 }

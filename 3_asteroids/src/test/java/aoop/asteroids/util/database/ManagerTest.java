@@ -52,4 +52,13 @@ class ManagerTest {
         retrievedScores.forEach(score -> System.out.println(score.toString()));
         manager.closeDatabase();
     }
+
+    @Test
+    void liveDBCheck(){
+        DatabaseManager manager = new DatabaseManager("prod");
+
+        List<Score> retrievedScores = manager.getAllScores();
+        retrievedScores.forEach(score -> System.out.println(score.toString()));
+        manager.closeDatabase();
+    }
 }

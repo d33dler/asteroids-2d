@@ -13,4 +13,6 @@ public interface GameUpdateListener {
 	 *                          actual physics update has been done by the game engine.
 	 */
 	void onGameUpdated(long timeSinceLastTick);
+
+	void onGameEnd(int score);
 }

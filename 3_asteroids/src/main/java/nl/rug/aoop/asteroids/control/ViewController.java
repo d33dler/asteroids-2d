@@ -4,6 +4,7 @@ import lombok.Getter;
 import nl.rug.aoop.asteroids.model.Game;
 import nl.rug.aoop.asteroids.util.ReflectionUtils;
 import nl.rug.aoop.asteroids.view.AsteroidsFrame;
+import nl.rug.aoop.asteroids.view.menus.EndgameMenu;
 import nl.rug.aoop.asteroids.view.menus.main_menu.MainMenu;
 import nl.rug.aoop.asteroids.view.menus.pause_menu.PauseMenu;
 import nl.rug.aoop.asteroids.view.panels.AsteroidsPanel;
@@ -45,13 +46,23 @@ public class ViewController {
         MainMenu menu = new MainMenu(this, mainMenuActions, MAIN_M_BG);
         activePanels.add(menu);
         frame.add(menu);
-
+        frame.revalidate();
     }
 
     public void displayGame() {
         removePanels();
-        asteroidsPanel = new AsteroidsPanel(game);
+        asteroidsPanel = new AsteroidsPanel(game, this);
+        activePanels.add(asteroidsPanel);
         frame.add(asteroidsPanel);
+        frame.revalidate();
+    }
+
+
+    public void displayEndGame(int score) {
+        removePanels();
+        EndgameMenu egMenu = new EndgameMenu(this, score);
+        activePanels.add(egMenu);
+        frame.add(egMenu);
         frame.revalidate();
     }
 

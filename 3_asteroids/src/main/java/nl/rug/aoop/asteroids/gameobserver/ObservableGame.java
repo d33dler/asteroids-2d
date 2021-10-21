@@ -14,7 +14,7 @@ public abstract class ObservableGame {
     /**
      * The list of listeners that will be notified when the game updates.
      */
-    private final Set<GameUpdateListener> listeners;
+    protected final Set<GameUpdateListener> listeners;
 
     /**
      * Constructs a new observable game with initially no listeners.

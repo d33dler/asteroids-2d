@@ -10,6 +10,8 @@ import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
 import nl.rug.aoop.asteroids.model.obj_factory.GameObjectFactory;
 import nl.rug.aoop.asteroids.model.obj_factory.GeneralObjectsFactory;
 import nl.rug.aoop.asteroids.network.clients.User;
+import nl.rug.aoop.asteroids.util.database.DatabaseManager;
+import nl.rug.aoop.asteroids.util.database.Score;
 import nl.rug.aoop.asteroids.view.AsteroidsFrame;
 
 import java.net.*;
@@ -67,6 +69,11 @@ public class Game extends ObservableGame {
     private GameObjectFactory objectFactory;
 
     /**
+     * Used to manipulate score DataBase
+     */
+    private DatabaseManager dbManager;
+
+    /**
      * Number of milliseconds to wait for the game updater to exit its game loop.
      */
     private static final int EXIT_TIMEOUT_MILLIS = 100;
@@ -92,6 +99,7 @@ public class Game extends ObservableGame {
         }
         InetAddress address = new InetSocketAddress(0).getAddress();
         System.out.println(address);
+        dbManager = new DatabaseManager("prod");
     }
 
     /**
@@ -105,7 +113,7 @@ public class Game extends ObservableGame {
     }
 
     /**
-     * @return Whether or not the game is running.
+     * @return Whether the game is running.
      */
     public synchronized boolean isRunning() {
         return running;
@@ -161,6 +169,21 @@ public class Game extends ObservableGame {
 
     public void initMultiplayerAsSpectator(InetSocketAddress address) {
         user = User.newClientUser(this, address);
+    }
+
+    /**
+     * This method performs the operations needed to end the game (update view and database)
+     */
+    public void endGame(){
+        notifyEnd();
+        dbManager.addScore(new Score("player", spaceShip.getScore()));
+    }
+
+    /**
+     * Notifies view to render the endgame panel
+     */
+    private void notifyEnd(){
+        listeners.forEach(l -> l.onGameEnd(spaceShip.getScore()));
     }
 
     /**
