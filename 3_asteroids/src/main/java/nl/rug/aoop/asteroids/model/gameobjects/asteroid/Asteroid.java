@@ -18,7 +18,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * collide. Each asteroid has a certain size, which determines its radius, as well as if any smaller asteroids spawn
  * when that one is destroyed.
  */
-public class Asteroid extends GameObject implements Serializable {
+public class Asteroid extends GameObject {
 
     public final static String OBJECT_ID = "asteroid";
 

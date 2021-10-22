@@ -48,9 +48,11 @@ public class Game extends ObservableGame {
      * The list of all asteroids in the game.
      */
     @Getter
+    @Setter
     private List<Asteroid> asteroids;
 
     @Getter
+    @Setter
     private List<Asteroid> asteroidsCache;
     @Getter
     private Collection<Bullet> bulletCache;
@@ -274,8 +276,10 @@ public class Game extends ObservableGame {
 
         public synchronized void loadCache() {
             bullets.addAll(bulletCache);
-            asteroids.addAll(asteroidsCache);
+            //asteroids.addAll(asteroidsCache);
             players.putAll(spaceshipCache);
+            bulletCache.clear();
+            asteroidsCache.clear();
         }
     }
 

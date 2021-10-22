@@ -67,6 +67,7 @@ public class User implements Runnable, GameUpdateListener {
     private void initSocket() {
         try {
             userSocket = new DatagramSocket();
+            System.out.println("USER GOT NEW PORT:  " + userSocket.getLocalPort());
         } catch (SocketException e) {
             e.printStackTrace();
         }
@@ -84,6 +85,7 @@ public class User implements Runnable, GameUpdateListener {
             game.setUSER_ID(USER_ID);
             ioHandler = io.getPackageHandler();
             clientConsumerThread = new Thread(new Consumer());
+            clientConsumerThread.start();
             new Thread(this).start();
         }
     }
@@ -107,7 +109,7 @@ public class User implements Runnable, GameUpdateListener {
         io.updateOutPackage(data);
         game.setUserSerializing(false);
         io.send();
-        resetDeltas();
+        //resetDeltas();
     }
 
     public void receive() {
@@ -124,12 +126,14 @@ public class User implements Runnable, GameUpdateListener {
 
     private class Consumer implements Runnable {
 
+        @SneakyThrows
         @Override
         public synchronized void run() {
             while (isConnected()) {
                 if (!game.isEngineBusy()) {
                     receive();
                     updateGame();
+                    wait(10);
                 }
             }
         }
@@ -149,6 +153,7 @@ public class User implements Runnable, GameUpdateListener {
                 }
             }
         }
+        System.out.println("CONSUMER DIED");
     }
 
 

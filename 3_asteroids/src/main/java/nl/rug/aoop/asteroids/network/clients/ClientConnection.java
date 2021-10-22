@@ -62,7 +62,6 @@ public class ClientConnection implements HostListener, Runnable {
 
         private synchronized void listen() {
             while (connected) {
-                System.out.println("READING FROM USER");
                 io.receive();
                 hostingDevice.addNewDelta(clientID, io.getLastDataPackage().getData());
                 try {

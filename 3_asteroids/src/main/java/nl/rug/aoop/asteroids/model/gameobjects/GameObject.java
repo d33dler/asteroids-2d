@@ -5,6 +5,7 @@ import lombok.Getter;
 import nl.rug.aoop.asteroids.view.viewmodels.GameObjectViewModel;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
  * abstract class, it provides some basic attributes that all objects in the game should have, like position and
  * velocity.
  */
-public abstract class GameObject implements Cloneable{
+public abstract class GameObject implements Cloneable , Serializable {
     /**
      * An x and y value pair indicating the object's current location.
      */

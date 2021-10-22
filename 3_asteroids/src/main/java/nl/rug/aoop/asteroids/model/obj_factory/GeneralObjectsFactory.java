@@ -28,7 +28,7 @@ public class GeneralObjectsFactory implements GameObjectFactory, GameUpdateListe
         FactoryCommand command = objFactoryMap.get(id);
         if (command != null) {
             while (true){
-                if(!game.isEngineBusy() && game.rendererDeepCloner.cycleDone){
+                if(!game.isEngineBusy()){
                     command.updateActiveObject(game, id, params);
                 }
             }

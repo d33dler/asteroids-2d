@@ -2,10 +2,12 @@ package nl.rug.aoop.asteroids.model;
 
 import lombok.Getter;
 
+import java.io.Serializable;
+
 /**
  * This enumeration defines the different possible sizes of asteroids.
  */
-public enum AsteroidSize {
+public enum AsteroidSize implements Serializable {
     X(0),
     SMALL(10),
     MEDIUM(20),

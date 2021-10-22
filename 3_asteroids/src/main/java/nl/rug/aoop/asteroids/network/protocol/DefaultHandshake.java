@@ -45,7 +45,8 @@ public class DefaultHandshake {
                 new ConnectionParameters(io.getSocket(),
                         new InetSocketAddress(configData.hostAddress,configData.port),HANDSHAKE_LEN));
         privateIO.getPackageHandler().initHandler(configData);
-        socket.connect(privateIO.getPackageHandler().getInet(), privateIO.getPackageHandler().getPort());
+
+       // socket.connect(privateIO.getPackageHandler().getInet(), privateIO.getPackageHandler().getPort());
         return privateIO;
     }
 }

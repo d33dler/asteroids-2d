@@ -31,8 +31,9 @@ public class DeltaProcessor implements DeltaManager {
     }
 
     private void collectPlayers(List<Tuple.T2<String, HashSet<Integer>>> playerKeySets) {
-        for (int i = playerKeySets.size() - 1; i >= 0; i--) {
-            factory.createNewObject(playerKeySets.get(i).a, playerKeySets.get(i).b);
+        System.out.println("LIST SIZE = " + playerKeySets.size());
+        for (Tuple.T2<String, HashSet<Integer>> playerKeySet : playerKeySets) {
+            factory.createNewObject(playerKeySet.a, playerKeySet.b);
         }
     }
 
@@ -40,10 +41,8 @@ public class DeltaProcessor implements DeltaManager {
         factory.createNewObject(playerKeySet.a, playerKeySet.b);
     }
 
-    private void updateObjects(List<GameObject> objectVectors) { //TODO needs 1 obj per tuple?
-        for (GameObject object : objectVectors) {
-            game.getAsteroidsCache().add((Asteroid) object);
-        }
+    private void updateObjects(List<? extends GameObject> objectVectors) {
+          game.setAsteroids((List<Asteroid>) objectVectors);
     }
 
     public Tuple.T2<String, HashSet<Integer>> getPlayerKeyEvents() {
@@ -53,10 +52,11 @@ public class DeltaProcessor implements DeltaManager {
     public List<Tuple.T2<String, HashSet<Integer>>> getAllPlayersKeyEvents() {
         List<Tuple.T2<String, HashSet<Integer>>> keyList = new ArrayList<>();
         game.getPlayers().forEach((s, spaceship) -> keyList.add(new Tuple.T2<>(s, spaceship.getKeyEventSet())));
+        keyList.add(new Tuple.T2<>(user.USER_ID, game.getSpaceShip().getKeyEventSet()));
         return keyList;
     }
 
-    public byte[] getHostDeltas() { //TODO move to deltaprocessing
+    public byte[] getHostDeltas() {
         List<GameObject> objectList = new ArrayList<>(game.getAsteroids());
         List<Tuple.T2<String, HashSet<Integer>>> keyEventList = getAllPlayersKeyEvents();
         return SerializationUtils.serialize(

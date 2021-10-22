@@ -202,6 +202,7 @@ public class Spaceship extends GameObject {
         for (Integer keyEvent : keyEventSet) {
             try {
                 inputFields.get(keyEvent).set(this,true);
+                System.out.println("NEW KEY WAS SET : " + keyEvent);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
