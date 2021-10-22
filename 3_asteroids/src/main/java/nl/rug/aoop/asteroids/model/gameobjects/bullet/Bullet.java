@@ -1,6 +1,8 @@
 package nl.rug.aoop.asteroids.model.gameobjects.bullet;
 
 import nl.rug.aoop.asteroids.model.gameobjects.GameObject;
+import nl.rug.aoop.asteroids.view.viewmodels.BulletViewModel;
+import nl.rug.aoop.asteroids.view.viewmodels.GameObjectViewModel;
 
 /**
  * The bullet is the ultimate weapon of the player. It has the same mechanics
@@ -89,6 +91,16 @@ public class Bullet extends GameObject {
     @Override
     public double[] getObjParameters() {
         return super.getObjParameters(); //TODO stepsleft??
+    }
+
+    @Override
+    public GameObjectViewModel<? extends GameObject> getViewModel(GameObject o) {
+       return new BulletViewModel((Bullet) o);
+    }
+
+    @Override
+    public GameObject clone() {
+        return new Bullet(getLocation().x,getLocation().y,getVelocity().x, getVelocity().y,stepsLeft);
     }
 
     @Override

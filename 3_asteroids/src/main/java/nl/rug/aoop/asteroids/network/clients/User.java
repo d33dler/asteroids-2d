@@ -18,12 +18,14 @@ import nl.rug.aoop.asteroids.network.protocol.IOProtocol;
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 @Log
@@ -35,7 +37,8 @@ public class User implements Runnable, GameUpdateListener {
     private ConnectionParameters connectionParameters;
     private MultiplayerManager multiplayerManager;
     private Game game;
-    private String USER_ID = "neo";
+
+    public String USER_ID = "host";
 
 
     private Thread clientConsumerThread;
@@ -44,8 +47,8 @@ public class User implements Runnable, GameUpdateListener {
         this.game = game;
         game.addListener(this);
         initSocket();
-        attemptConnect(address);
         initClientMultiplayer();
+        attemptConnect(address);
     }
 
     private User(Game game, InetAddress inetAddress) {
@@ -95,32 +98,6 @@ public class User implements Runnable, GameUpdateListener {
     }
 
 
-    public byte[] getHostDeltas(String userId) { //TODO move to deltaprocessing
-        List<Tuple.T2<String, double[]>> playerVecMap = new ArrayList<>();
-        HashMap<String, List<double[]>> objectVecMap = new HashMap<>(game.getTickObjMap());
-        playerVecMap.add(getPlayerData(userId));
-        playerVecMap.addAll(game.getAllPlayers());
-        byte[] hostDeltas = SerializationUtils.serialize(
-                new GameplayDeltas(playerVecMap, objectVecMap, System.currentTimeMillis()));
-        game.resetObjMap();
-        return hostDeltas;
-    }
-
-    public Tuple.T2<String, double[]> getPlayerData(String userId) {//TODO move to deltaprocessing //don't forget localuser io id
-        Point.Double userPos = game.getSpaceShip().getLocation();
-        Point.Double userVelocity = game.getSpaceShip().getVelocity();
-        return new Tuple.T2<>(userId, new double[]{userPos.x, userPos.y, userVelocity.x, userVelocity.y});
-    }
-
-
-    public HashMap<String, List<double[]>> getPlayerAssets() {
-        HashMap<String, List<double[]>> objectVecMap = new HashMap<>(game.getTickObjMap());
-        for (GameObject gob : game.getUserAssets()) {
-            objectVecMap.get(gob.getObjectId()).add(gob.getObjParameters());
-        }
-
-        return objectVecMap;
-    }
     private void resetDeltas() {
         game.resetObjMap();
     }
@@ -141,7 +118,7 @@ public class User implements Runnable, GameUpdateListener {
         return (!userSocket.isClosed());
     }
 
-    private synchronized void updateGame(){
+    private synchronized void updateGame() {
         io.getLastDataPackage().getData().injectChanges(multiplayerManager.getDeltaManager());
     }
 
@@ -150,21 +127,23 @@ public class User implements Runnable, GameUpdateListener {
         @Override
         public synchronized void run() {
             while (isConnected()) {
-                if(!game.isRendererBusy()){
+                if (!game.isEngineBusy()) {
                     receive();
                     updateGame();
                 }
             }
         }
+
     }
 
     @Override
     public synchronized void run() {
         while (isConnected()) {
-            if (!game.isRendererBusy()) {
-                send(new GameplayDeltas(List.of(getPlayerData(USER_ID)), getPlayerAssets(), System.currentTimeMillis()));
+            if (!game.isEngineBusy()) {
+                send(new GameplayDeltas(System.currentTimeMillis(),
+                        multiplayerManager.getDeltaManager().getPlayerKeyEvents()));
                 try {
-                    wait(10);
+                    wait(20);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -178,4 +157,7 @@ public class User implements Runnable, GameUpdateListener {
     public void onGameExit() {
         clientConsumerThread.join();
     }
+
+
+
 }

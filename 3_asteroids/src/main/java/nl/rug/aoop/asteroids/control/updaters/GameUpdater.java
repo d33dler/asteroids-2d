@@ -74,8 +74,6 @@ public class GameUpdater implements Runnable {
     private boolean isOnlineHost;
     private boolean online;
 
-    private HashMap<String, List<double[]>> tickObjMap;
-
     /**
      * Constructs a new game updater with the given game.
      *
@@ -85,7 +83,6 @@ public class GameUpdater implements Runnable {
         this.isOnlineHost = onlineHost;
         this.online = online;
         this.game = game;
-        this.tickObjMap = game.getTickObjMap();
         this.viewController = viewController;
         updateCounter = 0;
         asteroidsLimit = ASTEROIDS_LIMIT_DEFAULT;
@@ -111,10 +108,10 @@ public class GameUpdater implements Runnable {
             timeSinceLastDisplayFrame += elapsedTime;
 
             if (timeSinceLastTick >= MILLISECONDS_PER_TICK) {// Check if enough time has passed to update the physics.
-                game.setRendererBusy(true);
+                game.setEngineBusy(true);
                 updatePhysics(); // Perform one 'step' in the game.
                 timeSinceLastTick = 0L;
-                game.setRendererBusy(false);
+                game.setEngineBusy(false);
             }
 
             if (timeSinceLastDisplayFrame >= millisecondsPerDisplayFrame) { // Check if enough time has passed to refresh the display.
@@ -138,15 +135,17 @@ public class GameUpdater implements Runnable {
      * Also, every 200 game ticks, if possible, a new random asteroid is added to the game.
      */
     private void updatePhysics() {
+
+        game.rendererDeepCloner.loadCache();
         Spaceship ship = game.getSpaceShip();
-        Collection<Bullet> bullets = game.getPlayerBullets();
+        Collection<Bullet> bullets = game.getBullets();
         Collection<Asteroid> asteroids = game.getAsteroids();
+
+        ship.nextStep();
 
         asteroids.forEach(GameObject::nextStep);
         bullets.forEach(GameObject::nextStep);
-        game.getOnlineBullets().forEach(GameObject::nextStep); //TODO this was changed
-        game.getPlayers().values().forEach(GameObject::nextStep); //TODO check this for conflicts?
-        ship.nextStep();
+        game.getPlayers().values().forEach(GameObject::nextStep);
 
         if (ship.canFireWeapon()) {
             double direction = ship.getDirection();
@@ -156,7 +155,6 @@ public class GameUpdater implements Runnable {
                     ship.getVelocity().x + Math.sin(direction) * 15,
                     ship.getVelocity().y - Math.cos(direction) * 15
             );
-            addNewTickObj(b);
             bullets.add(b);
             ship.setFired();
         }
@@ -169,6 +167,7 @@ public class GameUpdater implements Runnable {
             addRandomAsteroid();
         }
         updateCounter++;
+        game.rendererDeepCloner.wakeup();
     }
 
     /**
@@ -196,7 +195,6 @@ public class GameUpdater implements Runnable {
             randomSize = AsteroidSize.SMALL;
         }
         Asteroid a = new Asteroid(newAsteroidLocation, randomVelocity, randomSize);
-        addNewTickObj(a);
         game.getAsteroids().add(a);
     }
 
@@ -206,7 +204,7 @@ public class GameUpdater implements Runnable {
      */
     private void checkCollisions() {
         // First check collisions between bullets and other objects.
-        game.getPlayerBullets().forEach(bullet -> {
+        game.getBullets().forEach(bullet -> {
             game.getAsteroids().forEach(asteroid -> { // Check collision with any of the asteroids.
                 if (asteroid.collides(bullet)) {
                     asteroid.destroy();
@@ -235,16 +233,7 @@ public class GameUpdater implements Runnable {
         });
     }
 
-    @SneakyThrows
-    private synchronized void addNewTickObj(GameObject object) {
-        while (true) {
-            if (!game.isUserSerializing()) {
-                System.out.println("ADDED NEW OBJJ");
-                tickObjMap.get(object.getObjectId()).add(object.getObjParameters());
-                break;
-            }
-        }
-    }
+
 
 
     /**
@@ -276,8 +265,8 @@ public class GameUpdater implements Runnable {
         // Remove all asteroids that are destroyed.
         game.getAsteroids().removeIf(GameObject::isDestroyed);
         // Remove any bullets that are destroyed.
-        game.getPlayerBullets().removeIf(GameObject::isDestroyed);
-        game.getOnlineBullets().removeIf(GameObject::isDestroyed);
+        game.getBullets().removeIf(GameObject::isDestroyed);
+        //game.getOnlineBullets().removeIf(GameObject::isDestroyed);
         game.getPlayers().values().removeIf(GameObject::isDestroyed);
     }
 }

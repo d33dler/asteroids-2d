@@ -2,6 +2,7 @@ package nl.rug.aoop.asteroids.model.gameobjects;
 
 import nl.rug.aoop.asteroids.view.AsteroidsFrame;
 import lombok.Getter;
+import nl.rug.aoop.asteroids.view.viewmodels.GameObjectViewModel;
 
 import java.awt.*;
 import java.util.Collection;
@@ -13,7 +14,7 @@ import java.util.List;
  * abstract class, it provides some basic attributes that all objects in the game should have, like position and
  * velocity.
  */
-public abstract class GameObject {
+public abstract class GameObject implements Cloneable{
     /**
      * An x and y value pair indicating the object's current location.
      */
@@ -129,5 +130,16 @@ public abstract class GameObject {
         return new double[]{getLocation().x,getLocation().y,getVelocity().x,getVelocity().y};
     };
 
+    public abstract GameObjectViewModel<? extends GameObject> getViewModel(GameObject o);
     public abstract String getObjectId();
+
+    @Override
+    public GameObject clone() {
+        try {
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            return (GameObject) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }

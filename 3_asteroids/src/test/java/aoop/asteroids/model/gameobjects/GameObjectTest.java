@@ -1,6 +1,7 @@
 package nl.rug.aoop.asteroids.model.gameobjects;
 
 import nl.rug.aoop.asteroids.view.AsteroidsFrame;
+import nl.rug.aoop.asteroids.view.viewmodels.GameObjectViewModel;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
@@ -179,6 +180,11 @@ class GameObjectTest {
 			@Override
 			protected int getDefaultStepsUntilCollisionPossible() {
 				return stepsUntilCollision;
+			}
+
+			@Override
+			public GameObjectViewModel<? extends GameObject> getViewModel(GameObject o) {
+				return null;
 			}
 
 			@Override

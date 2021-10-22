@@ -4,21 +4,21 @@ import nl.rug.aoop.asteroids.model.Game;
 import nl.rug.aoop.asteroids.model.obj_factory.FactoryCommand;
 import nl.rug.aoop.asteroids.model.obj_factory.ObjectCommand;
 
+import java.util.HashSet;
+
 @ObjectCommand(id = "spaceship")
 public class SpaceshipMaker implements FactoryCommand {
 
     @Override
-    public void updateObject(Game game, String id, double[] params) {
+    public void updateActiveObject(Game game, String id, HashSet<Integer> params) {
         if (game.getPlayers().containsKey(id)) {
-            Spaceship player = game.getPlayers().get(id);
-            player.updatePosition(params[0], params[1]);
-            player.updateVelocity(params[2], params[3]);
-            player.setDirection(params[4]);//TODO verify
+            game.getPlayers().get(id).setKeyEventSet(params);
         } else {
             if (!id.equals(game.getUSER_ID())) {
-                game.getPlayers().put(id, new Spaceship(params[0], params[1], params[2], params[3]));
+                Spaceship s = new Spaceship();
+                s.setKeyEventSet(params);
+                game.getSpaceshipCache().put(id,s);
             }
         }
-
     }
 }

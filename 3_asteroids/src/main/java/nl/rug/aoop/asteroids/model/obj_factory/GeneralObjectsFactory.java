@@ -5,6 +5,7 @@ import nl.rug.aoop.asteroids.model.Game;
 import nl.rug.aoop.asteroids.util.ReflectionUtils;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class GeneralObjectsFactory implements GameObjectFactory, GameUpdateListener {
 
@@ -23,12 +24,12 @@ public class GeneralObjectsFactory implements GameObjectFactory, GameUpdateListe
     }
 
     @Override
-    public void createNewObject(String id, double[] params) {
+    public void createNewObject(String id, HashSet<Integer> params) {
         FactoryCommand command = objFactoryMap.get(id);
         if (command != null) {
             while (true){
-                if(!game.isRendererBusy()){
-                    command.updateObject(game, id, params);
+                if(!game.isEngineBusy() && game.rendererDeepCloner.cycleDone){
+                    command.updateActiveObject(game, id, params);
                 }
             }
         }

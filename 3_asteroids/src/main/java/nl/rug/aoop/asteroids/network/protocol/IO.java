@@ -26,7 +26,7 @@ public class IO implements IOProtocol {
 
     public void send() {
         byte[] data = packageHandler.getOutDataInBytes();
-        System.out.println(data.length + "<- data length");
+        System.out.println("Receiving length" + data.length);
         DatagramPacket packet = new DatagramPacket(data, data.length, packageHandler.getInet(), packageHandler.getPort());
         try {
             socket.send(packet);
@@ -35,7 +35,7 @@ public class IO implements IOProtocol {
         }
     }
     public void send(byte[] data) {
-        System.out.println(data.length + "<- data length");
+        System.out.println("Sending length :" + data.length );
         DatagramPacket packet = new DatagramPacket(data, data.length, packageHandler.getInet(), packageHandler.getPort());
         try {
             socket.send(packet);
@@ -45,7 +45,6 @@ public class IO implements IOProtocol {
     }
 
     public void receive() {
-        System.out.println("RECEIVE LENGTH = " + length);
         byte[] data = new byte[length];
         DatagramPacket packet = new DatagramPacket(data, data.length);
         try {

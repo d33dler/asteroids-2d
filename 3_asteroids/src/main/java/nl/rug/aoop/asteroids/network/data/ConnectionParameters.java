@@ -8,7 +8,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
-import static nl.rug.aoop.asteroids.network.ConfigCodes.PACKET_SIZE;
 
 @NoArgsConstructor
 public class ConnectionParameters {
@@ -21,7 +20,7 @@ public class ConnectionParameters {
     @Getter
     @NetworkParam(id = "packet_size")
     private int dataLength = PKG_SIZE_LIM;
-    public final static int PKG_SIZE_LIM = 1500, PKG_SIZE_MIN = 1024;
+    public final static int PKG_SIZE_LIM = 3000, PKG_SIZE_MIN = 1024;
     @Setter
     public int LAT_MAX_millis = 100;
     public int LAT_SERVER_millis = 50;

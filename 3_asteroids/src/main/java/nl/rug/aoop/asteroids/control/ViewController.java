@@ -54,7 +54,7 @@ public class ViewController {
 
     public void displayGame() {
         removePanels();
-        asteroidsPanel = new AsteroidsPanel(game, this);
+        asteroidsPanel = new AsteroidsPanel(game);
         activePanels.add(asteroidsPanel);
         frame.add(asteroidsPanel);
         frame.revalidate();

@@ -2,8 +2,11 @@ package nl.rug.aoop.asteroids.model.gameobjects.asteroid;
 
 import nl.rug.aoop.asteroids.model.AsteroidSize;
 import nl.rug.aoop.asteroids.model.gameobjects.GameObject;
+import nl.rug.aoop.asteroids.view.viewmodels.AsteroidViewModel;
+import nl.rug.aoop.asteroids.view.viewmodels.GameObjectViewModel;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,7 +18,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * collide. Each asteroid has a certain size, which determines its radius, as well as if any smaller asteroids spawn
  * when that one is destroyed.
  */
-public class Asteroid extends GameObject {
+public class Asteroid extends GameObject implements Serializable {
 
     public final static String OBJECT_ID = "asteroid";
 
@@ -102,6 +105,15 @@ public class Asteroid extends GameObject {
         return new double[]{getLocation().x,getLocation().y,getVelocity().x,getVelocity().y, getRadius()};
     }
 
+    @Override
+    public GameObjectViewModel<? extends GameObject> getViewModel(GameObject o) {
+        return new AsteroidViewModel((Asteroid) o);
+    }
+
+    @Override
+    public GameObject clone() {
+        return new Asteroid(getLocation(),getVelocity(),size);
+    }
 
     @Override
     public String getObjectId() {

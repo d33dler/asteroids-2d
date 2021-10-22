@@ -34,18 +34,16 @@ public class HostingServer implements HostingDevice, Runnable {
     private Thread hostingUserUpdater;
     private ConnectionStatistic connectionStatistic = new ConnectionStatistic();
 
-    private final InetAddress socketAddress;
-    private InetSocketAddress inetSocketAddress;
 
     private final Randomizer randomizer = new Randomizer(6);
-    private final HashMap<String, GameplayDeltas> deltasMap = new HashMap<>();
     private final String hostId = randomizer.generateId();
-    private byte[] hostDeltas;
 
+
+    private byte[] hostDeltas;
+    private final HashMap<String, GameplayDeltas> deltasMap = new HashMap<>();
 
     public HostingServer(MultiplayerManager multiplayer, InetAddress address) {
         this.multiplayerGame = multiplayer;
-        this.socketAddress = address;
         this.host_name = address.getHostName();
         logHost();
         init();
@@ -62,7 +60,6 @@ public class HostingServer implements HostingDevice, Runnable {
             server_socket = new DatagramSocket();
             server_port = server_socket.getLocalPort(); //TODO this is for local networks
             System.out.println(server_port);
-            //  inetSocketAddress = new InetSocketAddress(socketAddress, server_port);
         } catch (SocketException e) {
             e.printStackTrace();
         }
@@ -109,7 +106,7 @@ public class HostingServer implements HostingDevice, Runnable {
         }
         if (privateSocket != null) {
             InetSocketAddress inetAddress = new InetSocketAddress(handshake.getAddress(), handshake.getPort());
-            String add = privateSocket.getLocalAddress().getHostName();
+            String add = privateSocket.getLocalAddress().getCanonicalHostName();
             System.out.println("NEW CONNECTION TO: " + add);
             byte[] data = SerializationUtils.serialize(new ConfigData(clientID,add,privateSocket.getLocalPort())); //TODO refactor;
             DatagramPacket ACK = new DatagramPacket(data, data.length, inetAddress.getAddress(), inetAddress.getPort());
@@ -136,9 +133,9 @@ public class HostingServer implements HostingDevice, Runnable {
         public synchronized void run() {
             Game hostGame = multiplayerGame.getGame();
             while (hostGame.isRunning()) {
-                if (!hostGame.isRendererBusy()) {
+                if (!hostGame.isEngineBusy()) {
                     multiplayerGame.getDeltaManager().collectPlayerDeltas(deltasMap);
-                    hostDeltas = hostingUser.getHostDeltas(hostId);
+                    hostDeltas = multiplayerGame.getDeltaManager().getHostDeltas(); //TODO modification?
                     try {
                         wait(10);
                     } catch (InterruptedException e) {
@@ -152,11 +149,6 @@ public class HostingServer implements HostingDevice, Runnable {
     @Override
     public DatagramSocket getServerSocket() {
         return server_socket;
-    }
-
-    @Override
-    public InetSocketAddress getInetSocketAddress() {
-        return inetSocketAddress;
     }
 
     public boolean updateReady() {

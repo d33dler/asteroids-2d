@@ -5,6 +5,7 @@ import lombok.Setter;
 import nl.rug.aoop.asteroids.network.data.types.DeltasData;
 import org.apache.commons.lang3.SerializationUtils;
 
+import javax.swing.text.Utilities;
 import java.io.Serializable;
 
 public class DataPackage implements Serializable {
@@ -25,9 +26,8 @@ public class DataPackage implements Serializable {
     }
 
     public void setData(DeltasData data, long bound) {
-        if (isAcceptedLatency(data, bound)) {
-            this.data = data;
-        }
+        this.data = data;
+
     }
 
     public void setData(byte[] data) {

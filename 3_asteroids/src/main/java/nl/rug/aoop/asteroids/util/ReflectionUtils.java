@@ -1,7 +1,9 @@
 package nl.rug.aoop.asteroids.util;
 
+import com.objectdb.o.HMP;
 import lombok.extern.java.Log;
 import nl.rug.aoop.asteroids.control.menu_commands.MenuCommands;
+import nl.rug.aoop.asteroids.model.gameobjects.KeyInput;
 import nl.rug.aoop.asteroids.model.obj_factory.FactoryCommand;
 import nl.rug.aoop.asteroids.model.obj_factory.ObjectCommand;
 import nl.rug.aoop.asteroids.network.data.NetworkParam;
@@ -11,10 +13,8 @@ import org.reflections.Reflections;
 
 import javax.swing.*;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.sql.Ref;
+import java.util.*;
 
 @Log
 public class ReflectionUtils {
@@ -22,13 +22,23 @@ public class ReflectionUtils {
     public static List<Tuple.T2<String, Integer>> getNetworkParams(Object c) {
         List<Tuple.T2<String, Integer>> map = new ArrayList<>();
         Set<Field> fields = new Reflections(c.getClass()).getFieldsAnnotatedWith(NetworkParam.class);
-        for(Field f : fields){
+        for (Field f : fields) {
             NetworkParam param = f.getAnnotation(NetworkParam.class);
             try {
                 map.add(new Tuple.T2<>(param.id(), f.getInt(f)));
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
+        }
+        return map;
+    }
+
+    public static HashMap<Integer, Field> getKeyInputFields(Class<?> c) {
+        HashMap<Integer, Field> map = new HashMap<>();
+        Set<Field> fields = new Reflections(c).getFieldsAnnotatedWith(KeyInput.class);
+        for (Field f : fields) {
+            KeyInput param = f.getAnnotation(KeyInput.class);
+            map.put(param.id(), f);
         }
         return map;
     }

@@ -1,7 +1,6 @@
 package nl.rug.aoop.asteroids.model;
 
 import nl.rug.aoop.asteroids.network.clients.User;
-import nl.rug.aoop.asteroids.network.data.ConnectionParameters;
 import nl.rug.aoop.asteroids.network.data.types.DeltaManager;
 import nl.rug.aoop.asteroids.network.host.HostingDevice;
 
@@ -14,6 +13,5 @@ public interface MultiplayerManager {
     DeltaManager getDeltaManager();
     Game getGame();
     HostingDevice getHostingDevice();
-    ConnectionParameters getParameters();
     boolean isUpdating();
 }

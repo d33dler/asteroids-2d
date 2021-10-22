@@ -6,7 +6,6 @@ import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
 import nl.rug.aoop.asteroids.network.clients.User;
 import nl.rug.aoop.asteroids.network.data.ConnectionParameters;
 import nl.rug.aoop.asteroids.network.data.DeltaProcessor;
-import nl.rug.aoop.asteroids.network.data.deltas_changes.GameplayDeltas;
 import nl.rug.aoop.asteroids.network.data.types.DeltaManager;
 import nl.rug.aoop.asteroids.network.host.HostingDevice;
 import nl.rug.aoop.asteroids.network.host.HostingServer;
@@ -15,8 +14,7 @@ import java.net.InetAddress;
 import java.util.HashMap;
 
 public class MultiplayerGame implements MultiplayerManager, GameUpdateListener {
-    @Getter
-    private ConnectionParameters parameters;
+
     @Getter
     private final int MAX_CLIENTS = 10;
     private User user;
@@ -39,7 +37,6 @@ public class MultiplayerGame implements MultiplayerManager, GameUpdateListener {
 
     public static MultiplayerManager multiplayerClient(Game game, User user) {
         MultiplayerGame multiplayerManager = new MultiplayerGame(game, user);
-        multiplayerManager.launchAsClient();
         return new MultiplayerGame(game,user);
     }
 
@@ -49,27 +46,19 @@ public class MultiplayerGame implements MultiplayerManager, GameUpdateListener {
         return multiplayerManager;
     }
 
-    private void launchAsClient() {
-        initClientComponents();
-    }
 
     private void launchAsSpectator() {
-        initClientComponents();
     }
 
     private void launchAsHost(InetAddress address){
         initHostingDevice(address);
     }
 
-    private void initClientComponents() {
-        parameters = user.getIoHandler().getParameters();
-    }
 
     private void initHostingDevice(InetAddress address){
         hostingDevice = new HostingServer(this,address ) ;
         hostingDeviceThread = new Thread((Runnable) hostingDevice);
         hostingDeviceThread.start();
-        parameters = hostingDevice.getRawConnectionParameters();
     }
 
     @Override
@@ -84,7 +73,7 @@ public class MultiplayerGame implements MultiplayerManager, GameUpdateListener {
 
     @Override
     public boolean isUpdating() {
-        return game.isRendererBusy();
+        return game.isEngineBusy();
     }
 
 

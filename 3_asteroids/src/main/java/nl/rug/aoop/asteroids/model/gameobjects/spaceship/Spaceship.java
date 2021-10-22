@@ -1,9 +1,19 @@
 package nl.rug.aoop.asteroids.model.gameobjects.spaceship;
 
 import nl.rug.aoop.asteroids.model.gameobjects.GameObject;
+import nl.rug.aoop.asteroids.model.gameobjects.KeyInput;
+import nl.rug.aoop.asteroids.util.ReflectionUtils;
 import nl.rug.aoop.asteroids.view.AsteroidsFrame;
 import lombok.Getter;
 import lombok.Setter;
+import nl.rug.aoop.asteroids.view.viewmodels.GameObjectViewModel;
+import nl.rug.aoop.asteroids.view.viewmodels.SpaceshipViewModel;
+
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.lang.reflect.Field;
+import java.util.*;
+import java.util.List;
 
 /**
  * This class represents a player's ship. Like all other game objects, it has a location and velocity, but additionally,
@@ -108,25 +118,35 @@ public class Spaceship extends GameObject {
      */
     @Setter
     @Getter
+    @KeyInput(id = 32)
     private boolean isFiring;
 
     /**
      * Indicates whether the accelerate button is pressed.
      */
     @Setter
+    @KeyInput(id = 87)
     private boolean accelerateKeyPressed;
 
     /**
      * Indicates whether the turn right button is pressed.
      */
     @Setter
+    @KeyInput(id = 68)
     private boolean turnRightKeyPressed;
 
     /**
      * Indicates whether the turn left button is pressed.
      */
     @Setter
+    @KeyInput(id = 65)
     private boolean turnLeftKeyPressed;
+
+    @Getter
+    @Setter
+    private HashSet<Integer> keyEventSet = new HashSet<>();
+
+    private final HashMap<Integer, Field> inputFields = ReflectionUtils.getKeyInputFields(this.getClass());
 
     /**
      * Constructs a new spaceship with default values. It starts in the middle of the window, facing directly upwards,
@@ -136,11 +156,14 @@ public class Spaceship extends GameObject {
         super(AsteroidsFrame.WINDOW_SIZE.width / 2, AsteroidsFrame.WINDOW_SIZE.height / 2,
                 0, 0, SHIP_SIZE);
         reset();
+
     }
+
     public Spaceship(double locationX, double locationY, double velocityX, double velocityY) {
         super(locationX, locationY, velocityX, velocityY, SHIP_SIZE);
         reset();
     }
+
     /**
      * Resets all parameters to default values, so a new game can be started.
      */
@@ -167,12 +190,22 @@ public class Spaceship extends GameObject {
     @Override
     public void nextStep() {
         super.nextStep();
-
         attemptToTurn();
         attemptToAccelerate();
         dampenVelocity();
         restWeapon();
         rechargeEnergy();
+    }
+
+    public synchronized void setKeyEventSet(HashSet<Integer> keyEventSet) {
+        this.keyEventSet = keyEventSet;
+        for (Integer keyEvent : keyEventSet) {
+            try {
+                inputFields.get(keyEvent).set(this,true);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -247,7 +280,12 @@ public class Spaceship extends GameObject {
 
     @Override
     public double[] getObjParameters() {
-        return new double[]{getLocation().x,getLocation().y,getVelocity().x,getVelocity().y,getDirection()};
+        return new double[]{getLocation().x, getLocation().y, getVelocity().x, getVelocity().y, getDirection()};
+    }
+
+    @Override
+    public GameObjectViewModel<? extends GameObject> getViewModel(GameObject object) {
+        return new SpaceshipViewModel((Spaceship) object);
     }
 
     @Override
@@ -294,12 +332,20 @@ public class Spaceship extends GameObject {
         score++;
     }
 
-    public void updatePosition(double x, double y){
+    @Override
+    public GameObject clone() {
+        Spaceship sh = new Spaceship(getLocation().x, getLocation().y, getVelocity().x, getVelocity().y);
+        sh.setDirection(direction);
+        sh.setFiring(isFiring);
+        return sh;
+    }
+
+    public void updatePosition(double x, double y) {
         getLocation().x = x;
         getLocation().y = y;
     }
 
-    public void updateVelocity(double x, double y){
+    public void updateVelocity(double x, double y) {
         getVelocity().x = x;
         getVelocity().y = y;
     }

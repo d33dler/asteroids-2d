@@ -10,7 +10,6 @@ import java.net.InetSocketAddress;
 
 public interface HostingDevice {
     DatagramSocket getServerSocket();
-    InetSocketAddress getInetSocketAddress();
     int getHostDefaultLatency();
     int getHostMaxLatency();
     boolean updateReady();

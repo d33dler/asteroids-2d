@@ -1,8 +1,8 @@
 package nl.rug.aoop.asteroids.model;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.control.updaters.GameUpdater;
@@ -15,11 +15,11 @@ import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
 import nl.rug.aoop.asteroids.model.obj_factory.GameObjectFactory;
 import nl.rug.aoop.asteroids.model.obj_factory.GeneralObjectsFactory;
 import nl.rug.aoop.asteroids.network.clients.User;
-import nl.rug.aoop.asteroids.network.data.deltas_changes.GameplayDeltas;
 import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
 import nl.rug.aoop.asteroids.util.database.DatabaseManager;
 
-import java.net.*;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.*;
 
 /**
@@ -37,15 +37,12 @@ public class Game extends ObservableGame {
     @Getter
     private Spaceship spaceShip;
     @Getter
-    private HashMap<String, Spaceship> players = new HashMap<>();
+    private HashMap<String, Spaceship> players;
     /**
      * The list of all bullets currently active in the game.
      */
     @Getter
-    private Collection<Bullet> playerBullets;
-
-    @Getter
-    private Collection<Bullet> onlineBullets;
+    private Collection<Bullet> bullets;
 
     /**
      * The list of all asteroids in the game.
@@ -53,6 +50,12 @@ public class Game extends ObservableGame {
     @Getter
     private List<Asteroid> asteroids;
 
+    @Getter
+    private List<Asteroid> asteroidsCache;
+    @Getter
+    private Collection<Bullet> bulletCache;
+    @Getter
+    private HashMap<String, Spaceship> spaceshipCache;
 
     /**
      * Indicates whether or not the game is running. Setting this to false causes the game to exit its loop and quit.
@@ -64,7 +67,7 @@ public class Game extends ObservableGame {
      */
     @Setter
     @Getter
-    private volatile boolean isRendererBusy = true;
+    private volatile boolean isEngineBusy = true;
 
     @Setter
     @Getter
@@ -90,11 +93,13 @@ public class Game extends ObservableGame {
      */
     private static final int EXIT_TIMEOUT_MILLIS = 100;
 
+    public RendererDeepCloner rendererDeepCloner = new RendererDeepCloner();
     @Setter
     private ViewController viewController;
     @Setter
     @Getter
     private String USER_ID = "neo";
+
 
     /**
      * Constructs a new game, with a new spaceship and all other model data in its default starting state.
@@ -102,20 +107,6 @@ public class Game extends ObservableGame {
     public Game() {
         spaceShip = new Spaceship();
         initializeGameData();
-        try {
-            InetAddress a = InetAddress.getByName("asteroidsonline.mooo.com");
-            System.out.println(a);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-        try {
-            DatagramSocket socket = new DatagramSocket();
-            System.out.println(socket.getInetAddress());
-        } catch (SocketException e) {
-            e.printStackTrace();
-        }
-        InetAddress address = new InetSocketAddress(0).getAddress();
-        System.out.println(address);
         //dbManager = new DatabaseManager("prod");
     }
 
@@ -124,9 +115,13 @@ public class Game extends ObservableGame {
      * default starting state before beginning a new game.
      */
     public void initializeGameData() {
-        playerBullets = new ArrayList<>();
-        onlineBullets = new ArrayList<>();
+        bullets = new ArrayList<>();
+        bulletCache = new ArrayList<>();
+        spaceshipCache = new HashMap<>();
+        asteroidsCache = new ArrayList<>();
         asteroids = new ArrayList<>();
+        players = new HashMap<>();
+        new Thread(rendererDeepCloner).start();
         spaceShip.reset();
     }
 
@@ -149,7 +144,6 @@ public class Game extends ObservableGame {
      * user input and physics updates. Only if the game isn't currently running, that is.
      */
     public void start(boolean online, boolean onlineHost) {
-        initializeObjMap();
         if (!running) {
             running = true;
             gameUpdaterThread = new Thread(new GameUpdater(this, viewController, online, onlineHost));
@@ -238,28 +232,51 @@ public class Game extends ObservableGame {
         }
     }
 
-    @Getter
-    private HashMap<String, List<double[]>> tickObjMap = new HashMap<>();
-
-    public void initializeObjMap() {
-        tickObjMap.put(Asteroid.OBJECT_ID, new ArrayList<>());
-        tickObjMap.put(Bullet.OBJECT_ID, new ArrayList<>());
-    }
-
     public void resetObjMap() {
-        tickObjMap.forEach((key, value) -> tickObjMap.replace(key, new ArrayList<>()));
+        asteroidsCache.clear();
     }
 
-    public List<Tuple.T2<String, double[]>> getAllPlayers() { //TODO move to deltaprocessing
-        List<Tuple.T2<String, double[]>> playersList = new ArrayList<>();
-        for (Map.Entry<String, Spaceship> player : players.entrySet()) {
-            playersList.add(new Tuple.T2<>(player.getKey(), player.getValue().getObjParameters()));
+
+    @NoArgsConstructor
+    public class RendererDeepCloner implements Runnable {
+
+        @Getter
+        public Collection<GameObject> clonedObjects = new ArrayList<>();
+        public boolean cycleDone = false;
+        @Override
+        public synchronized void run() {
+            recloneAll();
         }
-        return playersList;
-    }
+        private synchronized void recloneAll() {
 
-    public List<GameObject> getUserAssets() {
-        return Lists.newArrayList(playerBullets);
+            while (true) {
+                cycleDone = false;
+                clonedObjects = new ArrayList<>();
+                reclone(bullets);
+                reclone(asteroids);
+                reclone(players.values());
+                cycleDone = true;
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        private synchronized void reclone(Collection<? extends GameObject> c) {
+            for (GameObject origin : c) {
+                clonedObjects.add(origin.clone());
+            }
+        }
+        public synchronized void wakeup() {
+            this.notify();
+        }
+
+        public synchronized void loadCache() {
+            bullets.addAll(bulletCache);
+            asteroids.addAll(asteroidsCache);
+            players.putAll(spaceshipCache);
+        }
     }
 
 }

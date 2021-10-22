@@ -1,6 +1,5 @@
 package nl.rug.aoop.asteroids.view.panels;
 
-import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
 import nl.rug.aoop.asteroids.model.Game;
 import nl.rug.aoop.asteroids.view.viewmodels.AsteroidViewModel;
@@ -33,7 +32,6 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
      */
     private long timeSinceLastTick = 0L;
 
-    private final ViewController viewController;
 
     /**
      * Constructs a new game panel, based on the given model. Also starts listening to the game to check for updates, so
@@ -41,9 +39,8 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
      *
      * @param game The model which will be drawn in this panel.
      */
-    public AsteroidsPanel(Game game, ViewController viewController) {
+    public AsteroidsPanel(Game game) {
         this.game = game;
-        this.viewController = viewController;
         game.addListener(this);
     }
 
@@ -113,10 +110,15 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
              * If you do want to fix it yourself, you are of course free to do so.
              */
             new SpaceshipViewModel(game.getSpaceShip()).drawObject(graphics2D, timeSinceLastTick);
-            game.getPlayers().values().forEach(spaceship -> new SpaceshipViewModel(spaceship).drawObject(graphics2D,timeSinceLastTick)); //TODO verify
-            game.getAsteroids().forEach(asteroid -> new AsteroidViewModel(asteroid).drawObject(graphics2D, timeSinceLastTick));
-            game.getPlayerBullets().forEach(bullet -> new BulletViewModel(bullet).drawObject(graphics2D, timeSinceLastTick));
-            game.getOnlineBullets().forEach(bullet -> new BulletViewModel(bullet).drawObject(graphics2D, timeSinceLastTick)); //TODO Verify
+            while (true) {
+                if (game.rendererDeepCloner.cycleDone) {
+                    game.rendererDeepCloner.clonedObjects
+                            .forEach(object
+                                    -> object.getViewModel(object).drawObject(graphics2D, timeSinceLastTick));
+                    break;
+                }
+
+            }
         }
     }
 

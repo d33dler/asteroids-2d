@@ -41,6 +41,7 @@ public class PlayerKeyListener implements KeyListener {
      */
     public PlayerKeyListener(Spaceship ship) {
         this.ship = ship;
+
     }
 
     /**
@@ -51,10 +52,22 @@ public class PlayerKeyListener implements KeyListener {
     @Override
     public void keyPressed(KeyEvent event) {
         switch (event.getKeyCode()) {
-            case ACCELERATION_KEY -> ship.setAccelerateKeyPressed(true);
-            case LEFT_KEY -> ship.setTurnLeftKeyPressed(true);
-            case RIGHT_KEY -> ship.setTurnRightKeyPressed(true);
-            case FIRE_WEAPON_KEY -> ship.setFiring(true);
+            case ACCELERATION_KEY -> {
+                ship.setAccelerateKeyPressed(true);
+                ship.getKeyEventSet().add(ACCELERATION_KEY);
+            }
+            case LEFT_KEY -> {
+                ship.setTurnLeftKeyPressed(true);
+                ship.getKeyEventSet().add(LEFT_KEY);
+            }
+            case RIGHT_KEY -> {
+                ship.setTurnRightKeyPressed(true);
+                ship.getKeyEventSet().add(RIGHT_KEY);
+            }
+            case FIRE_WEAPON_KEY -> {
+                ship.setFiring(true);
+                ship.getKeyEventSet().add(FIRE_WEAPON_KEY);
+            }
         }
     }
 
@@ -66,10 +79,22 @@ public class PlayerKeyListener implements KeyListener {
     @Override
     public void keyReleased(KeyEvent event) {
         switch (event.getKeyCode()) {
-            case ACCELERATION_KEY -> ship.setAccelerateKeyPressed(false);
-            case LEFT_KEY -> ship.setTurnLeftKeyPressed(false);
-            case RIGHT_KEY -> ship.setTurnRightKeyPressed(false);
-            case FIRE_WEAPON_KEY -> ship.setFiring(false);
+            case ACCELERATION_KEY -> {
+                ship.setAccelerateKeyPressed(false);
+                ship.getKeyEventSet().remove(ACCELERATION_KEY);
+            }
+            case LEFT_KEY -> {
+                ship.setTurnLeftKeyPressed(false);
+                ship.getKeyEventSet().remove(LEFT_KEY);
+            }
+            case RIGHT_KEY -> {
+                ship.setTurnRightKeyPressed(false);
+                ship.getKeyEventSet().remove(RIGHT_KEY);
+            }
+            case FIRE_WEAPON_KEY -> {
+                ship.setFiring(false);
+                ship.getKeyEventSet().remove(FIRE_WEAPON_KEY);
+            }
         }
     }
 
