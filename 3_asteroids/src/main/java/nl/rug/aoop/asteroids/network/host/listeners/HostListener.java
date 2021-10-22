@@ -6,6 +6,7 @@ public interface HostListener {
     void fireUpdate(byte[] data);
     DeltasData getClientDeltas();
     public boolean checkPingAbuse();
+    void disconnect();
     void initFlux();
     boolean isConnected();
 }

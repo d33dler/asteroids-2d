@@ -3,11 +3,10 @@ package nl.rug.aoop.asteroids.network.data.deltas_changes;
 import nl.rug.aoop.asteroids.network.data.types.DeltaManager;
 import nl.rug.aoop.asteroids.network.data.types.DeltasData;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 
-public class GameplayDeltas implements DeltasData, Serializable {
+public class GameplayDeltas implements DeltasData {
 
     public final long timestamp;
     public final List<Tuple.T2<String, double[]>> playerVecMap;

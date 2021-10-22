@@ -12,7 +12,6 @@ import nl.rug.aoop.asteroids.network.host.listeners.HostListener;
 import nl.rug.aoop.asteroids.network.statistics.ConnectionStatistic;
 import nl.rug.aoop.asteroids.network.statistics.StatisticCalculator;
 import nl.rug.aoop.asteroids.util.Randomizer;
-import nl.rug.aoop.asteroids.util.ReflectionUtils;
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.io.IOException;
@@ -32,6 +31,7 @@ public class HostingServer implements HostingDevice, Runnable {
     private int server_port;
     private final String host_name;
     private ExecutorService executorService = Executors.newFixedThreadPool(40);
+    private Thread hostingUserUpdater;
     private ConnectionStatistic connectionStatistic = new ConnectionStatistic();
 
     private final InetAddress socketAddress;
@@ -40,7 +40,7 @@ public class HostingServer implements HostingDevice, Runnable {
     private final Randomizer randomizer = new Randomizer(6);
     private final HashMap<String, GameplayDeltas> deltasMap = new HashMap<>();
     private final String hostId = randomizer.generateId();
-    private GameplayDeltas hostDeltas;
+    private byte[] hostDeltas;
 
 
     public HostingServer(MultiplayerManager multiplayer, InetAddress address) {
@@ -52,8 +52,8 @@ public class HostingServer implements HostingDevice, Runnable {
     }
 
     private void logHost() {
-        hostDeltas = multiplayerGame.getHost().getUserDeltas();
-        new Thread(new HostingUserUpdater(multiplayerGame.getHost())).start();
+        hostingUserUpdater = new Thread(new HostingUserUpdater(multiplayerGame.getHost()));
+        hostingUserUpdater.start();
     }
 
     private void init() {
@@ -74,6 +74,18 @@ public class HostingServer implements HostingDevice, Runnable {
         acceptConnections();
     }
 
+    @Override
+    public void shutdown() {
+        try {
+            hostingUserUpdater.join(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        hostListeners.forEach(HostListener::disconnect);
+        executorService.shutdown();
+        System.out.println("closed server");
+    }
+
     private void acceptConnections() {
         while (hostListeners.size() < multiplayerGame.getMAX_CLIENTS()) {
             byte[] data = new byte[ConnectionParameters.PKG_SIZE_LIM];
@@ -88,19 +100,28 @@ public class HostingServer implements HostingDevice, Runnable {
     }
 
     private void addNewClient(DatagramPacket handshake) {
-        InetSocketAddress inetAddress = new InetSocketAddress(handshake.getAddress(), handshake.getPort());
-        byte[] data = SerializationUtils.serialize(new ConfigData(ReflectionUtils.getNetworkParams(parameters))); //TODO refactor;
-        DatagramPacket ACK = new DatagramPacket(data, data.length, inetAddress.getAddress(), inetAddress.getPort());
+        String clientID = randomizer.generateId();
+        DatagramSocket privateSocket = null;
         try {
-            server_socket.send(ACK);
-        } catch (IOException e) {
+            privateSocket = new DatagramSocket();
+        } catch (SocketException e) {
             e.printStackTrace();
         }
-        String id = randomizer.generateId();
-        ClientConnection newListener = new ClientConnection(this, id, inetAddress);
-        executorService.execute(newListener);
-        newListener.initFlux();
-        hostListeners.add(newListener);
+        if (privateSocket != null) {
+            InetSocketAddress inetAddress = new InetSocketAddress(handshake.getAddress(), handshake.getPort());
+            String add = privateSocket.getLocalAddress().getHostName();
+            System.out.println("NEW CONNECTION TO: " + add);
+            byte[] data = SerializationUtils.serialize(new ConfigData(clientID,add,privateSocket.getLocalPort())); //TODO refactor;
+            DatagramPacket ACK = new DatagramPacket(data, data.length, inetAddress.getAddress(), inetAddress.getPort());
+            try {
+                server_socket.send(ACK);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            ClientConnection newListener = new ClientConnection(this, privateSocket, clientID, inetAddress);
+            executorService.execute(newListener);
+            hostListeners.add(newListener);
+        }
     }
 
 
@@ -115,12 +136,14 @@ public class HostingServer implements HostingDevice, Runnable {
         public synchronized void run() {
             Game hostGame = multiplayerGame.getGame();
             while (hostGame.isRunning()) {
-                multiplayerGame.getDeltaManager().collectPlayerDeltas(deltasMap);
-                hostDeltas = hostingUser.getHostDeltas(hostId);
-                try {
-                    wait(5);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                if (!hostGame.isRendererBusy()) {
+                    multiplayerGame.getDeltaManager().collectPlayerDeltas(deltasMap);
+                    hostDeltas = hostingUser.getHostDeltas(hostId);
+                    try {
+                        wait(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -142,7 +165,7 @@ public class HostingServer implements HostingDevice, Runnable {
 
     @Override
     public byte[] getLastDeltas() {
-        return SerializationUtils.serialize(hostDeltas);
+        return hostDeltas;
     }
 
     @Override
@@ -159,7 +182,6 @@ public class HostingServer implements HostingDevice, Runnable {
     public int getHostDefaultLatency() {
         return parameters.LAT_SERVER_millis;
     }
-
 
     @Override
     public int getHostMaxLatency() {

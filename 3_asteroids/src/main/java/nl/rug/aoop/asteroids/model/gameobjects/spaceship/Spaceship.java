@@ -84,6 +84,7 @@ public class Spaceship extends GameObject {
      * Direction the spaceship is pointed in.
      */
     @Getter
+    @Setter
     private double direction;
 
     /**
@@ -246,7 +247,7 @@ public class Spaceship extends GameObject {
 
     @Override
     public double[] getObjParameters() {
-        return super.getObjParameters();
+        return new double[]{getLocation().x,getLocation().y,getVelocity().x,getVelocity().y,getDirection()};
     }
 
     @Override

@@ -15,9 +15,9 @@ import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
 import nl.rug.aoop.asteroids.model.obj_factory.GameObjectFactory;
 import nl.rug.aoop.asteroids.model.obj_factory.GeneralObjectsFactory;
 import nl.rug.aoop.asteroids.network.clients.User;
+import nl.rug.aoop.asteroids.network.data.deltas_changes.GameplayDeltas;
 import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
 import nl.rug.aoop.asteroids.util.database.DatabaseManager;
-import nl.rug.aoop.asteroids.util.database.Score;
 
 import java.net.*;
 import java.util.*;
@@ -51,7 +51,7 @@ public class Game extends ObservableGame {
      * The list of all asteroids in the game.
      */
     @Getter
-    private Collection<Asteroid> asteroids;
+    private List<Asteroid> asteroids;
 
 
     /**
@@ -65,12 +65,18 @@ public class Game extends ObservableGame {
     @Setter
     @Getter
     private volatile boolean isRendererBusy = true;
+
+    @Setter
+    @Getter
+    private volatile boolean isUserSerializing = false;
+
     /**
      * The game updater thread, which is responsible for updating the game's state as time goes on.
      */
     private Thread gameUpdaterThread;
 
-    private User user;
+    private Thread user;
+
     @Getter
     private GameObjectFactory objectFactory;
 
@@ -86,6 +92,10 @@ public class Game extends ObservableGame {
 
     @Setter
     private ViewController viewController;
+    @Setter
+    @Getter
+    private String USER_ID = "neo";
+
     /**
      * Constructs a new game, with a new spaceship and all other model data in its default starting state.
      */
@@ -142,12 +152,13 @@ public class Game extends ObservableGame {
         initializeObjMap();
         if (!running) {
             running = true;
-            gameUpdaterThread = new Thread(new GameUpdater(this,viewController, online, onlineHost));
+            gameUpdaterThread = new Thread(new GameUpdater(this, viewController, online, onlineHost));
             gameUpdaterThread.start();
         }
     }
-    public void start(){                    //TODO clean ugly mess
-        start(false,false);
+
+    public void start() {                    //TODO clean ugly mess
+        start(false, false);
     }
 
     public void startOnline(InetSocketAddress address) {
@@ -167,32 +178,39 @@ public class Game extends ObservableGame {
 
     public final static String default_OBJ_PKG = "nl.rug.aoop.asteroids.model.gameobjects";
 
-    public void initMultiplayerAsHost(InetAddress address) { //TODO command pattern
-        user = User.newHostUser(this, address);
-        objectFactory = new GeneralObjectsFactory(this, default_OBJ_PKG); //TODO move all obj creation to factory?
+    public void initMultiplayerAsHost(InetAddress address) {
+        initDefaultFactory(); //TODO command pattern
+        user = new Thread(User.newHostUser(this, address));
+        //TODO move all obj creation to factory?
+    }
+
+    private void initDefaultFactory() {
+        objectFactory = new GeneralObjectsFactory(this, default_OBJ_PKG);
     }
 
     public void initMultiplayerAsClient(InetSocketAddress address) {
-        user = User.newClientUser(this, address);
+        initDefaultFactory();
+        user = new Thread(User.newClientUser(this, address));
     }
 
     public void initMultiplayerAsSpectator(InetSocketAddress address) {
-        user = User.newClientUser(this, address);
+        initDefaultFactory();
+        user = new Thread(User.newClientUser(this, address));
     }
 
     /**
      * This method performs the operations needed to end the game (update view and database)
      */
-    public void endGame(){
-        notifyEnd();
+    public void endGame() {
+        notifyGameOver();
         //dbManager.addScore(new Score("player", spaceShip.getScore()));
     }
 
     /**
      * Notifies view to render the endgame panel
      */
-    private void notifyEnd(){
-        listeners.forEach(GameUpdateListener::onGameEnd);
+    private void notifyGameOver() {
+        listeners.forEach(GameUpdateListener::onGameOver);
     }
 
     /**
@@ -200,34 +218,48 @@ public class Game extends ObservableGame {
      */
     public void quit() {
         if (running) {
+
             try {
                 // Attempt to wait for the game updater to exit its game loop.
                 gameUpdaterThread.join(EXIT_TIMEOUT_MILLIS);
+                if (user != null) {
+                    user.join(EXIT_TIMEOUT_MILLIS);
+                }
             } catch (InterruptedException exception) {
                 System.err.println("Interrupted while waiting for the game updater thread to finish execution.");
             } finally {
+                listeners.forEach(GameUpdateListener::onGameExit);
                 running = false;
                 // Throw away the game updater thread and let the GC remove it.
                 gameUpdaterThread = null;
+                user = null;
+
             }
         }
     }
-    @Getter
-    private final HashMap<String, List<double[]>> objMap = new HashMap<>();
 
-    private void initializeObjMap() {
-        objMap.put(Asteroid.OBJECT_ID, new ArrayList<>());
-        objMap.put(Bullet.OBJECT_ID, new ArrayList<>());
+    @Getter
+    private HashMap<String, List<double[]>> tickObjMap = new HashMap<>();
+
+    public void initializeObjMap() {
+        tickObjMap.put(Asteroid.OBJECT_ID, new ArrayList<>());
+        tickObjMap.put(Bullet.OBJECT_ID, new ArrayList<>());
     }
-    public List<GameObject> getAllGameObj(){
-        Iterable<GameObject> allObj = Iterables.unmodifiableIterable(Iterables.concat(asteroids, playerBullets, onlineBullets));
-        return Lists.newArrayList(allObj);
+
+    public void resetObjMap() {
+        tickObjMap.forEach((key, value) -> tickObjMap.replace(key, new ArrayList<>()));
     }
-    public List<Tuple.T2<String, double[]>> getAllPlayers(){
+
+    public List<Tuple.T2<String, double[]>> getAllPlayers() { //TODO move to deltaprocessing
         List<Tuple.T2<String, double[]>> playersList = new ArrayList<>();
         for (Map.Entry<String, Spaceship> player : players.entrySet()) {
-            playersList.add(new Tuple.T2<>(player.getKey(),player.getValue().getObjParameters()));
+            playersList.add(new Tuple.T2<>(player.getKey(), player.getValue().getObjParameters()));
         }
         return playersList;
     }
+
+    public List<GameObject> getUserAssets() {
+        return Lists.newArrayList(playerBullets);
+    }
+
 }

@@ -78,6 +78,7 @@ public class ViewController {
     public void displayScoreboards() {
 
     }
+
     private void requestGameReset(){
         this.game = new Game();
         frame.setGame(game);

@@ -1,9 +1,12 @@
 package nl.rug.aoop.asteroids.model;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
+import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
 import nl.rug.aoop.asteroids.network.clients.User;
 import nl.rug.aoop.asteroids.network.data.ConnectionParameters;
 import nl.rug.aoop.asteroids.network.data.DeltaProcessor;
+import nl.rug.aoop.asteroids.network.data.deltas_changes.GameplayDeltas;
 import nl.rug.aoop.asteroids.network.data.types.DeltaManager;
 import nl.rug.aoop.asteroids.network.host.HostingDevice;
 import nl.rug.aoop.asteroids.network.host.HostingServer;
@@ -11,23 +14,26 @@ import nl.rug.aoop.asteroids.network.host.HostingServer;
 import java.net.InetAddress;
 import java.util.HashMap;
 
-public class MultiplayerGame implements MultiplayerManager {
+public class MultiplayerGame implements MultiplayerManager, GameUpdateListener {
     @Getter
     private ConnectionParameters parameters;
     @Getter
     private final int MAX_CLIENTS = 10;
-    private final User user;
+    private User user;
     @Getter
-    private final Game game;
+    private Game game;
     @Getter
     private HostingDevice hostingDevice;
     @Getter
-    private final DeltaManager deltaManager;
+    private DeltaManager deltaManager;
+
+    private Thread hostingDeviceThread;
 
     private MultiplayerGame(Game game, User user) {
         this.game = game;
         this.user = user;
         this.deltaManager = new DeltaProcessor(this, user);
+        game.addListener(this);
     }
 
 
@@ -56,12 +62,13 @@ public class MultiplayerGame implements MultiplayerManager {
     }
 
     private void initClientComponents() {
-        parameters = user.getIoHolder().getParameters();
+        parameters = user.getIoHandler().getParameters();
     }
 
     private void initHostingDevice(InetAddress address){
         hostingDevice = new HostingServer(this,address ) ;
-        new Thread((Runnable) hostingDevice).start();
+        hostingDeviceThread = new Thread((Runnable) hostingDevice);
+        hostingDeviceThread.start();
         parameters = hostingDevice.getRawConnectionParameters();
     }
 
@@ -80,4 +87,13 @@ public class MultiplayerGame implements MultiplayerManager {
         return game.isRendererBusy();
     }
 
+
+    @SneakyThrows
+    @Override
+    public void onGameExit() {
+        hostingDevice.shutdown();
+        hostingDeviceThread.join(100);
+        deltaManager = null;
+        hostingDevice = null;
+    }
 }

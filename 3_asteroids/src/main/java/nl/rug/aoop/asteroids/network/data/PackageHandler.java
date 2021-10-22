@@ -2,14 +2,15 @@ package nl.rug.aoop.asteroids.network.data;
 
 import lombok.Getter;
 import lombok.Setter;
-import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
+import lombok.extern.java.Log;
+import nl.rug.aoop.asteroids.network.data.deltas_changes.ConfigData;
+import nl.rug.aoop.asteroids.network.data.types.DeltasData;
 import org.apache.commons.lang3.SerializationException;
 import org.apache.commons.lang3.SerializationUtils;
 
-import java.net.DatagramPacket;
 import java.net.InetAddress;
-import java.util.List;
 
+@Log
 /**
  * PackageHolder class : (uses Decorator pattern)
  */
@@ -17,41 +18,53 @@ public class PackageHandler {
 
     @Getter
     @Setter
-    private DataPackage dataPackage = null;
+    private DataPackage outPackage;
+    @Getter
+    @Setter
+    private DataPackage inPackage;
+
     @Getter
     private final ConnectionParameters parameters;
+
     @Setter
-    private byte[] data;
+    @Getter
+    private String ownerId = "user";
 
     private PackageHandler(DataPackage dataPackage, ConnectionParameters parameters) {
         this(parameters);
-        this.dataPackage = dataPackage;
+        this.inPackage = dataPackage;
     }
 
-    private PackageHandler(ConnectionParameters parameters) {
-        this.parameters = parameters;
-        data = new byte[parameters.getDataLength()];
+    private PackageHandler(ConnectionParameters p) {
+        parameters = p;
+        outPackage = new DataPackage();
+        inPackage = new DataPackage();
     }
 
     public static PackageHandler newEmptyHolder(ConnectionParameters param) {
         return new PackageHandler(param);
-
     }
 
-    public byte[] getDataInBytes() {
-        byte[] data = SerializationUtils.serialize(dataPackage);
+    public byte[] getOutDataInBytes() {
+        byte[] data = outPackage.serializeDeltas();
         if (data.length <= parameters.getDataLength()) {
             return data;
         }
         return null;
     }
 
-    public void updateDataPackage() {
+    public void updateInDataPackage(byte[] data) {
+        dataPkgUpdate(inPackage, data);
+    }
+    public void updateOutDataPackage(DeltasData data) {
+        outPackage.setData(data,parameters.LAT_MAX_millis);
+    }
+    public void updateOutDataPackage(byte[] data) {
+        outPackage.setData(data);
+    }
+    private void dataPkgUpdate(DataPackage pkg, byte[] data) {
         try {
-            DataPackage newPackage = new DataPackage(SerializationUtils.deserialize(data));
-            if (newPackage.isAcceptedLatency(parameters.LAT_MAX_millis)) { //TODO verify
-                dataPackage = newPackage;
-            }
+            pkg.setData(SerializationUtils.deserialize(data), parameters.LAT_MAX_millis);
         } catch (SerializationException e) {
             e.printStackTrace();
         }
@@ -63,19 +76,11 @@ public class PackageHandler {
     }
 
 
-    public void initData() {
-        data = new byte[parameters.getDataLength()];
+    public void initHandler(ConfigData handshake) {
+        this.ownerId = handshake.id;
     }
-
-    public void loadData(DatagramPacket packet) {
-        data = packet.getData();
-    }
-
     public InetAddress getInet() {
         return parameters.getInet();
     }
 
-    public byte[] getData() {
-        return data;
-    }
 }

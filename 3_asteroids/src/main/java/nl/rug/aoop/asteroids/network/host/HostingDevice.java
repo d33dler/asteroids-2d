@@ -17,6 +17,7 @@ public interface HostingDevice {
     byte[] getLastDeltas();
     void addNewDelta(String clientIp, DeltasData data);
     void run();
+    void shutdown();
     StatisticCalculator getStatisticCalculator();
     ConnectionParameters getRawConnectionParameters();
 }

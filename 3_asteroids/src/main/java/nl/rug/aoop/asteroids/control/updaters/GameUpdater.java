@@ -1,5 +1,6 @@
 package nl.rug.aoop.asteroids.control.updaters;
 
+import lombok.SneakyThrows;
 import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.model.*;
 import nl.rug.aoop.asteroids.model.gameobjects.asteroid.Asteroid;
@@ -10,7 +11,10 @@ import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+
 
 /**
  * A runnable object which, when started in a thread, runs the main game loop and periodically updates the game's model
@@ -49,7 +53,7 @@ public class GameUpdater implements Runnable {
     /**
      * The number of ticks between asteroid spawns
      */
-    private static final int ASTEROID_SPAWN_RATE = 200;
+    private static final int ASTEROID_SPAWN_RATE = 10000; // -> 200
 
     /**
      * The game that this updater works for.
@@ -69,6 +73,9 @@ public class GameUpdater implements Runnable {
     private final ViewController viewController;
     private boolean isOnlineHost;
     private boolean online;
+
+    private HashMap<String, List<double[]>> tickObjMap;
+
     /**
      * Constructs a new game updater with the given game.
      *
@@ -78,6 +85,7 @@ public class GameUpdater implements Runnable {
         this.isOnlineHost = onlineHost;
         this.online = online;
         this.game = game;
+        this.tickObjMap = game.getTickObjMap();
         this.viewController = viewController;
         updateCounter = 0;
         asteroidsLimit = ASTEROIDS_LIMIT_DEFAULT;
@@ -142,14 +150,14 @@ public class GameUpdater implements Runnable {
 
         if (ship.canFireWeapon()) {
             double direction = ship.getDirection();
-            bullets.add(
-                    new Bullet(
-                            ship.getLocation().getX(),
-                            ship.getLocation().getY(),
-                            ship.getVelocity().x + Math.sin(direction) * 15,
-                            ship.getVelocity().y - Math.cos(direction) * 15
-                    )
+            Bullet b = new Bullet(
+                    ship.getLocation().getX(),
+                    ship.getLocation().getY(),
+                    ship.getVelocity().x + Math.sin(direction) * 15,
+                    ship.getVelocity().y - Math.cos(direction) * 15
             );
+            addNewTickObj(b);
+            bullets.add(b);
             ship.setFired();
         }
 
@@ -157,7 +165,7 @@ public class GameUpdater implements Runnable {
         removeDestroyedObjects();
 
         // Every 200 game ticks, try and spawn a new asteroid.
-        if ((isOnlineHost || !online) && updateCounter % ASTEROID_SPAWN_RATE == 0 && asteroids.size() < asteroidsLimit ) {
+        if ((isOnlineHost || !online) && updateCounter % ASTEROID_SPAWN_RATE == 0 && asteroids.size() < asteroidsLimit) {
             addRandomAsteroid();
         }
         updateCounter++;
@@ -187,7 +195,9 @@ public class GameUpdater implements Runnable {
         } else { // And finally a 33% chance of spawning a small asteroid.
             randomSize = AsteroidSize.SMALL;
         }
-        game.getAsteroids().add(new Asteroid(newAsteroidLocation, randomVelocity, randomSize));
+        Asteroid a = new Asteroid(newAsteroidLocation, randomVelocity, randomSize);
+        addNewTickObj(a);
+        game.getAsteroids().add(a);
     }
 
     /**
@@ -224,6 +234,18 @@ public class GameUpdater implements Runnable {
             }
         });
     }
+
+    @SneakyThrows
+    private synchronized void addNewTickObj(GameObject object) {
+        while (true) {
+            if (!game.isUserSerializing()) {
+                System.out.println("ADDED NEW OBJJ");
+                tickObjMap.get(object.getObjectId()).add(object.getObjParameters());
+                break;
+            }
+        }
+    }
+
 
     /**
      * Increment the player's score, and for every five score points, the asteroids limit is incremented.

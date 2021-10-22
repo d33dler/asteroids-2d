@@ -4,28 +4,39 @@ import lombok.Getter;
 import nl.rug.aoop.asteroids.network.data.ConnectionParameters;
 import nl.rug.aoop.asteroids.network.data.DataPackage;
 import nl.rug.aoop.asteroids.network.data.PackageHandler;
+import nl.rug.aoop.asteroids.network.data.types.DeltasData;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetSocketAddress;
-
-import static nl.rug.aoop.asteroids.network.protocol.DefaultHandshake.HANDSHAKE_LEN;
 
 public class IO implements IOProtocol {
     @Getter
-    private final PackageHandler holder;
+    private final PackageHandler packageHandler;
+    @Getter
     private final DatagramSocket socket;
+
+    public final int length;
 
     public IO(ConnectionParameters parameters) {
         this.socket = parameters.getCallerSocket();
-        holder = PackageHandler.newEmptyHolder(parameters);
+        packageHandler = PackageHandler.newEmptyHolder(parameters);
+        this.length = packageHandler.getParameters().getDataLength();
     }
 
     public void send() {
-        byte[] data = holder.getDataInBytes();
-        DatagramPacket packet = new DatagramPacket(data, data.length, holder.getInet(), holder.getPort());
-        System.out.println(holder.getInet());
+        byte[] data = packageHandler.getOutDataInBytes();
+        System.out.println(data.length + "<- data length");
+        DatagramPacket packet = new DatagramPacket(data, data.length, packageHandler.getInet(), packageHandler.getPort());
+        try {
+            socket.send(packet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void send(byte[] data) {
+        System.out.println(data.length + "<- data length");
+        DatagramPacket packet = new DatagramPacket(data, data.length, packageHandler.getInet(), packageHandler.getPort());
         try {
             socket.send(packet);
         } catch (IOException e) {
@@ -34,21 +45,31 @@ public class IO implements IOProtocol {
     }
 
     public void receive() {
-        byte[] data = holder.getData();
+        System.out.println("RECEIVE LENGTH = " + length);
+        byte[] data = new byte[length];
         DatagramPacket packet = new DatagramPacket(data, data.length);
         try {
             socket.receive(packet);
-            holder.updateDataPackage();  //TODO verify
+            packageHandler.updateInDataPackage(packet.getData());  //TODO verify
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void updateHolder(byte[] data) {
-        holder.setData(data);
+    public void updateOutPackage(DeltasData data) {
+        packageHandler.updateOutDataPackage(data);
+    }
+
+    @Override
+    public void updateOutPackage(byte[] data) {
+        packageHandler.updateOutDataPackage(data);
+    }
+
+    public String getOwnerId() {
+        return packageHandler.getOwnerId();
     }
 
     public DataPackage getLastDataPackage() {
-        return holder.getDataPackage();
+        return packageHandler.getInPackage();
     }
 }

@@ -1,17 +1,19 @@
 package nl.rug.aoop.asteroids.model.obj_factory;
 
+import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
 import nl.rug.aoop.asteroids.model.Game;
 import nl.rug.aoop.asteroids.util.ReflectionUtils;
 
 import java.util.HashMap;
 
-public class GeneralObjectsFactory implements GameObjectFactory {
+public class GeneralObjectsFactory implements GameObjectFactory, GameUpdateListener {
 
     private HashMap<String, FactoryCommand> objFactoryMap;
-    private final Game game;
+    private Game game;
 
     public GeneralObjectsFactory(Game game, String objPACKAGE) {
         this.game = game;
+        game.addListener(this);
         loadObject(objPACKAGE);
     }
 
@@ -24,7 +26,16 @@ public class GeneralObjectsFactory implements GameObjectFactory {
     public void createNewObject(String id, double[] params) {
         FactoryCommand command = objFactoryMap.get(id);
         if (command != null) {
-            command.updateObject(game, id, params);
+            while (true){
+                if(!game.isRendererBusy()){
+                    command.updateObject(game, id, params);
+                }
+            }
         }
+    }
+
+    @Override
+    public void onGameExit() {
+        objFactoryMap = null;
     }
 }

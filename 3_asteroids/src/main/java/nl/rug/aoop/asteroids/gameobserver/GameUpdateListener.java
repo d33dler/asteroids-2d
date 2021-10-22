@@ -12,7 +12,8 @@ public interface GameUpdateListener {
 	 *                          used so that things like a display may continue showing an animated model while no
 	 *                          actual physics update has been done by the game engine.
 	 */
-	void onGameUpdated(long timeSinceLastTick);
+	default void onGameUpdated(long timeSinceLastTick){};
 
-	void onGameEnd();
+	default void onGameOver(){};
+	default void onGameExit(){};
 }
