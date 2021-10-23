@@ -26,6 +26,11 @@ public class Tuple<K> implements Serializable {
             super(x,y);
             this.c = c;
         }
+
+        public static <K,V,Z> T2<V, Z> lstT2(T3<K,V,Z> t3) {
+            return new Tuple.T2<>(t3.b,t3.c);
+        }
     }
+
 
 }

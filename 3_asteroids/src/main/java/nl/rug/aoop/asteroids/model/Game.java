@@ -14,6 +14,7 @@ import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
 import nl.rug.aoop.asteroids.model.obj_factory.GameObjectFactory;
 import nl.rug.aoop.asteroids.model.obj_factory.GeneralObjectsFactory;
 import nl.rug.aoop.asteroids.network.clients.User;
+import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
 import nl.rug.aoop.asteroids.util.database.DatabaseManager;
 
 import java.net.InetAddress;
@@ -55,7 +56,7 @@ public class Game extends ObservableGame {
     @Getter
     private Collection<Bullet> bulletCache;
     @Getter
-    private HashMap<String, HashSet<Integer>> spaceshipCache;
+    private HashMap<String, Tuple.T2<HashSet<Integer>,double[]>> spaceshipCache;
 
     /**
      * Indicates whether or not the game is running. Setting this to false causes the game to exit its loop and quit.
@@ -271,12 +272,13 @@ public class Game extends ObservableGame {
             this.notify();
         }
         public synchronized void loadCache() {
-            for (Map.Entry<String, HashSet<Integer>> entry : spaceshipCache.entrySet()) {
+            for (Map.Entry<String,Tuple.T2<HashSet<Integer>,double[]> > entry : spaceshipCache.entrySet()) {
                 String s = entry.getKey();
-                HashSet<Integer> keySet = entry.getValue();
+                Tuple.T2<HashSet<Integer>,double[]> keySet = entry.getValue();
                 if(players.containsKey(s)){
-                    System.out.println("UPDATED PLAYER KEYSET");
-                    players.get(s).setKeyEventSet(keySet);
+                    Spaceship ship = players.get(s);
+                    ship.setKeyEventSet(keySet.a);
+                    ship.updateParameters(keySet.b);
                 } else{
                     players.put(s, new Spaceship(s,true));
                 }

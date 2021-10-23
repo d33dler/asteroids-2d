@@ -258,9 +258,6 @@ public class Spaceship extends GameObject {
     private void attemptToAccelerate() {
         if (accelerateKeyPressed && ((energy >= ACCELERATION_ENERGY_COST && getSpeed() < MAXIMUM_SPEED) || online)){
            accelerate();
-           if(online) {
-               System.out.println("ONLINE OBJ IS ACCELERATING");
-           }
         }
     }
 
@@ -364,6 +361,11 @@ public class Spaceship extends GameObject {
         return sh;
     }
 
+    public void updateParameters(double[] params) {
+        updatePosition(params[0],params[1]);
+        updateVelocity(params[2],params[3]);
+        direction = params[4];
+    }
     public void updatePosition(double x, double y) {
         getLocation().x = x;
         getLocation().y = y;

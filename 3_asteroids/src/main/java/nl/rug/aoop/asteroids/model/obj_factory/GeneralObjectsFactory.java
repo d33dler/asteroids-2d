@@ -2,6 +2,7 @@ package nl.rug.aoop.asteroids.model.obj_factory;
 
 import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
 import nl.rug.aoop.asteroids.model.Game;
+import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
 import nl.rug.aoop.asteroids.util.ReflectionUtils;
 
 import java.util.HashMap;
@@ -24,12 +25,12 @@ public class GeneralObjectsFactory implements GameObjectFactory, GameUpdateListe
     }
 
     @Override
-    public void createNewObject(String id, HashSet<Integer> params, String objId) {
+    public void createNewObject(Tuple.T3<String, HashSet<Integer>,double[]> playerKeySet , String objId) { //objId here
         FactoryCommand command = objFactoryMap.get(objId);
         if (command != null) {
             while (true){
                 if(!game.isEngineBusy() && game.rendererDeepCloner.cycleDone){
-                    command.updateActiveObject(game, id, params);
+                    command.updateActiveObject(game, playerKeySet );                //obj id might be needed for other active obj
                     break;
                 }
             }

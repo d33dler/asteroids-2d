@@ -30,34 +30,34 @@ public class DeltaProcessor implements DeltaManager {
         this.factory = multiplayerBase.getGame().getObjectFactory();
     }
 
-    private void collectPlayers(List<Tuple.T2<String, HashSet<Integer>>> playerKeySets) {
-        for (Tuple.T2<String, HashSet<Integer>> playerKeySet : playerKeySets) {
-            factory.createNewObject(playerKeySet.a, playerKeySet.b,"spaceship" );
+    private void collectPlayers(List<Tuple.T3<String, HashSet<Integer>, double[]>> playerKeySets) {
+        for (Tuple.T3<String, HashSet<Integer>,double[]> playerKeySet : playerKeySets) {
+            factory.createNewObject(playerKeySet,"spaceship" );
         }
     }
 
-    private void collectPlayer(Tuple.T2<String, HashSet<Integer>> playerKeySet) {
-        factory.createNewObject(playerKeySet.a, playerKeySet.b, "spaceship" );
+    private void collectPlayer(Tuple.T3<String, HashSet<Integer>,double[]> playerKeySet) {
+        factory.createNewObject(playerKeySet, "spaceship" );
     }
 
     private void updateObjects(List<? extends GameObject> objectVectors) {
           game.setAsteroids((List<Asteroid>) objectVectors);
     }
 
-    public Tuple.T2<String, HashSet<Integer>> getPlayerKeyEvents() {
-        return new Tuple.T2<>(user.USER_ID, game.getSpaceShip().getKeyEventSet());
+    public Tuple.T3<String, HashSet<Integer>,double[]> getPlayerKeyEvents() {
+        return new Tuple.T3<>(user.USER_ID, game.getSpaceShip().getKeyEventSet(),game.getSpaceShip().getObjParameters());
     }
 
-    public List<Tuple.T2<String, HashSet<Integer>>> getAllPlayersKeyEvents() {
-        List<Tuple.T2<String, HashSet<Integer>>> keyList = new ArrayList<>();
-        game.getPlayers().forEach((s, spaceship) -> keyList.add(new Tuple.T2<>(s, spaceship.getKeyEventSet())));
+    public List<Tuple.T3<String, HashSet<Integer>, double[]>> getAllPlayersKeyEvents() {
+        List<Tuple.T3<String, HashSet<Integer>, double[]>> keyList = new ArrayList<>();
+        game.getPlayers().forEach((s, spaceship) -> keyList.add(new Tuple.T3<>(s, spaceship.getKeyEventSet(), spaceship.getObjParameters())));
         keyList.add(getPlayerKeyEvents());
         return keyList;
     }
 
     public byte[] getHostDeltas() {
         List<GameObject> objectList = new ArrayList<>(game.getAsteroids());
-        List<Tuple.T2<String, HashSet<Integer>>> keyEventList = getAllPlayersKeyEvents();
+        List<Tuple.T3<String, HashSet<Integer>,double[]>> keyEventList = getAllPlayersKeyEvents();
         return SerializationUtils.serialize(
                 new GameplayDeltas(System.currentTimeMillis(), keyEventList, objectList));
     }

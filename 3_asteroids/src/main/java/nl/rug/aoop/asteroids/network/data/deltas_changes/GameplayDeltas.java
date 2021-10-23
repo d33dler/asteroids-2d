@@ -11,17 +11,17 @@ public class GameplayDeltas implements DeltasData {
 
     public final long timestamp;
 
-    public Tuple.T2<String, HashSet<Integer>> clientKeyEvents;
-    public final List<Tuple.T2<String, HashSet<Integer>>> keyEventList;
+    public Tuple.T3<String, HashSet<Integer>,double[]> clientKeyEvents;
+    public final List<Tuple.T3<String, HashSet<Integer>, double[]>> keyEventList;
     public final List<GameObject> objectList;
 
-    public GameplayDeltas(long timestamp, List<Tuple.T2<String, HashSet<Integer>>> kList, List<GameObject> objectList) {
+    public GameplayDeltas(long timestamp, List<Tuple.T3<String, HashSet<Integer>, double[]>> kList, List<GameObject> objectList) {
         this.timestamp = timestamp;
         this.keyEventList = kList;
         this.objectList = objectList;
     }
 
-    public GameplayDeltas(long timestamp, Tuple.T2<String, HashSet<Integer>> clientKeyEvents) {
+    public GameplayDeltas(long timestamp, Tuple.T3<String, HashSet<Integer>, double[]> clientKeyEvents) {
         this(timestamp, null, null);
         this.clientKeyEvents = clientKeyEvents;
     }
