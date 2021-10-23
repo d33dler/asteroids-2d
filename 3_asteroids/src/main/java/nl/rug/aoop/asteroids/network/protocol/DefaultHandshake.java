@@ -15,7 +15,7 @@ import java.net.InetSocketAddress;
 
 public class DefaultHandshake {
     private final DatagramSocket socket;
-    public static final int HANDSHAKE_LEN = 1490;
+    public static final int HANDSHAKE_LEN = 5000;
 
     public DefaultHandshake(DatagramSocket socket) {
         this.socket = socket;

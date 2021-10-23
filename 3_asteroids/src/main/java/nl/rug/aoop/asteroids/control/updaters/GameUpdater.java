@@ -51,7 +51,7 @@ public class GameUpdater implements Runnable {
     /**
      * The number of ticks between asteroid spawns
      */
-    private static final int ASTEROID_SPAWN_RATE = 1000; // -> 200
+    private static final int ASTEROID_SPAWN_RATE = 200; // -> 200
 
     /**
      * The game that this updater works for.

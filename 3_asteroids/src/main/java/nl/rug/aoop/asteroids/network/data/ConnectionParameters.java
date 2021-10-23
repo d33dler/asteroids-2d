@@ -20,7 +20,7 @@ public class ConnectionParameters {
     @Getter
     @NetworkParam(id = "packet_size")
     private int dataLength = PKG_SIZE_LIM;
-    public final static int PKG_SIZE_LIM = 2000, PKG_SIZE_MIN = 1024;
+    public final static int PKG_SIZE_LIM = 5000, PKG_SIZE_MIN = 1024;
     @Setter
     public int LAT_MAX_millis = 100;
     public int LAT_SERVER_millis = 50;

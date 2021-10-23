@@ -8,6 +8,7 @@ import nl.rug.aoop.asteroids.network.data.types.DeltasData;
 import org.apache.commons.lang3.SerializationException;
 import org.apache.commons.lang3.SerializationUtils;
 
+import java.io.EOFException;
 import java.net.InetAddress;
 
 @Log
@@ -63,11 +64,8 @@ public class PackageHandler {
         outPackage.setData(data);
     }
     private void dataPkgUpdate(DataPackage pkg, byte[] data) {
-        try {
-            pkg.setData(SerializationUtils.deserialize(data), parameters.LAT_MAX_millis);
-        } catch (SerializationException e) {
-            e.printStackTrace();
-        }
+        DeltasData dd = SerializationUtils.deserialize(data);
+        pkg.setData(dd, parameters.LAT_MAX_millis);
 
     }
 

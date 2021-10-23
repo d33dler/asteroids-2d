@@ -34,7 +34,7 @@ public class ClientConnection implements HostListener, Runnable {
 
     private void initParameters(InetSocketAddress clientAddress) {
         ConnectionParameters serverParameters = hostingDevice.getRawConnectionParameters();
-        this.parameters = new ConnectionParameters(privateSocket, clientAddress, serverParameters.getDataLength());
+        this.parameters = new ConnectionParameters(privateSocket, clientAddress, 5000);
     }
 
     private void initIO() {
