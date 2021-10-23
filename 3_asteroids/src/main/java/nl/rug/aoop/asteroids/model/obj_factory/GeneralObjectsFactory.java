@@ -7,6 +7,7 @@ import nl.rug.aoop.asteroids.util.ReflectionUtils;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 public class GeneralObjectsFactory implements GameObjectFactory, GameUpdateListener {
 
@@ -25,16 +26,30 @@ public class GeneralObjectsFactory implements GameObjectFactory, GameUpdateListe
     }
 
     @Override
-    public void createNewObject(Tuple.T3<String, HashSet<Integer>,double[]> playerKeySet , String objId) { //objId here
+    public void updateActiveObject(String objId, Tuple.T3<String, HashSet<Integer>, double[]> playerKeySet) { //objId here
         FactoryCommand command = objFactoryMap.get(objId);
         if (command != null) {
-            while (true){
-                if(!game.isEngineBusy() && game.rendererDeepCloner.cycleDone){
-                    command.updateActiveObject(game, playerKeySet );                //obj id might be needed for other active obj
-                    break;
-                }
+            command.updateActiveObject(game, playerKeySet);
+        }
+    }
+
+    @Override
+    public void updateAllActiveObjects(String objId, List<Tuple.T3<String, HashSet<Integer>, double[]>> playerKeySet) {
+        FactoryCommand command = objFactoryMap.get(objId);
+        if (command != null) {
+            command.updateAllObjects(game, playerKeySet);
+        }
+    }
+
+    @Override
+    public void updatePassiveObjects(List<Tuple.T2<String, List<double[]>>> playerKeySet) {
+        for (Tuple.T2<String, List<double[]>> tuple : playerKeySet) {
+            FactoryCommand command = objFactoryMap.get(tuple.a);
+            if (command != null) {
+                command.updatePassiveObjects(game, tuple);
             }
         }
+
     }
 
     @Override

@@ -137,7 +137,7 @@ public class HostingServer implements HostingDevice, Runnable {
                     multiplayerGame.getDeltaManager().collectPlayerDeltas(deltasMap);
                     hostDeltas = multiplayerGame.getDeltaManager().getHostDeltas(); //TODO modification?
                     try {
-                        wait(10);
+                        wait(2);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

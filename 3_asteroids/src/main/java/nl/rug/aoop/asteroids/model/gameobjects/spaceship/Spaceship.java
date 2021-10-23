@@ -151,7 +151,7 @@ public class Spaceship extends GameObject {
     @Getter
     @Setter
     private PlayerKeyListener keyListener;
-
+@Setter
     private boolean online = false;
     /**
      * Constructs a new spaceship with default values. It starts in the middle of the window, facing directly upwards,
@@ -165,11 +165,10 @@ public class Spaceship extends GameObject {
 
     public Spaceship(String nick) {
         this();
-        setNickId(nick);
+        super.setNickId(nick);
     }
     public Spaceship(String nick, boolean online) {
-        this();
-        setNickId(nick);
+        this(nick);
         this.online = online;
     }
 
@@ -256,7 +255,7 @@ public class Spaceship extends GameObject {
      * have enough energy, and finally, the ship must not exceed its maximum set speed.
      */
     private void attemptToAccelerate() {
-        if (accelerateKeyPressed && ((energy >= ACCELERATION_ENERGY_COST && getSpeed() < MAXIMUM_SPEED) || online)){
+        if (accelerateKeyPressed && (energy >= ACCELERATION_ENERGY_COST && getSpeed() < MAXIMUM_SPEED)){
            accelerate();
         }
     }
@@ -325,9 +324,7 @@ public class Spaceship extends GameObject {
      * down, and it has enough energy, and the user is pressing the button to fire the weapon.
      */
     public boolean canFireWeapon() {
-        return isFiring
-                && weaponCooldownRemaining == 0
-                && energy >= WEAPON_ENERGY_COST;
+        return isFiring && ((weaponCooldownRemaining == 0 && energy >= WEAPON_ENERGY_COST));
     }
 
     /**
@@ -358,6 +355,7 @@ public class Spaceship extends GameObject {
         sh.setDirection(direction);
         sh.setAccelerateKeyPressed(accelerateKeyPressed);
         sh.setFiring(isFiring);
+        sh.setOnline(online);
         return sh;
     }
 

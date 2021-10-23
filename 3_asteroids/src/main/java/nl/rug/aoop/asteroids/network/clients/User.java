@@ -102,10 +102,6 @@ public class User implements Runnable, GameUpdateListener {
     }
 
 
-    private void resetDeltas() {
-        game.resetObjMap();
-    }
-
     public synchronized void send(GameplayDeltas data) {
         game.setUserSerializing(true);
         io.updateOutPackage(data);

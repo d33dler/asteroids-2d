@@ -51,7 +51,7 @@ public class GameUpdater implements Runnable {
     /**
      * The number of ticks between asteroid spawns
      */
-    private static final int ASTEROID_SPAWN_RATE = 200; // -> 200
+    private static final int ASTEROID_SPAWN_RATE = 1000; // -> 200
 
     /**
      * The game that this updater works for.
@@ -133,7 +133,6 @@ public class GameUpdater implements Runnable {
      * Also, every 200 game ticks, if possible, a new random asteroid is added to the game.
      */
     private void updatePhysics() {
-
         game.rendererDeepCloner.loadCache();
         Spaceship ship = game.getSpaceShip();
         Collection<Bullet> bullets = game.getBullets();
@@ -146,15 +145,16 @@ public class GameUpdater implements Runnable {
 
         generateBullet(ship,bullets);
         game.getPlayers().values().forEach(o -> generateBullet(o,bullets));
-          //  System.out.println("PHYSICS ON");
-        //checkCollisions();
+        checkCollisions();
         removeDestroyedObjects();
 
         // Every 200 game ticks, try and spawn a new asteroid.
         if ((isOnlineHost || !online) && updateCounter % ASTEROID_SPAWN_RATE == 0 && asteroids.size() < asteroidsLimit) {
             addRandomAsteroid();
+
         }
         updateCounter++;
+        game.objectDeltaMapper.wakeup();
         game.rendererDeepCloner.wakeup();
     }
 
@@ -199,7 +199,7 @@ public class GameUpdater implements Runnable {
             randomSize = AsteroidSize.SMALL;
         }
         Asteroid a = new Asteroid(newAsteroidLocation, randomVelocity, randomSize);
-        game.getAsteroids().add(a);
+        game.getAsteroidsCache().add(a);
     }
 
     /**

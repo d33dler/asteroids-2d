@@ -56,10 +56,11 @@ public class Game extends ObservableGame {
     @Getter
     private Collection<Bullet> bulletCache;
     @Getter
-    private HashMap<String, Tuple.T2<HashSet<Integer>,double[]>> spaceshipCache;
+    @Setter
+    private HashMap<String, Tuple.T2<HashSet<Integer>, double[]>> spaceshipCache;
 
     /**
-     * Indicates whether or not the game is running. Setting this to false causes the game to exit its loop and quit.
+     * Indicates whether the game is running. Setting this to false causes the game to exit its loop and quit.
      */
     private volatile boolean running = false;
 
@@ -74,6 +75,7 @@ public class Game extends ObservableGame {
     @Getter
     private volatile boolean isUserSerializing = false;
 
+    private volatile boolean runProcesses = true;
     /**
      * The game updater thread, which is responsible for updating the game's state as time goes on.
      */
@@ -95,6 +97,7 @@ public class Game extends ObservableGame {
     private static final int EXIT_TIMEOUT_MILLIS = 100;
 
     public RendererDeepCloner rendererDeepCloner = new RendererDeepCloner();
+    public ObjectDeltaMapper objectDeltaMapper = new ObjectDeltaMapper();
     @Setter
     private ViewController viewController;
 
@@ -122,6 +125,7 @@ public class Game extends ObservableGame {
         asteroids = new ArrayList<>();
         players = new HashMap<>();
         new Thread(rendererDeepCloner).start();
+        new Thread(objectDeltaMapper).start();
         spaceShip.reset();
     }
 
@@ -215,6 +219,7 @@ public class Game extends ObservableGame {
             try {
                 // Attempt to wait for the game updater to exit its game loop.
                 gameUpdaterThread.join(EXIT_TIMEOUT_MILLIS);
+
                 if (user != null) {
                     user.join(EXIT_TIMEOUT_MILLIS);
                 }
@@ -223,16 +228,13 @@ public class Game extends ObservableGame {
             } finally {
                 listeners.forEach(GameUpdateListener::onGameExit);
                 running = false;
+                runProcesses = false;
                 // Throw away the game updater thread and let the GC remove it.
                 gameUpdaterThread = null;
                 user = null;
 
             }
         }
-    }
-
-    public void resetObjMap() {
-        asteroidsCache.clear();
     }
 
 
@@ -242,16 +244,17 @@ public class Game extends ObservableGame {
         @Getter
         public Collection<GameObject> clonedObjects = new ArrayList<>();
 
-        public boolean cycleDone = false;
+        public volatile boolean cycleDone = false;
+
         @Override
         public synchronized void run() {
             recloneAll();
         }
-        private synchronized void recloneAll() {
 
+        private synchronized void recloneAll() {
             while (true) {
                 cycleDone = false;
-                clonedObjects = new ArrayList<>();
+                clonedObjects.clear();
                 reclone(bullets);
                 reclone(asteroids);
                 reclone(players.values());
@@ -263,31 +266,72 @@ public class Game extends ObservableGame {
                 }
             }
         }
+
         private synchronized void reclone(Collection<? extends GameObject> c) {
             for (GameObject origin : c) {
                 clonedObjects.add(origin.clone());
             }
         }
+
         public synchronized void wakeup() {
             this.notify();
         }
+
         public synchronized void loadCache() {
-            for (Map.Entry<String,Tuple.T2<HashSet<Integer>,double[]> > entry : spaceshipCache.entrySet()) {
+            for (Map.Entry<String, Tuple.T2<HashSet<Integer>, double[]>> entry : spaceshipCache.entrySet()) {
                 String s = entry.getKey();
-                Tuple.T2<HashSet<Integer>,double[]> keySet = entry.getValue();
-                if(players.containsKey(s)){
+                Tuple.T2<HashSet<Integer>, double[]> keySet = entry.getValue();
+                if (players.containsKey(s)) {
                     Spaceship ship = players.get(s);
                     ship.setKeyEventSet(keySet.a);
                     ship.updateParameters(keySet.b);
-                } else{
-                    players.put(s, new Spaceship(s,true));
+                } else {
+                    players.put(s, new Spaceship(s, true));
                 }
-
             }
+            asteroids.addAll(asteroidsCache);
+            asteroidsCache.clear();
             spaceshipCache.clear();
         }
 
     }
+
+    public class ObjectDeltaMapper implements Runnable {
+        public List<Tuple.T2<String, List<double[]>>> mappedObjects = new ArrayList<>();
+        public volatile boolean cycleDone = false;
+
+        @Override
+        public void run() {
+            remapAll();
+        }
+
+        private synchronized void remapAll() {
+            while (true) {
+                cycleDone = false;
+                mappedObjects.clear();
+                remap(Asteroid.OBJECT_ID, asteroids);
+                cycleDone = true;
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        private void remap(String objId, Collection<? extends GameObject> collection) {
+            List<double[]> mappedCollection = new ArrayList<>();
+            for (GameObject object : collection) {
+                mappedCollection.add(object.getObjParameters());
+            }
+            mappedObjects.add(new Tuple.T2<>(objId, mappedCollection));
+        }
+
+        public synchronized void wakeup() {
+            this.notify();
+        }
+    }
+
 
     public void setUSER_ID(String USER_ID) {
         spaceShip.setNickId(USER_ID);

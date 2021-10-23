@@ -31,21 +31,19 @@ public class DeltaProcessor implements DeltaManager {
     }
 
     private void collectPlayers(List<Tuple.T3<String, HashSet<Integer>, double[]>> playerKeySets) {
-        for (Tuple.T3<String, HashSet<Integer>,double[]> playerKeySet : playerKeySets) {
-            factory.createNewObject(playerKeySet,"spaceship" );
-        }
+        factory.updateAllActiveObjects("spaceship", playerKeySets);
     }
 
-    private void collectPlayer(Tuple.T3<String, HashSet<Integer>,double[]> playerKeySet) {
-        factory.createNewObject(playerKeySet, "spaceship" );
+    private void collectPlayer(Tuple.T3<String, HashSet<Integer>, double[]> playerKeySet) {
+        factory.updateActiveObject("spaceship", playerKeySet);
     }
 
-    private void updateObjects(List<? extends GameObject> objectVectors) {
-          game.setAsteroids((List<Asteroid>) objectVectors);
+    private void updateObjects(List<Tuple.T2<String, List<double[]>>> objectVectors) {
+        factory.updatePassiveObjects(objectVectors);
     }
 
-    public Tuple.T3<String, HashSet<Integer>,double[]> getPlayerKeyEvents() {
-        return new Tuple.T3<>(user.USER_ID, game.getSpaceShip().getKeyEventSet(),game.getSpaceShip().getObjParameters());
+    public Tuple.T3<String, HashSet<Integer>, double[]> getPlayerKeyEvents() {
+        return new Tuple.T3<>(user.USER_ID, game.getSpaceShip().getKeyEventSet(), game.getSpaceShip().getObjParameters());
     }
 
     public List<Tuple.T3<String, HashSet<Integer>, double[]>> getAllPlayersKeyEvents() {
@@ -56,8 +54,8 @@ public class DeltaProcessor implements DeltaManager {
     }
 
     public byte[] getHostDeltas() {
-        List<GameObject> objectList = new ArrayList<>(game.getAsteroids());
-        List<Tuple.T3<String, HashSet<Integer>,double[]>> keyEventList = getAllPlayersKeyEvents();
+        List<Tuple.T2<String, List<double[]>>> objectList = new ArrayList<>(game.objectDeltaMapper.mappedObjects);
+        List<Tuple.T3<String, HashSet<Integer>, double[]>> keyEventList = getAllPlayersKeyEvents();
         return SerializationUtils.serialize(
                 new GameplayDeltas(System.currentTimeMillis(), keyEventList, objectList));
     }

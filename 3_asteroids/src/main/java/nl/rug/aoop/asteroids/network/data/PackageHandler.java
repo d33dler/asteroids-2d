@@ -5,16 +5,15 @@ import lombok.Setter;
 import lombok.extern.java.Log;
 import nl.rug.aoop.asteroids.network.data.deltas_changes.ConfigData;
 import nl.rug.aoop.asteroids.network.data.types.DeltasData;
-import org.apache.commons.lang3.SerializationException;
 import org.apache.commons.lang3.SerializationUtils;
 
-import java.io.EOFException;
 import java.net.InetAddress;
 
-@Log
+
 /**
  * PackageHolder class : (uses Decorator pattern)
  */
+@Log
 public class PackageHandler {
 
     @Getter

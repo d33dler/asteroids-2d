@@ -65,7 +65,7 @@ public class ClientConnection implements HostListener, Runnable {
                 io.receive();
                 hostingDevice.addNewDelta(clientID, io.getLastDataPackage().getData());
                 try {
-                    wait(LATENCY_ms);
+                    wait(1);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -78,7 +78,7 @@ public class ClientConnection implements HostListener, Runnable {
             if (hostingDevice.updateReady()) {
                 fireUpdate(hostingDevice.getLastDeltas());
                 try {
-                    wait(INTERVAL_ms);
+                    wait(10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
