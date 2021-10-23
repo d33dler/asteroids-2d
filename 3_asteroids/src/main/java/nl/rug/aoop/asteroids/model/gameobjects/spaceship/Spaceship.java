@@ -359,6 +359,7 @@ public class Spaceship extends GameObject {
     public GameObject clone() {
         Spaceship sh = new Spaceship(getLocation().x, getLocation().y, getVelocity().x, getVelocity().y);
         sh.setDirection(direction);
+        sh.setAccelerateKeyPressed(accelerateKeyPressed);
         sh.setFiring(isFiring);
         return sh;
     }

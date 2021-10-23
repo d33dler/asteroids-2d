@@ -134,7 +134,7 @@ public class User implements Runnable, GameUpdateListener {
                     receive();
                     updateGame();
                     try {
-                        wait(15);
+                        wait(1);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -151,7 +151,7 @@ public class User implements Runnable, GameUpdateListener {
                 send(new GameplayDeltas(System.currentTimeMillis(),
                         multiplayerManager.getDeltaManager().getPlayerKeyEvents()));
                 try {
-                    wait(15);
+                    wait(1);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
