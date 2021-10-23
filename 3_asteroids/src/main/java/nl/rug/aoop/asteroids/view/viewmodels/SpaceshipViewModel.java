@@ -1,5 +1,6 @@
 package nl.rug.aoop.asteroids.view.viewmodels;
 
+import nl.rug.aoop.asteroids.model.gameobjects.GameObject;
 import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
 import nl.rug.aoop.asteroids.util.PolarCoordinate;
 
@@ -58,6 +59,8 @@ public class SpaceshipViewModel extends GameObjectViewModel<Spaceship> {
         graphics2D.fill(spaceshipMainBody);
         graphics2D.setColor(Color.WHITE);
         graphics2D.draw(spaceshipMainBody);
+        Spaceship o = getGameObject();
+        graphics2D.drawString(o.getNickId(), (int) o.getLocation().x + 20, (int) o.getLocation().y - 10);
     }
 
     /**

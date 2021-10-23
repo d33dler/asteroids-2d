@@ -56,7 +56,8 @@ public class AsteroidsFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Add a key listener that can control the game's spaceship.
-        playerKeyListener = new PlayerKeyListener(game.getSpaceShip());
+        playerKeyListener = new PlayerKeyListener(game, game.getSpaceShip());
+
         addKeyListener(playerKeyListener);
 
         // Add a menu bar with some simple actions.
@@ -81,7 +82,7 @@ public class AsteroidsFrame extends JFrame {
 
     private void resetPlayerKeyListener() {
         removeKeyListener(playerKeyListener);
-        playerKeyListener = new PlayerKeyListener(game.getSpaceShip());
+        playerKeyListener = new PlayerKeyListener(game, game.getSpaceShip());
         addKeyListener(playerKeyListener);
     }
 

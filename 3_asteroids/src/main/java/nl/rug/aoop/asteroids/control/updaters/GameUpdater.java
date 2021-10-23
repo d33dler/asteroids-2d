@@ -1,18 +1,16 @@
 package nl.rug.aoop.asteroids.control.updaters;
 
-import lombok.SneakyThrows;
 import nl.rug.aoop.asteroids.control.ViewController;
-import nl.rug.aoop.asteroids.model.*;
+import nl.rug.aoop.asteroids.model.AsteroidSize;
+import nl.rug.aoop.asteroids.model.Game;
+import nl.rug.aoop.asteroids.model.gameobjects.GameObject;
 import nl.rug.aoop.asteroids.model.gameobjects.asteroid.Asteroid;
 import nl.rug.aoop.asteroids.model.gameobjects.bullet.Bullet;
-import nl.rug.aoop.asteroids.model.gameobjects.GameObject;
 import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 
@@ -53,7 +51,7 @@ public class GameUpdater implements Runnable {
     /**
      * The number of ticks between asteroid spawns
      */
-    private static final int ASTEROID_SPAWN_RATE = 300; // -> 200
+    private static final int ASTEROID_SPAWN_RATE = 1000; // -> 200
 
     /**
      * The game that this updater works for.
@@ -142,10 +140,25 @@ public class GameUpdater implements Runnable {
         Collection<Asteroid> asteroids = game.getAsteroids();
 
         ship.nextStep();
-
+        game.getPlayers().values().forEach(Spaceship::nextStep);
         asteroids.forEach(GameObject::nextStep);
         bullets.forEach(GameObject::nextStep);
-        game.getPlayers().values().forEach(GameObject::nextStep);
+
+        generateBullet(ship,bullets);
+        game.getPlayers().values().forEach(o -> generateBullet(o,bullets));
+          //  System.out.println("PHYSICS ON");
+        //checkCollisions();
+        removeDestroyedObjects();
+
+        // Every 200 game ticks, try and spawn a new asteroid.
+        if ((isOnlineHost || !online) && updateCounter % ASTEROID_SPAWN_RATE == 0 && asteroids.size() < asteroidsLimit) {
+            addRandomAsteroid();
+        }
+        updateCounter++;
+        game.rendererDeepCloner.wakeup();
+    }
+
+    private void generateBullet(Spaceship ship, Collection<Bullet> bullets){
 
         if (ship.canFireWeapon()) {
             double direction = ship.getDirection();
@@ -159,15 +172,6 @@ public class GameUpdater implements Runnable {
             ship.setFired();
         }
 
-        checkCollisions();
-        removeDestroyedObjects();
-
-        // Every 200 game ticks, try and spawn a new asteroid.
-        if ((isOnlineHost || !online) && updateCounter % ASTEROID_SPAWN_RATE == 0 && asteroids.size() < asteroidsLimit) {
-            addRandomAsteroid();
-        }
-        updateCounter++;
-        game.rendererDeepCloner.wakeup();
     }
 
     /**

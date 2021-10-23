@@ -35,10 +35,13 @@ public class ReflectionUtils {
 
     public static HashMap<Integer, Field> getKeyInputFields(Class<?> c) {
         HashMap<Integer, Field> map = new HashMap<>();
-        Set<Field> fields = new Reflections(c).getFieldsAnnotatedWith(KeyInput.class);
+        Field[] fields = c.getDeclaredFields();
         for (Field f : fields) {
-            KeyInput param = f.getAnnotation(KeyInput.class);
-            map.put(param.id(), f);
+            if(f.isAnnotationPresent(KeyInput.class)){
+                KeyInput param = f.getAnnotation(KeyInput.class);
+                map.put(param.id(), f);
+            }
+
         }
         return map;
     }

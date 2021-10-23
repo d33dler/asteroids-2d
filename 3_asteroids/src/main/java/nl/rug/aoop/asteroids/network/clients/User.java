@@ -15,6 +15,7 @@ import nl.rug.aoop.asteroids.network.data.deltas_changes.GameplayDeltas;
 import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
 import nl.rug.aoop.asteroids.network.protocol.DefaultHandshake;
 import nl.rug.aoop.asteroids.network.protocol.IOProtocol;
+import nl.rug.aoop.asteroids.util.Randomizer;
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.awt.*;
@@ -38,6 +39,7 @@ public class User implements Runnable, GameUpdateListener {
     private MultiplayerManager multiplayerManager;
     private Game game;
 
+    private final Randomizer randomizer = new Randomizer(6);
     public String USER_ID = "host";
 
 
@@ -109,7 +111,6 @@ public class User implements Runnable, GameUpdateListener {
         io.updateOutPackage(data);
         game.setUserSerializing(false);
         io.send();
-        //resetDeltas();
     }
 
     public void receive() {
@@ -126,34 +127,37 @@ public class User implements Runnable, GameUpdateListener {
 
     private class Consumer implements Runnable {
 
-        @SneakyThrows
         @Override
         public synchronized void run() {
-            while (isConnected()) {
+            while (isConnected() && !game.isGameOver()) {
                 if (!game.isEngineBusy()) {
                     receive();
                     updateGame();
-                    wait(10);
+                    try {
+                        wait(15);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
 
     }
-
+    @SneakyThrows
     @Override
     public synchronized void run() {
-        while (isConnected()) {
+        while (isConnected() && !game.isGameOver()) {
             if (!game.isEngineBusy()) {
                 send(new GameplayDeltas(System.currentTimeMillis(),
                         multiplayerManager.getDeltaManager().getPlayerKeyEvents()));
                 try {
-                    wait(20);
+                    wait(15);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         }
-        System.out.println("CONSUMER DIED");
+
     }
 
 
@@ -162,7 +166,5 @@ public class User implements Runnable, GameUpdateListener {
     public void onGameExit() {
         clientConsumerThread.join();
     }
-
-
 
 }

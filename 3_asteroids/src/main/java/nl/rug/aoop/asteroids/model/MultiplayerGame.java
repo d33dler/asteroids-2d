@@ -21,7 +21,7 @@ public class MultiplayerGame implements MultiplayerManager, GameUpdateListener {
     @Getter
     private Game game;
     @Getter
-    private HostingDevice hostingDevice;
+    private HostingDevice hostingDevice = null;
     @Getter
     private DeltaManager deltaManager;
 
@@ -37,11 +37,11 @@ public class MultiplayerGame implements MultiplayerManager, GameUpdateListener {
 
     public static MultiplayerManager multiplayerClient(Game game, User user) {
         MultiplayerGame multiplayerManager = new MultiplayerGame(game, user);
-        return new MultiplayerGame(game,user);
+        return multiplayerManager;
     }
 
-    public static MultiplayerManager multiplayerServer(Game game, User user, InetAddress address){
-        MultiplayerGame multiplayerManager = new MultiplayerGame(game,user);
+    public static MultiplayerManager multiplayerServer(Game game, User user, InetAddress address) {
+        MultiplayerGame multiplayerManager = new MultiplayerGame(game, user);
         multiplayerManager.launchAsHost(address);
         return multiplayerManager;
     }
@@ -50,13 +50,13 @@ public class MultiplayerGame implements MultiplayerManager, GameUpdateListener {
     private void launchAsSpectator() {
     }
 
-    private void launchAsHost(InetAddress address){
+    private void launchAsHost(InetAddress address) {
         initHostingDevice(address);
     }
 
 
-    private void initHostingDevice(InetAddress address){
-        hostingDevice = new HostingServer(this,address ) ;
+    private void initHostingDevice(InetAddress address) {
+        hostingDevice = new HostingServer(this, address);
         hostingDeviceThread = new Thread((Runnable) hostingDevice);
         hostingDeviceThread.start();
     }
@@ -80,9 +80,12 @@ public class MultiplayerGame implements MultiplayerManager, GameUpdateListener {
     @SneakyThrows
     @Override
     public void onGameExit() {
-        hostingDevice.shutdown();
+        if (hostingDevice != null) {
+            hostingDevice.shutdown();
+            hostingDevice = null;
+        }
         hostingDeviceThread.join(100);
         deltaManager = null;
-        hostingDevice = null;
+
     }
 }

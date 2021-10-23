@@ -43,7 +43,7 @@ public class ClientConnection implements HostListener, Runnable {
 
     @Override
     public void run() {
-        consumerThread = new Thread(new Consumer(parameters.LAT_SERVER_millis));
+        consumerThread = new Thread(new Consumer(15));
         consumerThread.start();
         initFlux();
     }

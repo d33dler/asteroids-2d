@@ -1,6 +1,8 @@
 package nl.rug.aoop.asteroids.control;
 
+import nl.rug.aoop.asteroids.model.Game;
 import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
+import nl.rug.aoop.asteroids.network.clients.User;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -33,15 +35,16 @@ public class PlayerKeyListener implements KeyListener {
      * The spaceship that will respond to key events caught by this listener.
      */
     private final Spaceship ship;
+    private final Game game;
 
     /**
      * Constructs a new player key listener to control the given ship.
      *
      * @param ship The ship that this key listener will control.
      */
-    public PlayerKeyListener(Spaceship ship) {
+    public PlayerKeyListener(Game game, Spaceship ship) {
         this.ship = ship;
-
+        this.game = game;
     }
 
     /**
@@ -69,6 +72,7 @@ public class PlayerKeyListener implements KeyListener {
                 ship.getKeyEventSet().add(FIRE_WEAPON_KEY);
             }
         }
+        //game.getUser().resend();
     }
 
     /**

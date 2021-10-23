@@ -11,16 +11,9 @@ public class SpaceshipMaker implements FactoryCommand {
 
     @Override
     public void updateActiveObject(Game game, String id, HashSet<Integer> params) {
-        if (game.getPlayers().containsKey(id)) {
-            game.getPlayers().get(id).setKeyEventSet(params);
-            System.out.println("ALREADY IS THERE?");
-        } else {
-            if (!id.equals(game.getUSER_ID())) {
-                Spaceship s = new Spaceship();
-                System.out.println("CREATED NEW SPACESHIP!");
-                s.setKeyEventSet(params);
-                game.getSpaceshipCache().put(id,s);
-            }
+        if (!id.equals(game.getUSER_ID())) {
+            game.getSpaceshipCache().put(id, params);
         }
     }
 }
+

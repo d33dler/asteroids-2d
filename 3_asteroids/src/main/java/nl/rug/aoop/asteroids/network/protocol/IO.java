@@ -36,8 +36,6 @@ public class IO implements IOProtocol {
         }
     }
     public void send(byte[] data) {
-        System.out.println("Sending length :" + data.length);
-        System.out.println("Sending to : " + packageHandler.getInet() + "  , " + packageHandler.getPort());
         DatagramPacket packet = new DatagramPacket(data, data.length, packageHandler.getInet(), packageHandler.getPort());
         try {
             socket.send(packet);
@@ -49,15 +47,9 @@ public class IO implements IOProtocol {
     public void receive() {
         byte[] data = new byte[length];
         DatagramPacket packet = new DatagramPacket(data, data.length);
-            System.out.println("WAITING for data?");
         try {
             socket.receive(packet);
             packageHandler.updateInDataPackage(packet.getData());  //TODO verify
-             System.out.println("RECEIVED NEW DATA +" + SerializationUtils.serialize(packageHandler.getInPackage().getData()).length );
-            GameplayDeltas deltas = (GameplayDeltas) packageHandler.getInPackage().getData();
-            if(deltas.objectList!=null){
-                System.out.println("OBJ list size ==" + deltas.objectList.size()) ;
-            }
         } catch (IOException e) {
             e.printStackTrace();
         }

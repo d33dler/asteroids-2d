@@ -1,5 +1,7 @@
 package nl.rug.aoop.asteroids.model.gameobjects.spaceship;
 
+import lombok.SneakyThrows;
+import nl.rug.aoop.asteroids.control.PlayerKeyListener;
 import nl.rug.aoop.asteroids.model.gameobjects.GameObject;
 import nl.rug.aoop.asteroids.model.gameobjects.KeyInput;
 import nl.rug.aoop.asteroids.util.ReflectionUtils;
@@ -143,11 +145,14 @@ public class Spaceship extends GameObject {
     private boolean turnLeftKeyPressed;
 
     @Getter
-    @Setter
     private HashSet<Integer> keyEventSet = new HashSet<>();
 
     private final HashMap<Integer, Field> inputFields = ReflectionUtils.getKeyInputFields(this.getClass());
+    @Getter
+    @Setter
+    private PlayerKeyListener keyListener;
 
+    private boolean online = false;
     /**
      * Constructs a new spaceship with default values. It starts in the middle of the window, facing directly upwards,
      * with no velocity.
@@ -156,12 +161,20 @@ public class Spaceship extends GameObject {
         super(AsteroidsFrame.WINDOW_SIZE.width / 2, AsteroidsFrame.WINDOW_SIZE.height / 2,
                 0, 0, SHIP_SIZE);
         reset();
+    }
 
+    public Spaceship(String nick) {
+        this();
+        setNickId(nick);
+    }
+    public Spaceship(String nick, boolean online) {
+        this();
+        setNickId(nick);
+        this.online = online;
     }
 
     public Spaceship(double locationX, double locationY, double velocityX, double velocityY) {
         super(locationX, locationY, velocityX, velocityY, SHIP_SIZE);
-        reset();
     }
 
     /**
@@ -197,14 +210,16 @@ public class Spaceship extends GameObject {
         rechargeEnergy();
     }
 
+    @SneakyThrows
     public synchronized void setKeyEventSet(HashSet<Integer> keyEventSet) {
         this.keyEventSet = keyEventSet;
-        for (Integer keyEvent : keyEventSet) {
-            try {
-                inputFields.get(keyEvent).set(this,true);
-                System.out.println("NEW KEY WAS SET : " + keyEvent);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+        for (Map.Entry<Integer, Field> entry : inputFields.entrySet()) {
+            Integer integer = entry.getKey();
+            Field field = entry.getValue();
+            if (keyEventSet.contains(integer)) {
+                field.set(this, true);
+            } else {
+                field.set(this, false);
             }
         }
     }
@@ -241,12 +256,19 @@ public class Spaceship extends GameObject {
      * have enough energy, and finally, the ship must not exceed its maximum set speed.
      */
     private void attemptToAccelerate() {
-        if (accelerateKeyPressed && energy >= ACCELERATION_ENERGY_COST && getSpeed() < MAXIMUM_SPEED) {
-            getVelocity().x += Math.sin(direction) * ACCELERATION_PER_TICK;
-            // Note that we subtract here, because the y-axis on the screen is flipped, compared to normal math.
-            getVelocity().y -= Math.cos(direction) * ACCELERATION_PER_TICK;
-            energy -= ACCELERATION_ENERGY_COST;
+        if (accelerateKeyPressed && ((energy >= ACCELERATION_ENERGY_COST && getSpeed() < MAXIMUM_SPEED) || online)){
+           accelerate();
+           if(online) {
+               System.out.println("ONLINE OBJ IS ACCELERATING");
+           }
         }
+    }
+
+    private void accelerate() {
+        getVelocity().x += Math.sin(direction) * ACCELERATION_PER_TICK;
+        // Note that we subtract here, because the y-axis on the screen is flipped, compared to normal math.
+        getVelocity().y -= Math.cos(direction) * ACCELERATION_PER_TICK;
+        energy -= ACCELERATION_ENERGY_COST;
     }
 
     /**

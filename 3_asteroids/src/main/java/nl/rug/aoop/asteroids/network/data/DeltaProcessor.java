@@ -31,14 +31,13 @@ public class DeltaProcessor implements DeltaManager {
     }
 
     private void collectPlayers(List<Tuple.T2<String, HashSet<Integer>>> playerKeySets) {
-        System.out.println("LIST SIZE = " + playerKeySets.size());
         for (Tuple.T2<String, HashSet<Integer>> playerKeySet : playerKeySets) {
-            factory.createNewObject(playerKeySet.a, playerKeySet.b);
+            factory.createNewObject(playerKeySet.a, playerKeySet.b,"spaceship" );
         }
     }
 
     private void collectPlayer(Tuple.T2<String, HashSet<Integer>> playerKeySet) {
-        factory.createNewObject(playerKeySet.a, playerKeySet.b);
+        factory.createNewObject(playerKeySet.a, playerKeySet.b, "spaceship" );
     }
 
     private void updateObjects(List<? extends GameObject> objectVectors) {
@@ -52,7 +51,7 @@ public class DeltaProcessor implements DeltaManager {
     public List<Tuple.T2<String, HashSet<Integer>>> getAllPlayersKeyEvents() {
         List<Tuple.T2<String, HashSet<Integer>>> keyList = new ArrayList<>();
         game.getPlayers().forEach((s, spaceship) -> keyList.add(new Tuple.T2<>(s, spaceship.getKeyEventSet())));
-        keyList.add(new Tuple.T2<>(user.USER_ID, game.getSpaceShip().getKeyEventSet()));
+        keyList.add(getPlayerKeyEvents());
         return keyList;
     }
 

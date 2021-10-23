@@ -24,12 +24,13 @@ public class GeneralObjectsFactory implements GameObjectFactory, GameUpdateListe
     }
 
     @Override
-    public void createNewObject(String id, HashSet<Integer> params) {
-        FactoryCommand command = objFactoryMap.get(id);
+    public void createNewObject(String id, HashSet<Integer> params, String objId) {
+        FactoryCommand command = objFactoryMap.get(objId);
         if (command != null) {
             while (true){
-                if(!game.isEngineBusy()){
+                if(!game.isEngineBusy() && game.rendererDeepCloner.cycleDone){
                     command.updateActiveObject(game, id, params);
+                    break;
                 }
             }
         }

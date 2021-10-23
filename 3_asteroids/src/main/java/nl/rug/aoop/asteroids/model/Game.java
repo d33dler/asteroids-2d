@@ -1,6 +1,5 @@
 package nl.rug.aoop.asteroids.model;
 
-import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,7 +14,6 @@ import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
 import nl.rug.aoop.asteroids.model.obj_factory.GameObjectFactory;
 import nl.rug.aoop.asteroids.model.obj_factory.GeneralObjectsFactory;
 import nl.rug.aoop.asteroids.network.clients.User;
-import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
 import nl.rug.aoop.asteroids.util.database.DatabaseManager;
 
 import java.net.InetAddress;
@@ -57,7 +55,7 @@ public class Game extends ObservableGame {
     @Getter
     private Collection<Bullet> bulletCache;
     @Getter
-    private HashMap<String, Spaceship> spaceshipCache;
+    private HashMap<String, HashSet<Integer>> spaceshipCache;
 
     /**
      * Indicates whether or not the game is running. Setting this to false causes the game to exit its loop and quit.
@@ -98,16 +96,15 @@ public class Game extends ObservableGame {
     public RendererDeepCloner rendererDeepCloner = new RendererDeepCloner();
     @Setter
     private ViewController viewController;
-    @Setter
-    @Getter
-    private String USER_ID = "neo";
 
+    @Getter
+    private String USER_ID = "host";
 
     /**
      * Constructs a new game, with a new spaceship and all other model data in its default starting state.
      */
     public Game() {
-        spaceShip = new Spaceship();
+        spaceShip = new Spaceship(USER_ID);
         initializeGameData();
         //dbManager = new DatabaseManager("prod");
     }
@@ -177,7 +174,6 @@ public class Game extends ObservableGame {
     public void initMultiplayerAsHost(InetAddress address) {
         initDefaultFactory(); //TODO command pattern
         user = new Thread(User.newHostUser(this, address));
-        //TODO move all obj creation to factory?
     }
 
     private void initDefaultFactory() {
@@ -244,6 +240,7 @@ public class Game extends ObservableGame {
 
         @Getter
         public Collection<GameObject> clonedObjects = new ArrayList<>();
+
         public boolean cycleDone = false;
         @Override
         public synchronized void run() {
@@ -273,14 +270,25 @@ public class Game extends ObservableGame {
         public synchronized void wakeup() {
             this.notify();
         }
-
         public synchronized void loadCache() {
-            bullets.addAll(bulletCache);
-            //asteroids.addAll(asteroidsCache);
-            players.putAll(spaceshipCache);
-            bulletCache.clear();
-            asteroidsCache.clear();
+            for (Map.Entry<String, HashSet<Integer>> entry : spaceshipCache.entrySet()) {
+                String s = entry.getKey();
+                HashSet<Integer> keySet = entry.getValue();
+                if(players.containsKey(s)){
+                    System.out.println("UPDATED PLAYER KEYSET");
+                    players.get(s).setKeyEventSet(keySet);
+                } else{
+                    players.put(s, new Spaceship(s,true));
+                }
+
+            }
+            spaceshipCache.clear();
         }
+
     }
 
+    public void setUSER_ID(String USER_ID) {
+        spaceShip.setNickId(USER_ID);
+        this.USER_ID = USER_ID;
+    }
 }

@@ -1,5 +1,6 @@
 package nl.rug.aoop.asteroids.model.gameobjects;
 
+import lombok.Setter;
 import nl.rug.aoop.asteroids.view.AsteroidsFrame;
 import lombok.Getter;
 import nl.rug.aoop.asteroids.view.viewmodels.GameObjectViewModel;
@@ -46,6 +47,10 @@ public abstract class GameObject implements Cloneable , Serializable {
      * can also be thought of as a grace period, or temporary immunity.
      */
     private int stepsUntilCollisionPossible;
+
+    @Setter
+    @Getter
+    private String nickId = getObjectId();
 
     /**
      * Constructs a new game object with the specified location, velocity and radius.
