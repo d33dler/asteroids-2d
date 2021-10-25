@@ -1,5 +1,6 @@
 package nl.rug.aoop.asteroids.view;
 
+import lombok.Getter;
 import lombok.Setter;
 import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.control.actions.NewGameAction;
@@ -7,10 +8,12 @@ import nl.rug.aoop.asteroids.control.PlayerKeyListener;
 import nl.rug.aoop.asteroids.control.actions.QuitAction;
 import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
 import nl.rug.aoop.asteroids.model.Game;
+import nl.rug.aoop.asteroids.view.panels.SpecialComponent;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.Set;
 
 /**
@@ -37,6 +40,7 @@ public class AsteroidsFrame extends JFrame {
 
     private PlayerKeyListener playerKeyListener;
 
+
     /**
      * Constructs the game's main window.
      *
@@ -59,7 +63,7 @@ public class AsteroidsFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Add a key listener that can control the game's spaceship.
-        playerKeyListener = new PlayerKeyListener(game, game.getSpaceShip());
+        playerKeyListener = new PlayerKeyListener(game, viewController, game.getSpaceShip());
 
         addKeyListener(playerKeyListener);
 
@@ -87,8 +91,9 @@ public class AsteroidsFrame extends JFrame {
 
     private void resetPlayerKeyListener() {
         removeKeyListener(playerKeyListener);
-        playerKeyListener = new PlayerKeyListener(game, game.getSpaceShip());
+        playerKeyListener = new PlayerKeyListener(game, viewController, game.getSpaceShip());
         addKeyListener(playerKeyListener);
     }
 
 }
+

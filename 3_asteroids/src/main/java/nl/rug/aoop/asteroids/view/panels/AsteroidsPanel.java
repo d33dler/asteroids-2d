@@ -1,14 +1,19 @@
 package nl.rug.aoop.asteroids.view.panels;
 
+import lombok.Getter;
+import lombok.Setter;
+import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
 import nl.rug.aoop.asteroids.model.Game;
 import nl.rug.aoop.asteroids.model.gameobjects.gameui.InteractionHud;
-import nl.rug.aoop.asteroids.view.viewmodels.AsteroidViewModel;
-import nl.rug.aoop.asteroids.view.viewmodels.BulletViewModel;
-import nl.rug.aoop.asteroids.view.viewmodels.SpaceshipViewModel;
+import nl.rug.aoop.asteroids.view.menus.pause_menu.PauseMenu;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ConcurrentModificationException;
 
 /**
@@ -35,6 +40,12 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
     private long timeSinceLastTick = 0L;
 
     private InteractionHud interactionHud;
+    @Setter
+    private boolean paused = false;
+    private final static String PAUSE_BG = "images/pause_bg.png";
+    private BufferedImage pauseImg;
+
+    private ViewController viewController;
 
     /**
      * Constructs a new game panel, based on the given model. Also starts listening to the game to check for updates, so
@@ -42,10 +53,20 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
      *
      * @param game The model which will be drawn in this panel.
      */
-    public AsteroidsPanel(Game game) {
+    public AsteroidsPanel(ViewController controller, Game game) {
+        this.viewController = controller;
         this.game = game;
         this.interactionHud = new InteractionHud(game);
         game.addListener(this);
+        loadPauseBg();
+    }
+
+    private void loadPauseBg() {
+        try {
+            pauseImg = ImageIO.read(Path.of(PAUSE_BG).toFile());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -69,9 +90,11 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         // Since the game takes place in space, it is efficient to just lazily make the background black.
         setBackground(Color.BLACK);
-
         drawGameObjects(graphics2D);
         drawShipInformation(graphics2D);
+        if (paused) {
+            paintPauseMenu(graphics2D);
+        }
     }
 
     /**
@@ -103,20 +126,27 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
             if (!game.isGameOver()) {
                 game.setDrawingDone(false);
                 while (true) {
-                    if (game.rendererDeepCloner.cycleDone ) {
+                    if (game.rendererDeepCloner.cycleDone) {
                         try {
                             game.rendererDeepCloner.clonedObjects
                                     .forEach(object
                                             -> object.getViewModel(object).drawObject(graphics2D, timeSinceLastTick));
                             game.setDrawingDone(true);
                             break;
-                        } catch (ConcurrentModificationException ignored){}
+                        } catch (ConcurrentModificationException ignored) {
+                        }
                     }
                 }
                 interactionHud.drawHud(graphics2D);
             }
         }
 
+    }
+
+
+    private void paintPauseMenu(Graphics2D graphics2D) {
+        graphics2D.drawImage(pauseImg, 0, 0, null);
+        viewController.getPMenu().paintOnCustomCanvas(graphics2D);
     }
 
     /**
@@ -132,6 +162,28 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
     public void onGameUpdated(long timeSinceLastTick) {
         this.timeSinceLastTick = timeSinceLastTick;
         repaint();
+    }
+
+
+    public final static Color blur_BG = new Color(0, 0, 0, 110);
+
+    public class GlassPane extends JPanel {
+
+        public GlassPane() {
+            this.setOpaque(false);
+            this.setBackground(blur_BG);
+        }
+
+
+        @Override
+        public final void paint(Graphics g) {
+            final Color old = blur_BG;
+            g.setColor(getBackground());
+            g.fillRect(0, 0, getSize().width, getSize().height);
+            g.setColor(old);
+            super.paintComponent(g);
+        }
+
     }
 
     @Override

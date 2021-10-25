@@ -5,6 +5,7 @@ import nl.rug.aoop.asteroids.control.menu_commands.MenuCommands;
 import nl.rug.aoop.asteroids.model.Game;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 
 @MenuCommands(id = "return")
@@ -18,7 +19,7 @@ public class ReturnCommand extends AbstractAction {
     }
 
     @Override
-    public void actionPerformed(ActionEvent actionEvent) {
+    public void actionPerformed(ActionEvent e) {
         manager.getGame().quit();
         Game newGame = new Game();
         manager.setGame(newGame);

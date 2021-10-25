@@ -31,9 +31,9 @@ public class InteractionHud {
             g.setColor(proxLine);
             g.drawOval((int) p.x, (int) p.y, 7, 7);
 
-            double max = Math.max(Math.min(255, 350 - diff), 0);
+            double diffVal = Math.max(Math.min(255, 370 - diff), 0);
 
-            g.setColor(new Color((int) max, (int) Math.max(Math.min(255, diff), 0), 0, (int) max));
+            g.setColor(new Color((int) diffVal, (int) Math.max(Math.min(255, diff), 0), 0, (int) diffVal));
             g.drawLine((int) p.x, (int) p.y, (int) ap.x, (int) ap.y);
             g.drawOval((int) ap.x, (int) ap.y, 7, 7);
 

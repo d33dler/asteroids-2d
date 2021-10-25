@@ -161,7 +161,7 @@ public class User implements Runnable, GameUpdateListener {
     @SneakyThrows
     @Override
     public void onGameExit() {
-        clientConsumerThread.join();
+        clientConsumerThread.join(100);
     }
 
 }

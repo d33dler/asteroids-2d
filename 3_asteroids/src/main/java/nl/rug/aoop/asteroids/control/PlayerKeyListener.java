@@ -4,6 +4,7 @@ import nl.rug.aoop.asteroids.model.Game;
 import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
 import nl.rug.aoop.asteroids.network.clients.User;
 
+import javax.swing.text.View;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -31,18 +32,21 @@ public class PlayerKeyListener implements KeyListener {
      */
     private static final int FIRE_WEAPON_KEY = KeyEvent.VK_SPACE;
 
+    public final static int pauseMenu = KeyEvent.VK_ESCAPE;
     /**
      * The spaceship that will respond to key events caught by this listener.
      */
     private final Spaceship ship;
     private final Game game;
+    private ViewController controller;
 
     /**
      * Constructs a new player key listener to control the given ship.
      *
      * @param ship The ship that this key listener will control.
      */
-    public PlayerKeyListener(Game game, Spaceship ship) {
+    public PlayerKeyListener(Game game, ViewController viewController, Spaceship ship) {
+        this.controller = viewController;
         this.ship = ship;
         this.game = game;
     }
@@ -71,8 +75,10 @@ public class PlayerKeyListener implements KeyListener {
                 ship.setFiring(true);
                 ship.getKeyEventSet().add(FIRE_WEAPON_KEY);
             }
+            case pauseMenu -> {
+                controller.requestPauseMenu();
+            }
         }
-        //game.getUser().resend();
     }
 
     /**
@@ -81,7 +87,7 @@ public class PlayerKeyListener implements KeyListener {
      * @param event Key event that triggered the method.
      */
     @Override
-    public void keyReleased(KeyEvent event) {
+    public void keyReleased(KeyEvent event) {           //TODO this is sloppy
         switch (event.getKeyCode()) {
             case ACCELERATION_KEY -> {
                 ship.setAccelerateKeyPressed(false);
@@ -110,5 +116,6 @@ public class PlayerKeyListener implements KeyListener {
      */
     @Override
     public void keyTyped(KeyEvent event) {
+
     }
 }

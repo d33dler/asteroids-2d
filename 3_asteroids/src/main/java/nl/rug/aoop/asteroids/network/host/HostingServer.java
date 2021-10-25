@@ -79,6 +79,7 @@ public class HostingServer implements HostingDevice, Runnable {
             e.printStackTrace();
         }
         hostingUserUpdater = null;
+        System.out.println("Got here");
         hostListeners.forEach(HostListener::disconnect);
         executorService.shutdown();
         System.out.println("closed server");

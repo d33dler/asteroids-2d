@@ -52,8 +52,4 @@ public class GeneralObjectsFactory implements GameObjectFactory, GameUpdateListe
 
     }
 
-    @Override
-    public void onGameExit() {
-        objFactoryMap = null;
-    }
 }

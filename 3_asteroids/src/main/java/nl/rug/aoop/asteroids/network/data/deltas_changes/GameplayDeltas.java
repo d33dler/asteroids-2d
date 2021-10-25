@@ -1,6 +1,5 @@
 package nl.rug.aoop.asteroids.network.data.deltas_changes;
 
-import nl.rug.aoop.asteroids.model.gameobjects.GameObject;
 import nl.rug.aoop.asteroids.network.data.types.DeltaManager;
 import nl.rug.aoop.asteroids.network.data.types.DeltasData;
 

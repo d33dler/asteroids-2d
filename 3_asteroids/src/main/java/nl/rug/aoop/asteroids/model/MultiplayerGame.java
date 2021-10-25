@@ -35,8 +35,7 @@ public class MultiplayerGame implements MultiplayerManager, GameUpdateListener {
 
 
     public static MultiplayerManager multiplayerClient(Game game, User user) {
-        MultiplayerGame multiplayerManager = new MultiplayerGame(game, user);
-        return multiplayerManager;
+        return new MultiplayerGame(game, user);
     }
 
     public static MultiplayerManager multiplayerServer(Game game, User user, InetAddress address) {
@@ -84,6 +83,6 @@ public class MultiplayerGame implements MultiplayerManager, GameUpdateListener {
             hostingDevice = null;
         }
         if (hostingDeviceThread != null) hostingDeviceThread.join(100);
-        deltaManager = null;
+        //deltaManager = null;
     }
 }

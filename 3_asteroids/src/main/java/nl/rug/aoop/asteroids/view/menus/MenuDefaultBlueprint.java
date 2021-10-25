@@ -82,13 +82,10 @@ public abstract class MenuDefaultBlueprint extends JPanel implements MouseListen
     protected void paintComponent(Graphics g) {
         this.g = g;
         g.drawImage(background, 0, 0, null);
-
         menuButtons.forEach(menuButtons -> menuButtons.refresh(g));
         g.setFont(labelFont);
         g.setColor(Color.WHITE);
-        labels.forEach(l -> {
-            g.drawString(l.a, l.b, l.c);
-        });
+        labels.forEach(l -> g.drawString(l.a, l.b, l.c));
     }
 
     @Override
@@ -105,7 +102,9 @@ public abstract class MenuDefaultBlueprint extends JPanel implements MouseListen
         repaint();
         revalidate();
     }
-
+    public synchronized void paintOnCustomCanvas(Graphics g) {
+         paintComponent(g);
+    }
 
     @Override
     public void mousePressed(MouseEvent e) {
