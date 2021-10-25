@@ -2,6 +2,7 @@ package nl.rug.aoop.asteroids.view.panels;
 
 import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
 import nl.rug.aoop.asteroids.model.Game;
+import nl.rug.aoop.asteroids.model.gameobjects.gameui.InteractionHud;
 import nl.rug.aoop.asteroids.view.viewmodels.AsteroidViewModel;
 import nl.rug.aoop.asteroids.view.viewmodels.BulletViewModel;
 import nl.rug.aoop.asteroids.view.viewmodels.SpaceshipViewModel;
@@ -32,7 +33,7 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
      */
     private long timeSinceLastTick = 0L;
 
-
+    private InteractionHud interactionHud;
     /**
      * Constructs a new game panel, based on the given model. Also starts listening to the game to check for updates, so
      * that it can repaint itself if necessary.
@@ -41,6 +42,7 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
      */
     public AsteroidsPanel(Game game) {
         this.game = game;
+        this.interactionHud = new InteractionHud(game);
         game.addListener(this);
     }
 
@@ -109,6 +111,7 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
              * The exception should not influence the gameplay if you happen to encounter it.
              * If you do want to fix it yourself, you are of course free to do so.
              */
+            interactionHud.drawHud(graphics2D);
             new SpaceshipViewModel(game.getSpaceShip()).drawObject(graphics2D, timeSinceLastTick);
             while (true) {
                 if (game.rendererDeepCloner.cycleDone) {

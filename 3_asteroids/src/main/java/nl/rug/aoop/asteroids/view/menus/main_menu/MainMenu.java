@@ -1,13 +1,13 @@
 package nl.rug.aoop.asteroids.view.menus.main_menu;
 
 import nl.rug.aoop.asteroids.control.ViewController;
-import nl.rug.aoop.asteroids.view.menus.MenuBlueprint;
+import nl.rug.aoop.asteroids.view.menus.MenuDefaultBlueprint;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-public class MainMenu extends MenuBlueprint {
+public class MainMenu extends MenuDefaultBlueprint {
 
     public final static int BUTTON_X = 400, BUTTON_Y = 1100, FRAME_W = 500, FRAME_H = 500;
     public final static Font font = new Font("Tahoma", Font.BOLD, 49);
