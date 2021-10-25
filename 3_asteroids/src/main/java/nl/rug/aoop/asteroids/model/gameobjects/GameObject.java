@@ -48,9 +48,7 @@ public abstract class GameObject implements Cloneable , Serializable {
      */
     private int stepsUntilCollisionPossible;
 
-    @Setter
-    @Getter
-    private String nickId = getObjectId();
+
 
     /**
      * Constructs a new game object with the specified location, velocity and radius.

@@ -4,6 +4,7 @@ import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
 import nl.rug.aoop.asteroids.control.ViewController;
 
 import javax.imageio.ImageIO;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -24,6 +25,7 @@ public abstract class MenuDefaultBlueprint extends JPanel implements MouseListen
     protected int ITEMS_DIST_X = 0, ITEM_DIST_Y = 110;
     private Color defaultHlColor = MenuButton.defaultCol;
 
+
     public MenuDefaultBlueprint(ViewController viewController) {
         this.viewController = viewController;
         addMouseListener(this);
@@ -32,7 +34,7 @@ public abstract class MenuDefaultBlueprint extends JPanel implements MouseListen
 
     private final List<Tuple.T3<AbstractAction, Rectangle, Font>> buttons = new ArrayList<>();
     private final List<MenuButton> menuButtons = new ArrayList<>();
-    private final List<JLabel> labels = new ArrayList<>();
+    private final List<Tuple.T3<String, Integer, Integer>> labels = new ArrayList<>();
     private int buff_x = 0, buff_y = 0;
 
     public void addNewButton(AbstractAction r, int w, int h, Font f, Color c) {
@@ -56,8 +58,8 @@ public abstract class MenuDefaultBlueprint extends JPanel implements MouseListen
         }
     }
 
-    protected void addText(String text) {
-        labels.add(new JLabel(text));
+    protected void addText(String text, int x, int y) {
+        labels.add(new Tuple.T3<>(text, x, y));
     }
 
     public void render(int w, int h) {
@@ -67,7 +69,6 @@ public abstract class MenuDefaultBlueprint extends JPanel implements MouseListen
         }
         setBackground(new Color(118, 18, 18));
         setLayout(new BorderLayout());
-        labels.forEach(this::add);
         JPanel menuPanel = new JPanel();
         menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.PAGE_AXIS));
         menuPanel.setSize(w, h);
@@ -75,15 +76,19 @@ public abstract class MenuDefaultBlueprint extends JPanel implements MouseListen
         setSize(w, h);
         setVisible(true);
     }
-
-
-
+    public final static Font labelFont = new Font("Tahoma", Font.BOLD, 30);
 
     @Override
     protected void paintComponent(Graphics g) {
         this.g = g;
         g.drawImage(background, 0, 0, null);
+
         menuButtons.forEach(menuButtons -> menuButtons.refresh(g));
+        g.setFont(labelFont);
+        g.setColor(Color.WHITE);
+        labels.forEach(l -> {
+            g.drawString(l.a, l.b, l.c);
+        });
     }
 
     @Override

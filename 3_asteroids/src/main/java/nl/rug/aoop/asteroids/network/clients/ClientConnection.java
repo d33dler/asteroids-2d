@@ -92,8 +92,8 @@ public class ClientConnection implements HostListener, Runnable {
 
     public synchronized void disconnect() {
         try {
-            consumerThread.join();
             connected = false;
+            consumerThread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

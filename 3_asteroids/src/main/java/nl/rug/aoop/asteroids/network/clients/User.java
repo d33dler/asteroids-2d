@@ -40,7 +40,7 @@ public class User implements Runnable, GameUpdateListener {
     private Game game;
 
     private final Randomizer randomizer = new Randomizer(6);
-    public String USER_ID = "host";
+    public String USER_ID = "Host";
 
 
     private Thread clientConsumerThread;
@@ -85,6 +85,7 @@ public class User implements Runnable, GameUpdateListener {
         } else {
             USER_ID = io.getOwnerId();
             game.setUSER_ID(USER_ID);
+
             ioHandler = io.getPackageHandler();
             clientConsumerThread = new Thread(new Consumer());
             clientConsumerThread.start();
@@ -125,7 +126,7 @@ public class User implements Runnable, GameUpdateListener {
 
         @Override
         public synchronized void run() {
-            while (isConnected() && !game.isGameOver()) {
+            while (isConnected()) {
                 if (!game.isEngineBusy()) {
                     receive();
                     updateGame();

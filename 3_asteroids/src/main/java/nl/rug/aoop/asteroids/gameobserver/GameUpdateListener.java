@@ -16,4 +16,5 @@ public interface GameUpdateListener {
 
 	default void onGameOver(){};
 	default void onGameExit(){};
+	default void onGamePaused(){};
 }

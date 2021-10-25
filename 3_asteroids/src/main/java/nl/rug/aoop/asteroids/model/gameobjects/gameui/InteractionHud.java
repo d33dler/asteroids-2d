@@ -24,7 +24,7 @@ public class InteractionHud {
 
     private void drawProximityLine(Graphics g) {
         Asteroid a = game.closestAsteroid;
-        if (a != null && game.proxy) {
+        if (a != null && !a.isDestroyed() && game.proxy ) {
             Point2D.Double p = game.getSpaceShip().getLocation();
             Point2D.Double ap = a.getLocation();
             double diff = Math.abs(ap.x - p.x) + Math.abs(ap.y - p.y);

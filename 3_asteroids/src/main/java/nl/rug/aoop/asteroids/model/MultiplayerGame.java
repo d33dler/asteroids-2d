@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
 import nl.rug.aoop.asteroids.network.clients.User;
-import nl.rug.aoop.asteroids.network.data.ConnectionParameters;
 import nl.rug.aoop.asteroids.network.data.DeltaProcessor;
 import nl.rug.aoop.asteroids.network.data.types.DeltaManager;
 import nl.rug.aoop.asteroids.network.host.HostingDevice;
@@ -84,8 +83,7 @@ public class MultiplayerGame implements MultiplayerManager, GameUpdateListener {
             hostingDevice.shutdown();
             hostingDevice = null;
         }
-        hostingDeviceThread.join(100);
+        if (hostingDeviceThread != null) hostingDeviceThread.join(100);
         deltaManager = null;
-
     }
 }

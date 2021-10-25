@@ -1,5 +1,8 @@
 package nl.rug.aoop.asteroids.gameobserver;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,7 +17,9 @@ public abstract class ObservableGame {
     /**
      * The list of listeners that will be notified when the game updates.
      */
-    protected final Set<GameUpdateListener> listeners;
+    @Getter
+    @Setter
+    protected Set<GameUpdateListener> listeners;
 
     /**
      * Constructs a new observable game with initially no listeners.

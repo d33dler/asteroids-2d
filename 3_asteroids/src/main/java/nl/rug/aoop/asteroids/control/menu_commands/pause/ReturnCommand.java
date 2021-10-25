@@ -19,7 +19,6 @@ public class ReturnCommand extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        System.out.println("CLICKED ON THIS");
         manager.getGame().quit();
         Game newGame = new Game();
         manager.setGame(newGame);

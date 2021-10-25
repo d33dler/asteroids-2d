@@ -78,13 +78,14 @@ public class HostingServer implements HostingDevice, Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        hostingUserUpdater = null;
         hostListeners.forEach(HostListener::disconnect);
         executorService.shutdown();
         System.out.println("closed server");
     }
 
     private void acceptConnections() {
-        while (hostListeners.size() < multiplayerGame.getMAX_CLIENTS()) {
+        while (multiplayerGame.getGame().isRunning() && hostListeners.size() < multiplayerGame.getMAX_CLIENTS()) {
             byte[] data = new byte[ConnectionParameters.PKG_SIZE_LIM];
             DatagramPacket handshakePacket = new DatagramPacket(data, data.length);
             try {

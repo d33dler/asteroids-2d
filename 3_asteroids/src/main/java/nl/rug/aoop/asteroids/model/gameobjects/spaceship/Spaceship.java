@@ -153,6 +153,11 @@ public class Spaceship extends GameObject {
     private PlayerKeyListener keyListener;
 @Setter
     private boolean online = false;
+
+    @Setter
+    @Getter
+    private String nickId;
+
     /**
      * Constructs a new spaceship with default values. It starts in the middle of the window, facing directly upwards,
      * with no velocity.
@@ -165,7 +170,7 @@ public class Spaceship extends GameObject {
 
     public Spaceship(String nick) {
         this();
-        super.setNickId(nick);
+        setNickId(nick);
     }
     public Spaceship(String nick, boolean online) {
         this(nick);
@@ -356,6 +361,7 @@ public class Spaceship extends GameObject {
         sh.setAccelerateKeyPressed(accelerateKeyPressed);
         sh.setFiring(isFiring);
         sh.setOnline(online);
+        sh.setNickId(nickId);
         return sh;
     }
 

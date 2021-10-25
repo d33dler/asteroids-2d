@@ -75,6 +75,9 @@ public class Game extends ObservableGame {
     @Getter
     private volatile boolean isUserSerializing = false;
 
+    @Getter
+    @Setter
+    private volatile boolean isDrawingDone = false;
     private volatile boolean runProcesses = true;
     /**
      * The game updater thread, which is responsible for updating the game's state as time goes on.
@@ -102,13 +105,14 @@ public class Game extends ObservableGame {
     private ViewController viewController;
 
     @Getter
-    private String USER_ID = "host";
+    private String USER_ID = "Host";
 
 
     public Asteroid closestAsteroid;
 
     public boolean proxy = false;
-public double diffnow;
+    public double diffnow;
+
     /**
      * Constructs a new game, with a new spaceship and all other model data in its default starting state.
      */
@@ -153,6 +157,7 @@ public double diffnow;
      * user input and physics updates. Only if the game isn't currently running, that is.
      */
     public void start(boolean online, boolean onlineHost) {
+        players.put(USER_ID, spaceShip);
         if (!running) {
             running = true;
             gameUpdaterThread = new Thread(new GameUpdater(this, viewController, online, onlineHost));
@@ -203,8 +208,14 @@ public double diffnow;
     /**
      * This method performs the operations needed to end the game (update view and database)
      */
-    public void endGame() {
-        notifyGameOver();
+
+    private boolean notifyEnd = false;
+
+    public void checkEndGame() {
+        if (isGameOver() && !notifyEnd) {
+            notifyGameOver();
+            notifyEnd = true;
+        }
         //dbManager.addScore(new Score("player", spaceShip.getScore()));
     }
 
@@ -220,7 +231,6 @@ public double diffnow;
      */
     public void quit() {
         if (running) {
-
             try {
                 // Attempt to wait for the game updater to exit its game loop.
                 gameUpdaterThread.join(EXIT_TIMEOUT_MILLIS);
@@ -234,10 +244,8 @@ public double diffnow;
                 listeners.forEach(GameUpdateListener::onGameExit);
                 running = false;
                 runProcesses = false;
-                // Throw away the game updater thread and let the GC remove it.
                 gameUpdaterThread = null;
                 user = null;
-
             }
         }
     }
@@ -249,7 +257,7 @@ public double diffnow;
         @Getter
         public Collection<GameObject> clonedObjects = new ArrayList<>();
 
-        public volatile boolean cycleDone = false;
+        public volatile boolean cycleDone = true;
 
         @Override
         public synchronized void run() {
@@ -292,6 +300,7 @@ public double diffnow;
                     ship.updateParameters(keySet.b);
                 } else {
                     players.put(s, new Spaceship(s, true));
+                    System.out.println("ADDed new player");
                 }
             }
             asteroids.addAll(asteroidsCache);
@@ -303,7 +312,7 @@ public double diffnow;
 
     public class ObjectDeltaMapper implements Runnable {
         public List<Tuple.T2<String, List<double[]>>> mappedObjects = new ArrayList<>();
-        public volatile boolean cycleDone = false;
+        public volatile boolean cycleDone = true;
 
         @Override
         public void run() {
@@ -339,7 +348,9 @@ public double diffnow;
 
 
     public void setUSER_ID(String USER_ID) {
-        spaceShip.setNickId(USER_ID);
+        players.remove(this.USER_ID, spaceShip);
         this.USER_ID = USER_ID;
+        players.put(USER_ID, spaceShip);
+        spaceShip.setNickId(USER_ID);
     }
 }

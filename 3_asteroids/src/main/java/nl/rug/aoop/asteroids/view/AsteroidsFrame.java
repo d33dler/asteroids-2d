@@ -5,11 +5,13 @@ import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.control.actions.NewGameAction;
 import nl.rug.aoop.asteroids.control.PlayerKeyListener;
 import nl.rug.aoop.asteroids.control.actions.QuitAction;
+import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
 import nl.rug.aoop.asteroids.model.Game;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyListener;
+import java.util.Set;
 
 /**
  * The main window that's used for displaying the game.
@@ -43,6 +45,7 @@ public class AsteroidsFrame extends JFrame {
     public AsteroidsFrame(Game game) {
         this.game = game;
         this.viewController = new ViewController(game, this);
+        game.addListener(viewController);
         initSwingUI();
     }
 
@@ -76,7 +79,9 @@ public class AsteroidsFrame extends JFrame {
 
 
     public void resetGame(Game game) {
+        Set<GameUpdateListener> listenerSet = this.game.getListeners();
         this.game = game;
+        this.game.setListeners(listenerSet);
         resetPlayerKeyListener();
     }
 

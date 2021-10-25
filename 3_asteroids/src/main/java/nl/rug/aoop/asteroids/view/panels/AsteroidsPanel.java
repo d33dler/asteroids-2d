@@ -34,6 +34,7 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
     private long timeSinceLastTick = 0L;
 
     private InteractionHud interactionHud;
+
     /**
      * Constructs a new game panel, based on the given model. Also starts listening to the game to check for updates, so
      * that it can repaint itself if necessary.
@@ -97,32 +98,23 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
      * @param graphics2D The graphics object that provides the drawing methods.
      */
     private void drawGameObjects(Graphics2D graphics2D) {
-        /*
-         * Because the game engine is running concurrently in its own thread, we must obtain a lock for the game model
-         * while drawing to ensure that we don't encounter a concurrentModificationException, which would happen if we
-         * were in the middle of drawing while the game engine starts a new physics update.
-         */
+        //Fixed concurrent state modification
         synchronized (game) {
-            /*
-             * Note that the following can cause a ConcurrentModificationException in rare scenarios.
-             * This happens when the physics update happens while this part is still painting.
-             * The way games usually deal with this is making a deep clone of the object and sending this to the renderer.
-             * However, to not introduce even more complexity to the current assignment, we have decided to not do this.
-             * The exception should not influence the gameplay if you happen to encounter it.
-             * If you do want to fix it yourself, you are of course free to do so.
-             */
-
-            new SpaceshipViewModel(game.getSpaceShip()).drawObject(graphics2D, timeSinceLastTick);
-            while (true) {
-                if (game.rendererDeepCloner.cycleDone) {
-                    game.rendererDeepCloner.clonedObjects
-                            .forEach(object
-                                    -> object.getViewModel(object).drawObject(graphics2D, timeSinceLastTick));
-                    break;
+            if (!game.isGameOver()) {
+                game.setDrawingDone(false);
+                while (true) {
+                    if (game.rendererDeepCloner.cycleDone ) {
+                        game.rendererDeepCloner.clonedObjects
+                                .forEach(object
+                                        -> object.getViewModel(object).drawObject(graphics2D, timeSinceLastTick));
+                        game.setDrawingDone(true);
+                        break;
+                    }
                 }
+                interactionHud.drawHud(graphics2D);
             }
-            interactionHud.drawHud(graphics2D);
         }
+
     }
 
     /**
@@ -142,6 +134,6 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
 
     @Override
     public void onGameOver() {
-        remove(this);
+
     }
 }

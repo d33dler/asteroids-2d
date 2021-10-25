@@ -2,6 +2,7 @@ package nl.rug.aoop.asteroids.control;
 
 import lombok.Getter;
 import lombok.Setter;
+import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
 import nl.rug.aoop.asteroids.model.Game;
 import nl.rug.aoop.asteroids.util.ReflectionUtils;
 import nl.rug.aoop.asteroids.view.AsteroidsFrame;
@@ -14,7 +15,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ViewController {
+public class ViewController implements GameUpdateListener {
     @Getter
     @Setter
     private Game game;
@@ -27,7 +28,8 @@ public class ViewController {
     private final static String MAIN_M_PKG = "nl.rug.aoop.asteroids.control.menu_commands.main",
             PAUSE_M_PKG = "nl.rug.aoop.asteroids.control.menu_commands.pause";
 
-    private final static String MAIN_M_BG = "images/menu_bg.png";
+    private final static String MAIN_M_BG = "images/menu_bg.png",
+    GAME_OVER_BG = "images/game_over.png";
     private AsteroidsPanel asteroidsPanel;
 
     private final List<JPanel> activePanels = new ArrayList<>();
@@ -36,6 +38,7 @@ public class ViewController {
         this.game = game;
         this.frame = frame;
         game.setViewController(this);
+        game.addListener(this);
         initAllCommands();
     }
 
@@ -62,11 +65,11 @@ public class ViewController {
 
 
     public void displayEndGame() {
-        game.endGame();
         removePanels();
-        EndgameMenu egMenu = new EndgameMenu(this, game.getSpaceShip().getScore());
+        EndgameMenu egMenu = new EndgameMenu(this, game.getSpaceShip().getScore(), GAME_OVER_BG);
         activePanels.add(egMenu);
         frame.add(egMenu);
+        frame.repaint();
         frame.revalidate();
     }
 
@@ -90,4 +93,8 @@ public class ViewController {
         }
     }
 
+    @Override
+    public void onGameOver() {
+        displayEndGame();
+    }
 }
