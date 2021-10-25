@@ -9,7 +9,6 @@ import nl.rug.aoop.asteroids.model.gameobjects.bullet.Bullet;
 import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
 
 import java.awt.*;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ThreadLocalRandom;
@@ -73,7 +72,7 @@ public class GameUpdater implements Runnable {
     private boolean isOnlineHost;
     private boolean online;
 
-    public double diff = 200;
+    public static double diff = 300;
     public double diffNow = diff;
 
     /**
@@ -231,7 +230,7 @@ public class GameUpdater implements Runnable {
         double y = game.getSpaceShip().getLocation().y;
 
         game.getAsteroids().forEach(asteroid -> {
-            recheckProxies(asteroid, x, y);
+            recheckProxyAsteroids(asteroid, x, y);
             if (asteroid.collides(game.getSpaceShip())) {
                 asteroid.destroy();
                 game.getSpaceShip().destroy();
@@ -245,11 +244,11 @@ public class GameUpdater implements Runnable {
                 });
             }
         });
-        game.proxy = (recheckProxies(game.closestAsteroid, x, y) < diff);
+        game.proxy = (recheckProxyAsteroids(game.closestAsteroid, x, y) < diff);
     }
 
 
-    public double recheckProxies(Asteroid a, double x, double y) {
+    public double recheckProxyAsteroids(Asteroid a, double x, double y) {
         if (a != null) {
             Point.Double p = a.getLocation();
             double diff = Math.abs(p.x - x) + Math.abs(p.y - y);

@@ -108,6 +108,7 @@ public class Game extends ObservableGame {
     public Asteroid closestAsteroid;
 
     public boolean proxy = false;
+public double diffnow;
     /**
      * Constructs a new game, with a new spaceship and all other model data in its default starting state.
      */

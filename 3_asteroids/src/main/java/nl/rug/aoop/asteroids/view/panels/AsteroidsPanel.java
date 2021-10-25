@@ -111,7 +111,7 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
              * The exception should not influence the gameplay if you happen to encounter it.
              * If you do want to fix it yourself, you are of course free to do so.
              */
-            interactionHud.drawHud(graphics2D);
+
             new SpaceshipViewModel(game.getSpaceShip()).drawObject(graphics2D, timeSinceLastTick);
             while (true) {
                 if (game.rendererDeepCloner.cycleDone) {
@@ -120,8 +120,8 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
                                     -> object.getViewModel(object).drawObject(graphics2D, timeSinceLastTick));
                     break;
                 }
-
             }
+            interactionHud.drawHud(graphics2D);
         }
     }
 
