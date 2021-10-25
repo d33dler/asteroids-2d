@@ -22,7 +22,7 @@ public abstract class MenuDefaultBlueprint extends JPanel implements MouseListen
     private final ViewController viewController;
     private Graphics g;
     protected int ITEMS_DIST_X = 0, ITEM_DIST_Y = 110;
-    private Color defaultHlColor = MenuButton.defaultHighlight;
+    private Color defaultHlColor = MenuButton.defaultCol;
 
     public MenuDefaultBlueprint(ViewController viewController) {
         this.viewController = viewController;
@@ -135,7 +135,6 @@ public abstract class MenuDefaultBlueprint extends JPanel implements MouseListen
             } else {
                 if (button.isHighlighted()) {
                     button.highlight(false);
-                    button.setHighlighted(false);
                 }
             }
         }

@@ -36,7 +36,7 @@ public class InteractionHud {
             g.drawOval((int) ap.x, (int) ap.y, 7, 7);
 
 
-            g.drawString(Double.toString(Math.round(diff-50)), (int) ap.x, (int) ap.y);
+            g.drawString(Double.toString(Math.round(diff - 50)), (int) ap.x, (int) ap.y);
         }
     }
 }

@@ -23,7 +23,7 @@ public class AsteroidsFrame extends JFrame {
     /**
      * The size that the window should be.
      */
-    public static final Dimension WINDOW_SIZE = new Dimension(1000, 950);
+    public static final Dimension WINDOW_SIZE = new Dimension(1050, 1000);
 
     /**
      * The game model.

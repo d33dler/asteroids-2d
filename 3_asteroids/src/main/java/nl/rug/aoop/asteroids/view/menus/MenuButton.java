@@ -16,8 +16,8 @@ public class MenuButton implements InterfaceMotions {
     /**
      * The text of the button.
      */
-    public static Color nonHl = new Color(216, 248, 226, 161);
-    public static Color defaultHighlight = new Color(224, 214, 15, 200);
+    public static Color highlightCol = new Color(126, 232, 236, 200);
+    public static Color defaultCol = new Color(231, 170, 14, 180);
     private final String text;
     /**
      * The coordinates where it will be printed and
@@ -44,7 +44,7 @@ public class MenuButton implements InterfaceMotions {
     @Getter
     private int currentAlpha;
 
-    public Color currentColor = new Color(178, 111, 42, 229);
+    public Color currentColor = defaultCol;
     /**
      * Initializes the button after which draws it.
      *
@@ -131,11 +131,11 @@ public class MenuButton implements InterfaceMotions {
     }
 
 
-    public void highlight( boolean hl) {
-        if(hl) currentColor = defaultHighlight;
-        else currentColor = nonHl;
+    public void highlight(boolean hl) {
+        if (hl) currentColor = highlightCol;
+        else currentColor = defaultCol;
+        highlighted = hl;
         blueprint.refresh();
-        highlighted = true;
     }
 
 

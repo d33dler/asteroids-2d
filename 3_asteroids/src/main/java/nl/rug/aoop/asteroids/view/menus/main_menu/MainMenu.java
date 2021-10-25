@@ -9,7 +9,7 @@ import java.util.List;
 
 public class MainMenu extends MenuDefaultBlueprint {
 
-    public final static int BUTTON_X = 400, BUTTON_Y = 1100, FRAME_W = 500, FRAME_H = 500;
+    public final static int BUTTON_X = 500, BUTTON_Y = 1200, FRAME_W = 500, FRAME_H = 500;
     public final static Font font = new Font("Tahoma", Font.BOLD, 49);
 
     public MainMenu(ViewController v, List<AbstractAction> menuCommands, String image) {
