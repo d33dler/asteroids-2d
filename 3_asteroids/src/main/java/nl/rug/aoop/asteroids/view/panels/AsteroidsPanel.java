@@ -9,6 +9,7 @@ import nl.rug.aoop.asteroids.view.viewmodels.SpaceshipViewModel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ConcurrentModificationException;
 
 /**
  * The panel at the center of the game's window which is responsible for the custom drawing of game objects.
@@ -98,17 +99,18 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
      * @param graphics2D The graphics object that provides the drawing methods.
      */
     private void drawGameObjects(Graphics2D graphics2D) {
-        //Fixed concurrent state modification
         synchronized (game) {
             if (!game.isGameOver()) {
                 game.setDrawingDone(false);
                 while (true) {
                     if (game.rendererDeepCloner.cycleDone ) {
-                        game.rendererDeepCloner.clonedObjects
-                                .forEach(object
-                                        -> object.getViewModel(object).drawObject(graphics2D, timeSinceLastTick));
-                        game.setDrawingDone(true);
-                        break;
+                        try {
+                            game.rendererDeepCloner.clonedObjects
+                                    .forEach(object
+                                            -> object.getViewModel(object).drawObject(graphics2D, timeSinceLastTick));
+                            game.setDrawingDone(true);
+                            break;
+                        } catch (ConcurrentModificationException ignored){}
                     }
                 }
                 interactionHud.drawHud(graphics2D);
