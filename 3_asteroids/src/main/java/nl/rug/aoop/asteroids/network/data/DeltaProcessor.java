@@ -49,7 +49,6 @@ public class DeltaProcessor implements DeltaManager {
     public List<Tuple.T3<String, HashSet<Integer>, double[]>> getAllPlayersKeyEvents() {
         List<Tuple.T3<String, HashSet<Integer>, double[]>> keyList = new ArrayList<>();
         game.getPlayers().forEach((s, spaceship) -> keyList.add(new Tuple.T3<>(s, spaceship.getKeyEventSet(), spaceship.getObjParameters())));
-        keyList.add(getPlayerKeyEvents());
         return keyList;
     }
 

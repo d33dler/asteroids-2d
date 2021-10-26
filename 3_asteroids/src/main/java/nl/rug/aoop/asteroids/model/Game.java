@@ -1,5 +1,6 @@
 package nl.rug.aoop.asteroids.model;
 
+import com.objectdb.o.HMP;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,10 +17,17 @@ import nl.rug.aoop.asteroids.model.obj_factory.GeneralObjectsFactory;
 import nl.rug.aoop.asteroids.network.clients.User;
 import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
 import nl.rug.aoop.asteroids.util.database.DatabaseManager;
+import org.jetbrains.annotations.NotNull;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This class is the main model for the Asteroids game. It contains all game objects, and has methods to start and stop
@@ -36,7 +44,13 @@ public class Game extends ObservableGame {
     @Getter
     private Spaceship spaceShip;
     @Getter
-    private HashMap<String, Spaceship> players;
+    private final ConcurrentHashMap<String, Spaceship> players = new ConcurrentHashMap<>() {
+        @Override
+        public synchronized Spaceship remove(@NotNull Object key) {
+            listeners.forEach(listener -> listener.playerEliminated((String) key));
+            return super.remove(key);
+        }
+    };
     /**
      * The list of all bullets currently active in the game.
      */
@@ -107,19 +121,36 @@ public class Game extends ObservableGame {
     @Getter
     private String USER_ID = "Host";
 
-
     public Asteroid closestAsteroid;
-
     public boolean proxy = false;
-    public double diffnow;
+    public static List<BufferedImage> spriteImgList = new ArrayList<>();
 
     /**
      * Constructs a new game, with a new spaceship and all other model data in its default starting state.
      */
     public Game() {
+        loadSprites();
         spaceShip = new Spaceship(USER_ID);
         initializeGameData();
+
         //dbManager = new DatabaseManager("prod");
+    }
+
+    private void loadSprites() {
+        File folder = new File("images/ship_sprites/");
+        File[] spriteFiles = folder.listFiles();
+        assert spriteFiles != null;
+        for(File file : spriteFiles) {
+            if(file.isFile()) {
+                try {
+                    BufferedImage img = ImageIO.read(file);
+                    spriteImgList.add(img);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            System.out.println(spriteImgList.size());
+        }
     }
 
     /**
@@ -132,7 +163,6 @@ public class Game extends ObservableGame {
         spaceshipCache = new HashMap<>();
         asteroidsCache = new ArrayList<>();
         asteroids = new ArrayList<>();
-        players = new HashMap<>();
         new Thread(rendererDeepCloner).start();
         new Thread(objectDeltaMapper).start();
         spaceShip.reset();
@@ -300,7 +330,7 @@ public class Game extends ObservableGame {
                     ship.updateParameters(keySet.b);
                 } else {
                     players.put(s, new Spaceship(s, true));
-                    System.out.println("ADDed new player");
+                    System.out.println("Added new player");
                 }
             }
             asteroids.addAll(asteroidsCache);
@@ -346,7 +376,10 @@ public class Game extends ObservableGame {
         }
     }
 
-
+    public void reportHostPort(int port){
+        JOptionPane.showMessageDialog(viewController.getFrame(),"Reserved port:  " + port,
+                "ASTEROIDS",JOptionPane.INFORMATION_MESSAGE);
+    }
     public void setUSER_ID(String USER_ID) {
         players.remove(this.USER_ID, spaceShip);
         this.USER_ID = USER_ID;

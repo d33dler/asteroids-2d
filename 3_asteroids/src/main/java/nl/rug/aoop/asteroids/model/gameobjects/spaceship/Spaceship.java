@@ -2,6 +2,7 @@ package nl.rug.aoop.asteroids.model.gameobjects.spaceship;
 
 import lombok.SneakyThrows;
 import nl.rug.aoop.asteroids.control.PlayerKeyListener;
+import nl.rug.aoop.asteroids.model.Game;
 import nl.rug.aoop.asteroids.model.gameobjects.GameObject;
 import nl.rug.aoop.asteroids.model.gameobjects.KeyInput;
 import nl.rug.aoop.asteroids.util.ReflectionUtils;
@@ -11,11 +12,14 @@ import lombok.Setter;
 import nl.rug.aoop.asteroids.view.viewmodels.GameObjectViewModel;
 import nl.rug.aoop.asteroids.view.viewmodels.SpaceshipViewModel;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * This class represents a player's ship. Like all other game objects, it has a location and velocity, but additionally,
@@ -85,7 +89,7 @@ public class Spaceship extends GameObject {
     /**
      * Collision radius of the ship
      */
-    public static final int SHIP_SIZE = 20;
+    public static final int SHIP_SIZE = 36;
 
     /**
      * Number of ticks this object is immune to collision
@@ -151,12 +155,16 @@ public class Spaceship extends GameObject {
     @Getter
     @Setter
     private PlayerKeyListener keyListener;
-@Setter
+    @Setter
     private boolean online = false;
 
     @Setter
     @Getter
     private String nickId;
+
+    @Getter
+    @Setter
+    private int sprite_img_code ;
 
     /**
      * Constructs a new spaceship with default values. It starts in the middle of the window, facing directly upwards,
@@ -172,6 +180,7 @@ public class Spaceship extends GameObject {
         this();
         setNickId(nick);
     }
+
     public Spaceship(String nick, boolean online) {
         this(nick);
         this.online = online;
@@ -189,6 +198,7 @@ public class Spaceship extends GameObject {
         getLocation().y = AsteroidsFrame.WINDOW_SIZE.height / 2;
         getVelocity().x = 0;
         getVelocity().y = 0;
+        sprite_img_code = ThreadLocalRandom.current().nextInt(5);
         direction = 0;
         isFiring = false;
         accelerateKeyPressed = false;
@@ -260,8 +270,8 @@ public class Spaceship extends GameObject {
      * have enough energy, and finally, the ship must not exceed its maximum set speed.
      */
     private void attemptToAccelerate() {
-        if (accelerateKeyPressed && (energy >= ACCELERATION_ENERGY_COST && getSpeed() < MAXIMUM_SPEED)){
-           accelerate();
+        if (accelerateKeyPressed && (energy >= ACCELERATION_ENERGY_COST && getSpeed() < MAXIMUM_SPEED)) {
+            accelerate();
         }
     }
 
@@ -366,10 +376,11 @@ public class Spaceship extends GameObject {
     }
 
     public void updateParameters(double[] params) {
-        updatePosition(params[0],params[1]);
-        updateVelocity(params[2],params[3]);
+        updatePosition(params[0], params[1]);
+        updateVelocity(params[2], params[3]);
         direction = params[4];
     }
+
     public void updatePosition(double x, double y) {
         getLocation().x = x;
         getLocation().y = y;

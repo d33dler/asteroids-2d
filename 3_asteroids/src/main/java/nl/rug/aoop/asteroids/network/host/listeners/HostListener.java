@@ -8,5 +8,6 @@ public interface HostListener {
     public boolean checkPingAbuse();
     void disconnect();
     void initFlux();
+    void notifyDisconnected(String id);
     boolean isConnected();
 }

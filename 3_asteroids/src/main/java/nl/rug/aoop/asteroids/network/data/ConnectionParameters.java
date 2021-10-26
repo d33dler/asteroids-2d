@@ -30,6 +30,8 @@ public class ConnectionParameters {
     @Getter
     public int MAX_PACKET_LOSS = 50;
 
+    public final static int CONNECTION_TIMEOUT = 0x1388;
+
     public ConnectionParameters(DatagramSocket callerSocket,
                                 InetSocketAddress receptor, int dataLength) {
         this.callerSocket = callerSocket;

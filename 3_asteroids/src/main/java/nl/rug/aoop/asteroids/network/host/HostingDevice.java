@@ -15,6 +15,8 @@ public interface HostingDevice {
     boolean updateReady();
     byte[] getLastDeltas();
     void addNewDelta(String clientIp, DeltasData data);
+    void notifyDisconnected(String id);
+    void notifyEliminated(String id);
     void run();
     void shutdown();
     StatisticCalculator getStatisticCalculator();

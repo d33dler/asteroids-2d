@@ -4,13 +4,12 @@ import lombok.Getter;
 import nl.rug.aoop.asteroids.network.data.ConnectionParameters;
 import nl.rug.aoop.asteroids.network.data.DataPackage;
 import nl.rug.aoop.asteroids.network.data.PackageHandler;
-import nl.rug.aoop.asteroids.network.data.deltas_changes.GameplayDeltas;
 import nl.rug.aoop.asteroids.network.data.types.DeltasData;
-import org.apache.commons.lang3.SerializationUtils;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.SocketException;
 
 public class IO implements IOProtocol {
     @Getter
@@ -24,6 +23,11 @@ public class IO implements IOProtocol {
         this.socket = parameters.getCallerSocket();
         packageHandler = PackageHandler.newEmptyHolder(parameters);
         this.length = packageHandler.getParameters().getDataLength();
+        try {
+            socket.setSoTimeout(ConnectionParameters.CONNECTION_TIMEOUT);
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
     }
 
     public void send() {
@@ -44,15 +48,16 @@ public class IO implements IOProtocol {
         }
     }
 
-    public void receive() {
+    public boolean receive() {
         byte[] data = new byte[length];
         DatagramPacket packet = new DatagramPacket(data, data.length);
         try {
             socket.receive(packet);
             packageHandler.updateInDataPackage(packet.getData());  //TODO verify
         } catch (IOException e) {
-            e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
     public void updateOutPackage(DeltasData data) {

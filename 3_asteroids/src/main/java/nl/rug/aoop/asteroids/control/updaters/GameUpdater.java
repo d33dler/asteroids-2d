@@ -11,6 +11,8 @@ import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 
@@ -225,7 +227,7 @@ public class GameUpdater implements Runnable {
             players.forEach(ship -> {
                 if (ship.collides(bullet)) {
                     bullet.destroy();
-                    game.getSpaceShip().destroy();
+                    ship.destroy();
                 }
             }); // Check collision with ship.
 
@@ -239,7 +241,7 @@ public class GameUpdater implements Runnable {
             players.forEach(ship -> {
                 if (ship.collides(asteroid)) {
                     asteroid.destroy();
-                    game.getSpaceShip().destroy();
+                    ship.destroy();
                 }
             });
             if (KESSLER_SYNDROME) { // Only check for asteroid - asteroid collisions if we allow kessler syndrome.
@@ -300,6 +302,12 @@ public class GameUpdater implements Runnable {
         // Remove any bullets that are destroyed.
         game.getBullets().removeIf(GameObject::isDestroyed);
         //game.getOnlineBullets().removeIf(GameObject::isDestroyed);
-        game.getPlayers().values().removeIf(GameObject::isDestroyed);
+
+        ConcurrentHashMap<String, Spaceship> playersMap = game.getPlayers();
+        playersMap.forEach((s, spaceship) -> {
+            if (spaceship.isDestroyed()) {
+                playersMap.remove(s);
+            }
+        });
     }
 }

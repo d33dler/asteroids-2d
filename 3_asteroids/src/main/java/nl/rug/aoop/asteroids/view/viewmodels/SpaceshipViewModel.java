@@ -1,11 +1,18 @@
 package nl.rug.aoop.asteroids.view.viewmodels;
 
+import nl.rug.aoop.asteroids.model.Game;
 import nl.rug.aoop.asteroids.model.gameobjects.GameObject;
 import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
 import nl.rug.aoop.asteroids.util.PolarCoordinate;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
+import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.nio.file.Path;
 
 import static java.lang.Math.PI;
 
@@ -13,6 +20,17 @@ import static java.lang.Math.PI;
  * View model for displaying a spaceship object.
  */
 public class SpaceshipViewModel extends GameObjectViewModel<Spaceship> {
+
+
+    public static BufferedImage exhaust;
+
+    static {
+        try {
+            exhaust = ImageIO.read(Path.of("images/ship_sprites/exhaust/exhaust.png").toFile());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Constructs a new view model with the given game object.
@@ -33,7 +51,7 @@ public class SpaceshipViewModel extends GameObjectViewModel<Spaceship> {
     public void draw(Graphics2D graphics2D, Point.Double location) {
         Spaceship spaceship = getGameObject();
         if (spaceship.isAccelerating()) {
-            drawExhaust(spaceship, graphics2D, location);
+            drawExhaust(spaceship, graphics2D, new Point2D.Double(location.x , location.y));
         }
         drawMainBody(spaceship, graphics2D, location);
     }
@@ -47,18 +65,18 @@ public class SpaceshipViewModel extends GameObjectViewModel<Spaceship> {
      * @param location   The location at which to draw the spaceship.
      */
     private void drawMainBody(Spaceship spaceship, Graphics2D graphics2D, Point.Double location) {
-        Path2D.Double spaceshipMainBody = buildTriangle(
-                location,
-                spaceship.getDirection(),
-                new PolarCoordinate(0.0 * PI, Spaceship.SHIP_SIZE),
-                new PolarCoordinate(0.8 * PI, Spaceship.SHIP_SIZE),
-                new PolarCoordinate(1.2 * PI, Spaceship.SHIP_SIZE)
-        );
-        // The area where the spaceship's body goes is first cleared by filling it with black, then the path is drawn.
-        graphics2D.setColor(Color.DARK_GRAY);
-        graphics2D.fill(spaceshipMainBody);
-        graphics2D.setColor(Color.WHITE);
-        graphics2D.draw(spaceshipMainBody);
+        int size = Spaceship.SHIP_SIZE;
+        double dir = spaceship.getDirection();
+
+        BufferedImage rotated = Game.spriteImgList.get(spaceship.getSprite_img_code());
+
+        AffineTransform transform = new AffineTransform();
+        transform.translate(-15.5,-15.5);
+        transform.rotate(dir,location.x + (size/2) , location.y + (size/2));
+        graphics2D.setTransform(transform);
+        graphics2D.drawImage(rotated, (int)location.x , (int) location.y,size,size, null);
+        graphics2D.setTransform(new AffineTransform());
+
         Spaceship o = getGameObject();
         graphics2D.drawString(o.getNickId(), (int) o.getLocation().x + 20, (int) o.getLocation().y - 10);
     }
@@ -71,17 +89,19 @@ public class SpaceshipViewModel extends GameObjectViewModel<Spaceship> {
      * @param location   The location at which to draw the spaceship.
      */
     private void drawExhaust(Spaceship spaceship, Graphics2D graphics2D, Point.Double location) {
-        Path2D.Double exhaustFlame = buildTriangle(
-                location,
-                spaceship.getDirection(),
-                new PolarCoordinate(1.0 * PI, Spaceship.SHIP_SIZE + 5),
-                new PolarCoordinate(0.9 * PI, Spaceship.SHIP_SIZE - 5),
-                new PolarCoordinate(1.1 * PI, Spaceship.SHIP_SIZE - 5)
-        );
-        graphics2D.setColor(Color.ORANGE);
-        graphics2D.fill(exhaustFlame);
-        graphics2D.setColor(Color.RED);
-        graphics2D.draw(exhaustFlame);
+        AffineTransform backup = graphics2D.getTransform();
+        AffineTransform trans = new AffineTransform();
+        trans.translate(-15.5,-15.5);
+        trans.rotate(spaceship.getDirection(),spaceship.getLocation().x + Spaceship.SHIP_SIZE/2,
+                spaceship.getLocation().y + Spaceship.SHIP_SIZE/2);
+        graphics2D.transform(trans);
+        graphics2D.drawImage(exhaust, (int) (location.x) - 1, (int) (location.y +
+                        + Spaceship.SHIP_SIZE - 1), 14,14, null);
+        graphics2D.drawImage(exhaust, (int) (location.x + 18), (int) (location.y +
+                + Spaceship.SHIP_SIZE-1), 14,14, null);
+        graphics2D.setTransform(backup);
+        Spaceship o = getGameObject();
+
     }
 
     /**

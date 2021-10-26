@@ -56,12 +56,15 @@ public class PackageHandler {
     public void updateInDataPackage(byte[] data) {
         dataPkgUpdate(inPackage, data);
     }
+
     public void updateOutDataPackage(DeltasData data) {
-        outPackage.setData(data,parameters.LAT_MAX_millis);
+        outPackage.setData(data, parameters.LAT_MAX_millis);
     }
+
     public void updateOutDataPackage(byte[] data) {
         outPackage.setData(data);
     }
+
     private void dataPkgUpdate(DataPackage pkg, byte[] data) {
         DeltasData dd = SerializationUtils.deserialize(data);
         pkg.setData(dd, parameters.LAT_MAX_millis);
@@ -76,6 +79,7 @@ public class PackageHandler {
     public void initHandler(ConfigData handshake) {
         this.ownerId = handshake.id;
     }
+
     public InetAddress getInet() {
         return parameters.getInet();
     }

@@ -1,5 +1,6 @@
 package nl.rug.aoop.asteroids.network.host;
 
+import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
 import nl.rug.aoop.asteroids.model.Game;
 import nl.rug.aoop.asteroids.model.MultiplayerManager;
 import nl.rug.aoop.asteroids.network.clients.ClientConnection;
@@ -14,6 +15,7 @@ import nl.rug.aoop.asteroids.network.statistics.StatisticCalculator;
 import nl.rug.aoop.asteroids.util.Randomizer;
 import org.apache.commons.lang3.SerializationUtils;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
@@ -22,7 +24,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class HostingServer implements HostingDevice, Runnable {
+public class HostingServer implements HostingDevice, Runnable, GameUpdateListener {
 
     private final MultiplayerManager multiplayerGame;
     private final List<HostListener> hostListeners = new ArrayList<>();
@@ -30,7 +32,7 @@ public class HostingServer implements HostingDevice, Runnable {
     private DatagramSocket server_socket;
     private int server_port;
     private final String host_name;
-    private ExecutorService executorService = Executors.newFixedThreadPool(40);
+    private ExecutorService executorService = Executors.newFixedThreadPool(10);
     private Thread hostingUserUpdater;
     private ConnectionStatistic connectionStatistic = new ConnectionStatistic();
 
@@ -45,12 +47,13 @@ public class HostingServer implements HostingDevice, Runnable {
     public HostingServer(MultiplayerManager multiplayer, InetAddress address) {
         this.multiplayerGame = multiplayer;
         this.host_name = address.getHostName();
+        multiplayer.getGame().addListener(this);
         logHost();
         init();
     }
 
     private void logHost() {
-        hostingUserUpdater = new Thread(new HostingUserUpdater(multiplayerGame.getHost()));
+        hostingUserUpdater = new Thread(new HostingUserUpdater());
         hostingUserUpdater.start();
     }
 
@@ -59,7 +62,7 @@ public class HostingServer implements HostingDevice, Runnable {
         try {
             server_socket = new DatagramSocket();
             server_port = server_socket.getLocalPort(); //TODO this is for local networks
-            System.out.println(server_port);
+            multiplayerGame.getGame().reportHostPort(server_port);
         } catch (SocketException e) {
             e.printStackTrace();
         }
@@ -79,10 +82,8 @@ public class HostingServer implements HostingDevice, Runnable {
             e.printStackTrace();
         }
         hostingUserUpdater = null;
-        System.out.println("Got here");
         hostListeners.forEach(HostListener::disconnect);
         executorService.shutdown();
-        System.out.println("closed server");
     }
 
     private void acceptConnections() {
@@ -109,8 +110,8 @@ public class HostingServer implements HostingDevice, Runnable {
         if (privateSocket != null) {
             InetSocketAddress inetAddress = new InetSocketAddress(handshake.getAddress(), handshake.getPort());
             String add = privateSocket.getLocalAddress().getCanonicalHostName();
-            System.out.println("NEW CONNECTION TO: " + add);
-            byte[] data = SerializationUtils.serialize(new ConfigData(clientID,add,privateSocket.getLocalPort())); //TODO refactor;
+            System.out.println("NEW CONNECTION ASSIGNED");
+            byte[] data = SerializationUtils.serialize(new ConfigData(clientID, add, privateSocket.getLocalPort())); //TODO refactor;
             DatagramPacket ACK = new DatagramPacket(data, data.length, inetAddress.getAddress(), inetAddress.getPort());
             try {
                 server_socket.send(ACK);
@@ -123,13 +124,13 @@ public class HostingServer implements HostingDevice, Runnable {
         }
     }
 
+    @Override
+    public void playerEliminated(String id) {
+        notifyEliminated(id);
+    }
+
 
     private class HostingUserUpdater implements Runnable {
-        private final User hostingUser;
-
-        public HostingUserUpdater(User user) {
-            hostingUser = user;
-        }
 
         @Override
         public synchronized void run() {
@@ -168,6 +169,16 @@ public class HostingServer implements HostingDevice, Runnable {
     }
 
     @Override
+    public void notifyDisconnected(String id) {
+        deltasMap.remove(id);
+    }
+
+    @Override
+    public void notifyEliminated(String id) {
+        notifyDisconnected(id);
+    }
+
+    @Override
     public StatisticCalculator getStatisticCalculator() {
         return connectionStatistic;
     }
@@ -186,4 +197,6 @@ public class HostingServer implements HostingDevice, Runnable {
     public ConnectionParameters getRawConnectionParameters() {
         return parameters;
     }
+
+
 }

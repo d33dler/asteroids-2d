@@ -62,12 +62,11 @@ public class ClientConnection implements HostListener, Runnable {
 
         private synchronized void listen() {
             while (connected) {
-                io.receive();
-                hostingDevice.addNewDelta(clientID, io.getLastDataPackage().getData());
-                try {
-                    wait(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                boolean success = io.receive();
+                if (success) {
+                    hostingDevice.addNewDelta(clientID, io.getLastDataPackage().getData());
+                } else {
+                    disconnect();
                 }
             }
         }
@@ -86,6 +85,11 @@ public class ClientConnection implements HostListener, Runnable {
         }
     }
 
+    @Override
+    public void notifyDisconnected(String id) {
+        hostingDevice.notifyDisconnected(id);
+    }
+
     public void fireUpdate(byte[] data) {
         io.send(data);
     }
@@ -94,6 +98,7 @@ public class ClientConnection implements HostListener, Runnable {
         try {
             connected = false;
             consumerThread.join(100);
+            notifyDisconnected(clientID);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
