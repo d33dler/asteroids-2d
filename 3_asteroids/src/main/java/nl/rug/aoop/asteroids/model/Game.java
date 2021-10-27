@@ -17,6 +17,7 @@ import nl.rug.aoop.asteroids.model.obj_factory.GeneralObjectsFactory;
 import nl.rug.aoop.asteroids.network.clients.User;
 import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
 import nl.rug.aoop.asteroids.util.database.DatabaseManager;
+import nl.rug.aoop.asteroids.util.database.Score;
 import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
@@ -133,7 +134,7 @@ public class Game extends ObservableGame {
         spaceShip = new Spaceship(USER_ID);
         initializeGameData();
 
-        //dbManager = new DatabaseManager("prod");
+        dbManager = DatabaseManager.getInstance();
     }
 
     private void loadSprites() {
@@ -245,8 +246,8 @@ public class Game extends ObservableGame {
         if (isGameOver() && !notifyEnd) {
             notifyGameOver();
             notifyEnd = true;
+            dbManager.addScore(new Score("player", spaceShip.getScore()));
         }
-        //dbManager.addScore(new Score("player", spaceShip.getScore()));
     }
 
     /**

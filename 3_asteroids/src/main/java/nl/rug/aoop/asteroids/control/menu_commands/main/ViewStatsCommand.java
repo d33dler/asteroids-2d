@@ -17,6 +17,6 @@ public class ViewStatsCommand extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        manager.displayScoreBoard();
     }
 }
