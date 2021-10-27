@@ -89,7 +89,7 @@ public class Spaceship extends GameObject {
     /**
      * Collision radius of the ship
      */
-    public static final int SHIP_SIZE = 36;
+    public static final int SHIP_SIZE = 38;
 
     /**
      * Number of ticks this object is immune to collision

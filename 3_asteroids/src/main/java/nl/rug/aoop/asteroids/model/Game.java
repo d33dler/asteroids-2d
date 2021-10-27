@@ -133,7 +133,6 @@ public class Game extends ObservableGame {
         loadSprites();
         spaceShip = new Spaceship(USER_ID);
         initializeGameData();
-
         dbManager = DatabaseManager.getInstance();
     }
 
@@ -296,7 +295,7 @@ public class Game extends ObservableGame {
         }
 
         private synchronized void recloneAll() {
-            while (true) {
+            while (runProcesses) {
                 cycleDone = false;
                 clonedObjects.clear();
                 reclone(bullets);
@@ -351,7 +350,7 @@ public class Game extends ObservableGame {
         }
 
         private synchronized void remapAll() {
-            while (true) {
+            while (runProcesses) {
                 cycleDone = false;
                 mappedObjects.clear();
                 remap(Asteroid.OBJECT_ID, asteroids);

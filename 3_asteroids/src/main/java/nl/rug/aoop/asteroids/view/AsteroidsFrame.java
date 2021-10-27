@@ -75,9 +75,8 @@ public class AsteroidsFrame extends JFrame {
         menu.add(new NewGameAction(game));
         setJMenuBar(menuBar);
         viewController.displayMainMenu();
-        // Add the custom panel that the game will be drawn to.
+
         setResizable(false);
-        //add(new AsteroidsPanel(game));
         setVisible(true);
     }
 

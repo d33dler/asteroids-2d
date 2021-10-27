@@ -98,7 +98,7 @@ public class SpaceshipViewModel extends GameObjectViewModel<Spaceship> {
         graphics2D.drawImage(exhaust, (int) (location.x) - 1, (int) (location.y +
                         + Spaceship.SHIP_SIZE - 1), 14,14, null);
         graphics2D.drawImage(exhaust, (int) (location.x + 18), (int) (location.y +
-                + Spaceship.SHIP_SIZE-1), 14,14, null);
+                Spaceship.SHIP_SIZE -1), 14,14, null);
         graphics2D.setTransform(backup);
         Spaceship o = getGameObject();
 

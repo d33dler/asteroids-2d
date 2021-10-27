@@ -58,6 +58,7 @@ public class PlayerKeyListener implements KeyListener {
      */
     @Override
     public void keyPressed(KeyEvent event) {
+        System.out.println("GOT KEY READ");
         switch (event.getKeyCode()) {
             case ACCELERATION_KEY -> {
                 ship.setAccelerateKeyPressed(true);

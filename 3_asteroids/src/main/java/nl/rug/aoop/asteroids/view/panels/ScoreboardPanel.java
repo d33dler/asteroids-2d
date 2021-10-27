@@ -4,12 +4,14 @@ import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.control.menu_commands.pause.ReturnCommand;
 import nl.rug.aoop.asteroids.util.database.DatabaseManager;
 import nl.rug.aoop.asteroids.util.database.Score;
+import nl.rug.aoop.asteroids.view.AsteroidsFrame;
 import org.jetbrains.annotations.Nls;
 
 import javax.swing.*;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.*;
 import java.util.List;
 
@@ -29,10 +31,16 @@ public class ScoreboardPanel extends JPanel {
      * @param viewController Controller needed for Button actions
      */
     public ScoreboardPanel(ViewController viewController, String iconFileName) {
-        super();
         JLabel icon = new JLabel(new ImageIcon(iconFileName));
         JTable scoreTable = new JTable(new ScoreTable(dbManager.getAllScores()));
-        JButton returnButton = new JButton(new ReturnCommand(viewController));
+        JButton returnButton = new JButton(new AbstractAction("Return") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                viewController.getFrame().dispose();
+                AsteroidsFrame af = new AsteroidsFrame(viewController.getGame());
+                viewController.setFrame(af);
+            }
+        });
         setLayout(new BorderLayout(40, 30));
         add(icon, BorderLayout.NORTH);
         add(scoreTable, BorderLayout.CENTER);

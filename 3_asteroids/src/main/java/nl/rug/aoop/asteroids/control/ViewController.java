@@ -21,7 +21,8 @@ public class ViewController implements GameUpdateListener{
     @Setter
     private Game game;
     @Getter
-    private final AsteroidsFrame frame;
+    @Setter
+    private AsteroidsFrame frame;
 
     private List<AbstractAction> mainMenuActions;
     private List<AbstractAction> pauseActions;
@@ -66,8 +67,8 @@ public class ViewController implements GameUpdateListener{
     }
 
     public void displayScoreBoard() {
-        removePanels();
-        ScoreboardPanel scoreboardPanel = new ScoreboardPanel(this, SCOREBOARD);
+       removePanels();
+      ScoreboardPanel scoreboardPanel = new ScoreboardPanel(this, SCOREBOARD);
         validatePanel(scoreboardPanel);
     }
 
@@ -79,14 +80,14 @@ public class ViewController implements GameUpdateListener{
 
     public void displayPauseMenu() {
         asteroidsPanel.add(pMenu);
-    validatePanel(pMenu);
+        validatePanel(pMenu);
         asteroidsPanel.setPaused(true);
     }
 
     private void validatePanel(JPanel menu) {
         activePanels.add(menu);
         frame.add(menu);
-        frame.validate();
+       frame.revalidate();
     }
 
     private void requestGameReset() {
@@ -98,6 +99,7 @@ public class ViewController implements GameUpdateListener{
         for (JPanel activePanel : activePanels) {
             frame.remove(activePanel);
         }
+        activePanels.clear();
     }
 
     @Override
@@ -109,7 +111,6 @@ public class ViewController implements GameUpdateListener{
     private boolean paused = false;
 
     public void requestPauseMenu() {
-        System.out.println("REQUESTING");
         if (paused) {
             displayGame();
         } else {
