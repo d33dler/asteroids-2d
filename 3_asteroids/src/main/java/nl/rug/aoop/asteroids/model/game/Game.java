@@ -54,7 +54,6 @@ public class Game extends ObservableGame {
 
     public Asteroid closestAsteroid;
     public boolean proxy = false;
-    public static List<BufferedImage> spriteImgList = new ArrayList<>();
 
     @Getter
     private final GameResources resources;
@@ -110,16 +109,19 @@ public class Game extends ObservableGame {
 
     public void startOnline(InetSocketAddress address) {
         start(true, false);
+        initializeGameThreads();
         initMultiplayerAsClient(address);
     }
 
     public void startSpectating(InetSocketAddress address) {
         start(true, false);
+        initializeGameThreads();
         initMultiplayerAsSpectator(address);
     }
 
     public void startHosting(InetAddress address) {
         start(true, true);
+        initializeGameThreads();
         initMultiplayerAsHost(address);
     }
 
@@ -150,9 +152,9 @@ public class Game extends ObservableGame {
 
     public void checkEndGame() {
         if ((isGameOver() || !resources.isRunProcesses()) && !notifyEnd) {
-            notifyGameOver();
             notifyEnd = true;
             dbManager.addScore(new Score("player", resources.getSpaceShip().getScore()));
+            notifyGameOver();
         }
     }
 

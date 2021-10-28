@@ -116,7 +116,7 @@ public class GameResources {
     @Getter
     protected Asteroid closestAsteroid;
     protected boolean proxy = false;
-    public static List<BufferedImage> spriteImgList = new ArrayList<>();
+    public static List<BufferedImage> spriteImgList;
 
     private final Game game;
 
@@ -132,20 +132,24 @@ public class GameResources {
     }
 
     private void loadSprites() {
-        File folder = new File("images/ship_sprites/");
-        File[] spriteFiles = folder.listFiles();
-        assert spriteFiles != null;
-        for (File file : spriteFiles) {
-            if (file.isFile()) {
-                try {
-                    BufferedImage img = ImageIO.read(file);
-                    spriteImgList.add(img);
-                } catch (IOException e) {
-                    e.printStackTrace();
+        if(spriteImgList==null){
+            spriteImgList = new ArrayList<>();
+            File folder = new File("images/ship_sprites/");
+            File[] spriteFiles = folder.listFiles();
+            assert spriteFiles != null;
+            for (File file : spriteFiles) {
+                if (file.isFile()) {
+                    try {
+                        BufferedImage img = ImageIO.read(file);
+                        spriteImgList.add(img);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
+                System.out.println(spriteImgList.size());
             }
-            System.out.println(spriteImgList.size());
         }
+
     }
 
     public boolean isGameOver() {

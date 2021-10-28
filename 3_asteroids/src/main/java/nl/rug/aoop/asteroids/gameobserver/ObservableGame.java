@@ -3,6 +3,7 @@ package nl.rug.aoop.asteroids.gameobserver;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -54,6 +55,10 @@ public abstract class ObservableGame {
      *                          actual physics update has been done by the game engine.
      */
     public void notifyListeners(long timeSinceLastTick) {
-        listeners.forEach(listener -> listener.onGameUpdated(timeSinceLastTick));
+        try{
+            listeners.forEach(listener -> listener.onGameUpdated(timeSinceLastTick));
+        } catch (ConcurrentModificationException ignored){
+        }
+
     }
 }

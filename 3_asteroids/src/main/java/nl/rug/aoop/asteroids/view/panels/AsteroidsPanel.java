@@ -1,5 +1,6 @@
 package nl.rug.aoop.asteroids.view.panels;
 
+import lombok.Getter;
 import lombok.Setter;
 import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
@@ -40,9 +41,9 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
 
     private InteractionHud interactionHud;
     @Setter
+    @Getter
     private boolean paused = false;
     private final static String PAUSE_BG = "images/pause_bg.png";
-    private BufferedImage pauseImg;
 
     private ViewController viewController;
 
@@ -58,15 +59,6 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
         this.resources = game.getResources();
         this.interactionHud = new InteractionHud(game);
         game.addListener(this);
-        loadPauseBg();
-    }
-
-    private void loadPauseBg() {
-        try {
-            pauseImg = ImageIO.read(Path.of(PAUSE_BG).toFile());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -92,9 +84,7 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
         setBackground(Color.BLACK);
         drawGameObjects(graphics2D);
         drawShipInformation(graphics2D);
-        if (paused) {
-            paintPauseMenu(graphics2D);
-        }
+
     }
 
     /**
@@ -144,11 +134,6 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
     }
 
 
-    private void paintPauseMenu(Graphics2D graphics2D) {
-        graphics2D.drawImage(pauseImg, 0, 0, null);
-        viewController.getPMenu().paintOnCustomCanvas(graphics2D);
-    }
-
     /**
      * Do something when the game has indicated that it is updated. For this panel, that means redrawing.
      *
@@ -167,24 +152,6 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
 
     public final static Color blur_BG = new Color(0, 0, 0, 110);
 
-    public class GlassPane extends JPanel {
-
-        public GlassPane() {
-            this.setOpaque(false);
-            this.setBackground(blur_BG);
-        }
-
-
-        @Override
-        public final void paint(Graphics g) {
-            final Color old = blur_BG;
-            g.setColor(getBackground());
-            g.fillRect(0, 0, getSize().width, getSize().height);
-            g.setColor(old);
-            super.paintComponent(g);
-        }
-
-    }
 
     @Override
     public void onGameOver() {

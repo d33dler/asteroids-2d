@@ -16,7 +16,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ViewController implements GameUpdateListener{
+public class ViewController implements GameUpdateListener {
     @Getter
     @Setter
     private Game game;
@@ -39,8 +39,7 @@ public class ViewController implements GameUpdateListener{
     private AsteroidsPanel asteroidsPanel;
 
     private final List<JPanel> activePanels = new ArrayList<>();
-    private JDialog pauseMenu;
-    private JLayeredPane layeredPane;
+
     public ViewController(Game game, AsteroidsFrame frame) {
         this.game = game;
         this.frame = frame;
@@ -62,14 +61,15 @@ public class ViewController implements GameUpdateListener{
 
     public void displayGame() {
         removePanels();
-        frame.activateKeyListener();
+       frame.setFocusable(true);
         asteroidsPanel = new AsteroidsPanel(this, game);
         validatePanel(asteroidsPanel);
     }
 
     public void displayScoreBoard() {
-       removePanels();
-      ScoreboardPanel scoreboardPanel = new ScoreboardPanel(this, SCOREBOARD);
+
+        removePanels();
+        ScoreboardPanel scoreboardPanel = new ScoreboardPanel(this, SCOREBOARD);
         validatePanel(scoreboardPanel);
     }
 
@@ -80,15 +80,15 @@ public class ViewController implements GameUpdateListener{
     }
 
     public void displayPauseMenu() {
-        asteroidsPanel.add(pMenu);
+       removePanels();
         validatePanel(pMenu);
-        asteroidsPanel.setPaused(true);
+        pMenu.refresh();
     }
 
     private void validatePanel(JPanel menu) {
         activePanels.add(menu);
         frame.add(menu);
-       frame.revalidate();
+        frame.validate();
     }
 
     private void requestGameReset() {
@@ -108,16 +108,17 @@ public class ViewController implements GameUpdateListener{
         displayEndGame();
     }
 
-
-    private boolean paused = false;
+@Setter
+    private volatile boolean paused = false;
 
     public void requestPauseMenu() {
-        if (paused) {
-            displayGame();
-        } else {
-            displayPauseMenu();
+        if (!game.isGameOver() && game.isRunning()) {
+            if (paused) {
+               displayGame();
+            } else {
+                displayPauseMenu();
+            }
+            setPaused(!paused);
         }
-        paused = !paused;
     }
-
 }

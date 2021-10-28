@@ -57,7 +57,7 @@ public class AsteroidsFrame extends JFrame {
         setTitle(WINDOW_TITLE);
         setSize(WINDOW_SIZE);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+        activateKeyListener();
         // Add a menu bar with some simple actions.
         JMenuBar menuBar = new JMenuBar();
         JMenu menu = new JMenu("Game");
