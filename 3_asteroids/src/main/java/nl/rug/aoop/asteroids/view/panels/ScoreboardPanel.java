@@ -1,11 +1,9 @@
 package nl.rug.aoop.asteroids.view.panels;
 
 import nl.rug.aoop.asteroids.control.ViewController;
-import nl.rug.aoop.asteroids.control.menu_commands.pause.ReturnCommand;
-import nl.rug.aoop.asteroids.control.updaters.controls.MainMenuControl;
+import nl.rug.aoop.asteroids.control.controls.MainMenuControl;
 import nl.rug.aoop.asteroids.util.database.DatabaseManager;
 import nl.rug.aoop.asteroids.util.database.Score;
-import nl.rug.aoop.asteroids.view.AsteroidsFrame;
 import org.jetbrains.annotations.Nls;
 
 import javax.swing.*;

@@ -1,4 +1,4 @@
-package nl.rug.aoop.asteroids.control.updaters.controls;
+package nl.rug.aoop.asteroids.control.controls;
 
 import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.view.panels.ScoreboardPanel;

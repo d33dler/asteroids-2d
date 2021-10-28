@@ -2,7 +2,7 @@ package nl.rug.aoop.asteroids.control.menu_commands.pause;
 
 import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.control.menu_commands.MenuCommands;
-import nl.rug.aoop.asteroids.control.updaters.controls.MainMenuControl;
+import nl.rug.aoop.asteroids.control.controls.MainMenuControl;
 import nl.rug.aoop.asteroids.model.game.Game;
 
 import javax.swing.*;

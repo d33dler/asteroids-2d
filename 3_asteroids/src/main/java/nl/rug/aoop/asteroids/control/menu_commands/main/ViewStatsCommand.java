@@ -2,7 +2,7 @@ package nl.rug.aoop.asteroids.control.menu_commands.main;
 
 import nl.rug.aoop.asteroids.control.menu_commands.MenuCommands;
 import nl.rug.aoop.asteroids.control.ViewController;
-import nl.rug.aoop.asteroids.control.updaters.controls.ScoreboardControl;
+import nl.rug.aoop.asteroids.control.controls.ScoreboardControl;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

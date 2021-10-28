@@ -5,7 +5,7 @@ import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.control.actions.NewGameAction;
 import nl.rug.aoop.asteroids.control.PlayerKeyListener;
 import nl.rug.aoop.asteroids.control.actions.QuitAction;
-import nl.rug.aoop.asteroids.control.updaters.controls.MainMenuControl;
+import nl.rug.aoop.asteroids.control.controls.MainMenuControl;
 import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
 import nl.rug.aoop.asteroids.model.game.Game;
 

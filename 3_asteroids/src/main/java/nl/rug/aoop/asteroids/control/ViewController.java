@@ -2,16 +2,14 @@ package nl.rug.aoop.asteroids.control;
 
 import lombok.Getter;
 import lombok.Setter;
-import nl.rug.aoop.asteroids.control.updaters.controls.Control;
+import nl.rug.aoop.asteroids.control.controls.Control;
 import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
 import nl.rug.aoop.asteroids.model.game.Game;
 import nl.rug.aoop.asteroids.util.ReflectionUtils;
 import nl.rug.aoop.asteroids.view.AsteroidsFrame;
 import nl.rug.aoop.asteroids.view.menus.EndgameMenu;
-import nl.rug.aoop.asteroids.view.menus.main_menu.MainMenu;
 import nl.rug.aoop.asteroids.view.menus.pause_menu.PauseMenu;
 import nl.rug.aoop.asteroids.view.panels.AsteroidsPanel;
-import nl.rug.aoop.asteroids.view.panels.ScoreboardPanel;
 
 import javax.swing.*;
 import java.util.ArrayList;
