@@ -2,6 +2,7 @@ package nl.rug.aoop.asteroids.control;
 
 import lombok.Getter;
 import lombok.Setter;
+import nl.rug.aoop.asteroids.control.updaters.controls.Control;
 import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
 import nl.rug.aoop.asteroids.model.game.Game;
 import nl.rug.aoop.asteroids.util.ReflectionUtils;
@@ -24,17 +25,13 @@ public class ViewController implements GameUpdateListener {
     @Setter
     private AsteroidsFrame frame;
 
-    private List<AbstractAction> mainMenuActions;
     private List<AbstractAction> pauseActions;
     @Getter
     private final PauseMenu pMenu = new PauseMenu(this);
 
-    private final static String MAIN_M_PKG = "nl.rug.aoop.asteroids.control.menu_commands.main",
-            PAUSE_M_PKG = "nl.rug.aoop.asteroids.control.menu_commands.pause";
+    private final static String PAUSE_M_PKG = "nl.rug.aoop.asteroids.control.menu_commands.pause";
 
-    private final static String MAIN_M_BG = "images/menu_bg.png",
-            GAME_OVER_BG = "images/game_over.png";
-    private final static String SCOREBOARD = "images/scoreboard.png";
+    private final static String GAME_OVER_BG = "images/game_over.png";
 
     private AsteroidsPanel asteroidsPanel;
 
@@ -49,14 +46,16 @@ public class ViewController implements GameUpdateListener {
     }
 
     private void initAllCommands() {
-        mainMenuActions = ReflectionUtils.getMenuCommands(this, MAIN_M_PKG);
         pauseActions = ReflectionUtils.getMenuCommands(this, PAUSE_M_PKG);
     }
 
-    public void displayMainMenu() {
-        removePanels();
-        MainMenu menu = new MainMenu(this, mainMenuActions, MAIN_M_BG);
-        validatePanel(menu);
+    /**
+     * Executes the given control
+     *
+     * @param control An object implementing the control interface
+     */
+    public void displayPane(Control control){
+        control.display();
     }
 
     public void displayGame() {
@@ -64,13 +63,6 @@ public class ViewController implements GameUpdateListener {
        frame.setFocusable(true);
         asteroidsPanel = new AsteroidsPanel(this, game);
         validatePanel(asteroidsPanel);
-    }
-
-    public void displayScoreBoard() {
-
-        removePanels();
-        ScoreboardPanel scoreboardPanel = new ScoreboardPanel(this, SCOREBOARD);
-        validatePanel(scoreboardPanel);
     }
 
     public void displayEndGame() {
@@ -85,7 +77,7 @@ public class ViewController implements GameUpdateListener {
         pMenu.refresh();
     }
 
-    private void validatePanel(JPanel menu) {
+    public void validatePanel(JPanel menu) {
         activePanels.add(menu);
         frame.add(menu);
         frame.validate();
@@ -96,7 +88,7 @@ public class ViewController implements GameUpdateListener {
         frame.setGame(game);
     }
 
-    private void removePanels() {
+    public void removePanels() {
         for (JPanel activePanel : activePanels) {
             frame.remove(activePanel);
         }

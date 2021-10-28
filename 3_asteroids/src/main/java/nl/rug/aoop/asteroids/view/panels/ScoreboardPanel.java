@@ -2,6 +2,7 @@ package nl.rug.aoop.asteroids.view.panels;
 
 import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.control.menu_commands.pause.ReturnCommand;
+import nl.rug.aoop.asteroids.control.updaters.controls.MainMenuControl;
 import nl.rug.aoop.asteroids.util.database.DatabaseManager;
 import nl.rug.aoop.asteroids.util.database.Score;
 import nl.rug.aoop.asteroids.view.AsteroidsFrame;
@@ -36,7 +37,7 @@ public class ScoreboardPanel extends JPanel {
         JButton returnButton = new JButton(new AbstractAction("Return") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                viewController.displayMainMenu();
+                viewController.displayPane(new MainMenuControl(viewController));
             }
         });
         setLayout(new BorderLayout(40, 30));

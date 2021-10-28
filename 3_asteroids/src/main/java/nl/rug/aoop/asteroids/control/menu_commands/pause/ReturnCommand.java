@@ -2,6 +2,7 @@ package nl.rug.aoop.asteroids.control.menu_commands.pause;
 
 import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.control.menu_commands.MenuCommands;
+import nl.rug.aoop.asteroids.control.updaters.controls.MainMenuControl;
 import nl.rug.aoop.asteroids.model.game.Game;
 
 import javax.swing.*;
@@ -24,6 +25,6 @@ public class ReturnCommand extends AbstractAction {
         manager.setGame(newGame);
         newGame.setViewController(manager);
         manager.getFrame().resetGame(newGame);
-        manager.displayMainMenu();
+        manager.displayPane(new MainMenuControl(manager));
     }
 }

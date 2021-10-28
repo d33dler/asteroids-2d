@@ -5,6 +5,7 @@ import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.control.actions.NewGameAction;
 import nl.rug.aoop.asteroids.control.PlayerKeyListener;
 import nl.rug.aoop.asteroids.control.actions.QuitAction;
+import nl.rug.aoop.asteroids.control.updaters.controls.MainMenuControl;
 import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
 import nl.rug.aoop.asteroids.model.game.Game;
 
@@ -65,7 +66,7 @@ public class AsteroidsFrame extends JFrame {
         menu.add(new QuitAction());
         menu.add(new NewGameAction(game));
         setJMenuBar(menuBar);
-        viewController.displayMainMenu();
+        viewController.displayPane(new MainMenuControl(viewController));
 
         setResizable(false);
         setVisible(true);
