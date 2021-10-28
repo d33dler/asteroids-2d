@@ -3,7 +3,8 @@
   <h1 align="center">Asteroids</h1>
 
   <p align="center">
-    < add a very short description here (1 sentence)>
+  A re-interpration of the famous Asteroids game in Java for the Advanced Object
+  Oriented Programming Course at Rijksuniversiteit Groningen
   </p>
 </p>
 
@@ -24,6 +25,9 @@
 ## About The Project
 
 <!-- Add short description about the project here -->
+This project has the all-time famous Asteroids game as its core. It is developed
+following OOP concepts using Java. Along with the classic game, it was enriched
+with a networking functionality that lets the users enjoy the game with friends.
 
 ### Built With
 
@@ -31,7 +35,13 @@
 
 ## Getting Started
 
-To get a local copy up and running follow these simple steps.
+To get a local copy up and running follow these simple steps:
+
+1. Clone the resources of the game on your computer from Github using:
+   * HTTPS: https://github.com/rug-advoop/2021_Team_093.git
+   * SSH: git@github.com:rug-advoop/2021_Team_093.git
+   * Github CLI: gh repo clone rug-advoop/2021_Team_093
+1. Follow the steps in [Installation](#installation) 
 
 ### Prerequisites
 
@@ -62,7 +72,17 @@ The JAR file will appear in the `/target` directory.
 
 ## Design Description
 
+<!-- 
 Describe your program's structure (classes and packages) in detail, addressing all but the most trivial features, and provide ample reasoning for why you chose a certain structure, or why you implemented something a certain way. What design patterns did you use? Describe how and where they've been applied. And finally, how does your game handle networking? Give a description of the protocol or messages that the clients use to communicate with servers. Including a diagram here can help! 
+-->
+
+The project structure follows the Model-View-Controller pattern. This means that
+the resources were divided in these main packages (Model, View, Control)
+supported by a gameobserver, a network and a util package. Each of these
+packages addresses a main concern: Model handles the the states of the game and
+keeps track of changes; the view handles the UI of the program; the control
+handles the interaction between the user and UI the; 
+
 <!-- Write this section yourself -->
 Expected length: as much as you need to explain the above. This will likely be the longest section (it is also the most important one).
 
