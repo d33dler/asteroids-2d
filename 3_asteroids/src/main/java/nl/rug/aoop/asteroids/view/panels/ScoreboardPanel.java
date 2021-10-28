@@ -32,15 +32,19 @@ public class ScoreboardPanel extends JPanel {
     public ScoreboardPanel(ViewController viewController, String iconFileName) {
         JLabel icon = new JLabel(new ImageIcon(iconFileName));
         JTable scoreTable = new JTable(new ScoreTable(dbManager.getAllScores()));
+        scoreTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        scoreTable.setAutoCreateRowSorter(true);
+        JScrollPane scrollPane = new JScrollPane(scoreTable);
+        scrollPane.setPreferredSize(new Dimension(100, 250));
         JButton returnButton = new JButton(new AbstractAction("Return") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 viewController.displayPane(new MainMenuControl(viewController));
             }
         });
-        setLayout(new BorderLayout(40, 30));
+        setLayout(new BorderLayout(150, 50));
         add(icon, BorderLayout.NORTH);
-        add(scoreTable, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.CENTER);
         add(returnButton, BorderLayout.SOUTH);
 
     }

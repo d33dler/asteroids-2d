@@ -22,6 +22,12 @@ public class StartCommand extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         manager.displayPane(new GameControl(manager));
+        String input = getUserInput();
+        manager.getGame().setNickname(input);
         new NewGameAction(manager.getGame()).actionPerformed(null);
+    }
+
+    private String getUserInput() {
+        return JOptionPane.showInputDialog(manager.getFrame(), "Input your NickName");
     }
 }

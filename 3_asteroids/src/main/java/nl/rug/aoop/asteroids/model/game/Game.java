@@ -51,6 +51,8 @@ public class Game extends ObservableGame {
 
     @Getter
     private String USER_ID = "Host";
+    @Setter
+    private String nickname;
 
     public Asteroid closestAsteroid;
     public boolean proxy = false;
@@ -153,7 +155,7 @@ public class Game extends ObservableGame {
     public void checkEndGame() {
         if ((isGameOver() || !resources.isRunProcesses()) && !notifyEnd) {
             notifyEnd = true;
-            dbManager.addScore(new Score("player", resources.getSpaceShip().getScore()));
+            dbManager.addScore(new Score(nickname, resources.getSpaceShip().getScore()));
             notifyGameOver();
         }
     }
