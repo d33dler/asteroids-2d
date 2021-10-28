@@ -1,5 +1,6 @@
 package nl.rug.aoop.asteroids.control.menu_commands.main;
 
+import nl.rug.aoop.asteroids.control.controls.GameControl;
 import nl.rug.aoop.asteroids.control.menu_commands.MenuCommands;
 import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
@@ -25,7 +26,7 @@ public class JoinCommand extends AbstractAction {
         if (input!=null) {
             InetSocketAddress address = new InetSocketAddress(input.a, input.b);
             manager.getGame().startOnline(address);
-            manager.displayGame();
+            manager.displayPane(new GameControl(manager));
         }
     }
 

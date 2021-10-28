@@ -3,6 +3,9 @@ package nl.rug.aoop.asteroids.control;
 import lombok.Getter;
 import lombok.Setter;
 import nl.rug.aoop.asteroids.control.controls.Control;
+import nl.rug.aoop.asteroids.control.controls.EndGameControl;
+import nl.rug.aoop.asteroids.control.controls.GameControl;
+import nl.rug.aoop.asteroids.control.controls.PauseControl;
 import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
 import nl.rug.aoop.asteroids.model.game.Game;
 import nl.rug.aoop.asteroids.util.ReflectionUtils;
@@ -23,16 +26,6 @@ public class ViewController implements GameUpdateListener {
     @Setter
     private AsteroidsFrame frame;
 
-    private List<AbstractAction> pauseActions;
-    @Getter
-    private final PauseMenu pMenu = new PauseMenu(this);
-
-    private final static String PAUSE_M_PKG = "nl.rug.aoop.asteroids.control.menu_commands.pause";
-
-    private final static String GAME_OVER_BG = "images/game_over.png";
-
-    private AsteroidsPanel asteroidsPanel;
-
     private final List<JPanel> activePanels = new ArrayList<>();
 
     public ViewController(Game game, AsteroidsFrame frame) {
@@ -40,11 +33,6 @@ public class ViewController implements GameUpdateListener {
         this.frame = frame;
         game.setViewController(this);
         game.addListener(this);
-        initAllCommands();
-    }
-
-    private void initAllCommands() {
-        pauseActions = ReflectionUtils.getMenuCommands(this, PAUSE_M_PKG);
     }
 
     /**
@@ -56,36 +44,26 @@ public class ViewController implements GameUpdateListener {
         control.display();
     }
 
-    public void displayGame() {
-        removePanels();
-       frame.setFocusable(true);
-        asteroidsPanel = new AsteroidsPanel(this, game);
-        validatePanel(asteroidsPanel);
-    }
-
-    public void displayEndGame() {
-        removePanels();
-        EndgameMenu egMenu = new EndgameMenu(this, game.getUserSpaceship().getScore(), GAME_OVER_BG);
-        validatePanel(egMenu);
-    }
-
-    public void displayPauseMenu() {
-       removePanels();
-        validatePanel(pMenu);
-        pMenu.refresh();
-    }
-
+    /**
+     * This method adds a panel to the frame and validates it
+     *
+     * @param menu A Jpanel to add to the frame
+     */
     public void validatePanel(JPanel menu) {
         activePanels.add(menu);
         frame.add(menu);
         frame.validate();
     }
 
+    // TODO Useless??
     private void requestGameReset() {
         this.game = new Game();
         frame.setGame(game);
     }
 
+    /**
+     * This method clears the frame from the tracked panels
+     */
     public void removePanels() {
         for (JPanel activePanel : activePanels) {
             frame.remove(activePanel);
@@ -95,18 +73,22 @@ public class ViewController implements GameUpdateListener {
 
     @Override
     public void onGameOver() {
-        displayEndGame();
+        displayPane(new EndGameControl(this));
     }
 
-@Setter
+    @Setter
     private volatile boolean paused = false;
 
+    /**
+     * This method handles the pause menu, making it so the game can only
+     * be paused while the game is actually running
+     */
     public void requestPauseMenu() {
         if (!game.isGameOver() && game.isRunning()) {
             if (paused) {
-               displayGame();
+                displayPane(new GameControl(this));
             } else {
-                displayPauseMenu();
+                displayPane(new PauseControl(this));
             }
             setPaused(!paused);
         }

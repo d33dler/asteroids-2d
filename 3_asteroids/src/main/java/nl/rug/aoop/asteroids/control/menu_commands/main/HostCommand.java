@@ -1,6 +1,7 @@
 package nl.rug.aoop.asteroids.control.menu_commands.main;
 
 import lombok.extern.java.Log;
+import nl.rug.aoop.asteroids.control.controls.GameControl;
 import nl.rug.aoop.asteroids.control.menu_commands.MenuCommands;
 import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
@@ -30,7 +31,7 @@ public class HostCommand extends AbstractAction {
         try {
             address = InetAddress.getByName(input);
             manager.getGame().startHosting(address);
-            manager.displayGame();
+            manager.displayPane(new GameControl(manager));
         } catch (UnknownHostException ex) {
             log.warning("Unknown host address");
         }
