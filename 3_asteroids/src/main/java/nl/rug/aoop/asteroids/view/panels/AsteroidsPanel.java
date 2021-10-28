@@ -42,9 +42,8 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
     private InteractionHud interactionHud;
     @Setter
     @Getter
-    private boolean paused;
+    private boolean paused = false;
     private final static String PAUSE_BG = "images/pause_bg.png";
-    private BufferedImage pauseImg;
 
     private ViewController viewController;
 
@@ -60,15 +59,6 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
         this.resources = game.getResources();
         this.interactionHud = new InteractionHud(game);
         game.addListener(this);
-        loadPauseBg();
-    }
-
-    private void loadPauseBg() {
-        try {
-            pauseImg = ImageIO.read(Path.of(PAUSE_BG).toFile());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -82,21 +72,19 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
 		/* The parent method is first called. Here's an excerpt from the documentation stating why we do this:
 		"...if you do not invoke super's implementation you must honor the opaque property, that is if this component is
 		opaque, you must completely fill in the background in an opaque color. If you do not honor the opaque property
-		you will likely see visual artifacts." Just a little FYI. */
+		you will likely see visual artifacts." Just a little FYI.
+		 */
+        super.paintComponent(graphics);
+
+        // The Graphics2D class offers some more advanced options when drawing, so before doing any drawing, this is obtained simply by casting.
         Graphics2D graphics2D = (Graphics2D) graphics;
+        // Set some key-value options for the graphics object. In this case, this just sets antialiasing to true.
+        graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        // Since the game takes place in space, it is efficient to just lazily make the background black.
+        setBackground(Color.BLACK);
+        drawGameObjects(graphics2D);
+        drawShipInformation(graphics2D);
 
-        if (!paused) {
-            super.paintComponent(graphics);
-
-            // The Graphics2D class offers some more advanced options when drawing, so before doing any drawing, this is obtained simply by casting.
-
-            // Set some key-value options for the graphics object. In this case, this just sets antialiasing to true.
-            graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            // Since the game takes place in space, it is efficient to just lazily make the background black.
-            setBackground(Color.BLACK);
-            drawGameObjects(graphics2D);
-            drawShipInformation(graphics2D);
-        } else paintPauseMenu(graphics2D);
     }
 
     /**
@@ -146,12 +134,6 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
     }
 
 
-    private void paintPauseMenu(Graphics2D graphics2D) {
-        System.out.println("PAINTING pause");
-        graphics2D.drawImage(pauseImg, 0, 0, null);
-       viewController.getPMenu().paintOnCustomCanvas(graphics2D);
-    }
-
     /**
      * Do something when the game has indicated that it is updated. For this panel, that means redrawing.
      *
@@ -170,24 +152,6 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
 
     public final static Color blur_BG = new Color(0, 0, 0, 110);
 
-    public class GlassPane extends JPanel {
-
-        public GlassPane() {
-            this.setOpaque(false);
-            this.setBackground(blur_BG);
-        }
-
-
-        @Override
-        public final void paint(Graphics g) {
-            final Color old = blur_BG;
-            g.setColor(getBackground());
-            g.fillRect(0, 0, getSize().width, getSize().height);
-            g.setColor(old);
-            super.paintComponent(g);
-        }
-
-    }
 
     @Override
     public void onGameOver() {

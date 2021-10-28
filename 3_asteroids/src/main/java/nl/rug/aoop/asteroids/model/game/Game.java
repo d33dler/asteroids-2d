@@ -109,16 +109,19 @@ public class Game extends ObservableGame {
 
     public void startOnline(InetSocketAddress address) {
         start(true, false);
+        initializeGameThreads();
         initMultiplayerAsClient(address);
     }
 
     public void startSpectating(InetSocketAddress address) {
         start(true, false);
+        initializeGameThreads();
         initMultiplayerAsSpectator(address);
     }
 
     public void startHosting(InetAddress address) {
         start(true, true);
+        initializeGameThreads();
         initMultiplayerAsHost(address);
     }
 

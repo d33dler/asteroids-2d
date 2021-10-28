@@ -55,19 +55,19 @@ public class ViewController implements GameUpdateListener {
 
     public void displayMainMenu() {
         removePanels();
-        frame.setFocusable(true);
         MainMenu menu = new MainMenu(this, mainMenuActions, MAIN_M_BG);
         validatePanel(menu);
     }
 
     public void displayGame() {
         removePanels();
-        frame.activateKeyListener();
+       frame.setFocusable(true);
         asteroidsPanel = new AsteroidsPanel(this, game);
         validatePanel(asteroidsPanel);
     }
 
     public void displayScoreBoard() {
+
         removePanels();
         ScoreboardPanel scoreboardPanel = new ScoreboardPanel(this, SCOREBOARD);
         validatePanel(scoreboardPanel);
@@ -80,14 +80,9 @@ public class ViewController implements GameUpdateListener {
     }
 
     public void displayPauseMenu() {
-        asteroidsPanel.setPaused(true);
-        asteroidsPanel.add(pMenu);
-        asteroidsPanel.validate();
-    }
-    public void returnToGame(){
-        asteroidsPanel.setPaused(false);
-        asteroidsPanel.remove(pMenu);
-        asteroidsPanel.validate();
+       removePanels();
+        validatePanel(pMenu);
+        pMenu.refresh();
     }
 
     private void validatePanel(JPanel menu) {
@@ -113,15 +108,17 @@ public class ViewController implements GameUpdateListener {
         displayEndGame();
     }
 
+@Setter
+    private volatile boolean paused = false;
 
     public void requestPauseMenu() {
-        if(asteroidsPanel!=null){
-            if (asteroidsPanel.isPaused()) {
-                returnToGame();
+        if (!game.isGameOver() && game.isRunning()) {
+            if (paused) {
+               displayGame();
             } else {
                 displayPauseMenu();
             }
+            setPaused(!paused);
         }
     }
-
 }
