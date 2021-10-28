@@ -1,9 +1,8 @@
 package nl.rug.aoop.asteroids.network.data;
 
-import nl.rug.aoop.asteroids.model.Game;
+import nl.rug.aoop.asteroids.model.game.Game;
 import nl.rug.aoop.asteroids.model.MultiplayerManager;
-import nl.rug.aoop.asteroids.model.gameobjects.GameObject;
-import nl.rug.aoop.asteroids.model.gameobjects.asteroid.Asteroid;
+import nl.rug.aoop.asteroids.model.game.GameResources;
 import nl.rug.aoop.asteroids.model.obj_factory.GameObjectFactory;
 import nl.rug.aoop.asteroids.network.clients.User;
 import nl.rug.aoop.asteroids.network.data.deltas_changes.GameplayDeltas;
@@ -22,12 +21,14 @@ public class DeltaProcessor implements DeltaManager {
     private final User user;
     private final MultiplayerManager multiplayerBase;
     private final GameObjectFactory factory;
+    private final GameResources resources;
 
     public DeltaProcessor(MultiplayerManager manager, User user) {
         this.game = manager.getGame();
+        this.resources = game.getResources();
         this.user = user;
         this.multiplayerBase = manager;
-        this.factory = multiplayerBase.getGame().getObjectFactory();
+        this.factory = resources.getObjectFactory();
     }
 
     private void collectPlayers(List<Tuple.T3<String, HashSet<Integer>, double[]>> playerKeySets) {
@@ -43,12 +44,13 @@ public class DeltaProcessor implements DeltaManager {
     }
 
     public Tuple.T3<String, HashSet<Integer>, double[]> getPlayerKeyEvents() {
-        return new Tuple.T3<>(user.USER_ID, game.getSpaceShip().getKeyEventSet(), game.getSpaceShip().getObjParameters());
+        return new Tuple.T3<>(user.USER_ID, resources.getSpaceShip().getKeyEventSet(), resources.getSpaceShip().getObjParameters());
     }
 
     public List<Tuple.T3<String, HashSet<Integer>, double[]>> getAllPlayersKeyEvents() {
         List<Tuple.T3<String, HashSet<Integer>, double[]>> keyList = new ArrayList<>();
-        game.getPlayers().forEach((s, spaceship) -> keyList.add(new Tuple.T3<>(s, spaceship.getKeyEventSet(), spaceship.getObjParameters())));
+        resources.getPlayers().forEach((s, spaceship) ->
+                keyList.add(new Tuple.T3<>(s, spaceship.getKeyEventSet(), spaceship.getObjParameters())));
         return keyList;
     }
 

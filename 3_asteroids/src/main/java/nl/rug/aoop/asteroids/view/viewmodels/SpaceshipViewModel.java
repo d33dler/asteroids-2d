@@ -1,7 +1,7 @@
 package nl.rug.aoop.asteroids.view.viewmodels;
 
-import nl.rug.aoop.asteroids.model.Game;
-import nl.rug.aoop.asteroids.model.gameobjects.GameObject;
+import nl.rug.aoop.asteroids.model.game.Game;
+import nl.rug.aoop.asteroids.model.game.GameResources;
 import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
 import nl.rug.aoop.asteroids.util.PolarCoordinate;
 
@@ -13,8 +13,6 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Path;
-
-import static java.lang.Math.PI;
 
 /**
  * View model for displaying a spaceship object.
@@ -68,7 +66,7 @@ public class SpaceshipViewModel extends GameObjectViewModel<Spaceship> {
         int size = Spaceship.SHIP_SIZE;
         double dir = spaceship.getDirection();
 
-        BufferedImage rotated = Game.spriteImgList.get(spaceship.getSprite_img_code());
+        BufferedImage rotated = GameResources.spriteImgList.get(spaceship.getSprite_img_code());
 
         AffineTransform transform = new AffineTransform();
         transform.translate(-15.5,-15.5);
@@ -95,9 +93,9 @@ public class SpaceshipViewModel extends GameObjectViewModel<Spaceship> {
         trans.rotate(spaceship.getDirection(),spaceship.getLocation().x + Spaceship.SHIP_SIZE/2,
                 spaceship.getLocation().y + Spaceship.SHIP_SIZE/2);
         graphics2D.transform(trans);
-        graphics2D.drawImage(exhaust, (int) (location.x) - 1, (int) (location.y +
+        graphics2D.drawImage(exhaust, (int) (location.x+2) , (int) (location.y +
                         + Spaceship.SHIP_SIZE - 1), 14,14, null);
-        graphics2D.drawImage(exhaust, (int) (location.x + 18), (int) (location.y +
+        graphics2D.drawImage(exhaust, (int) (location.x + 20), (int) (location.y +
                 Spaceship.SHIP_SIZE -1), 14,14, null);
         graphics2D.setTransform(backup);
         Spaceship o = getGameObject();

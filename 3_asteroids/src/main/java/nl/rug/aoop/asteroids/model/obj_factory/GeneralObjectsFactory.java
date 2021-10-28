@@ -1,7 +1,8 @@
 package nl.rug.aoop.asteroids.model.obj_factory;
 
 import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
-import nl.rug.aoop.asteroids.model.Game;
+import nl.rug.aoop.asteroids.model.game.Game;
+import nl.rug.aoop.asteroids.model.game.GameResources;
 import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
 import nl.rug.aoop.asteroids.util.ReflectionUtils;
 
@@ -13,9 +14,10 @@ public class GeneralObjectsFactory implements GameObjectFactory, GameUpdateListe
 
     private HashMap<String, FactoryCommand> objFactoryMap;
     private Game game;
-
+    private GameResources resources;
     public GeneralObjectsFactory(Game game, String objPACKAGE) {
         this.game = game;
+        this.resources = game.getResources();
         game.addListener(this);
         loadObject(objPACKAGE);
     }

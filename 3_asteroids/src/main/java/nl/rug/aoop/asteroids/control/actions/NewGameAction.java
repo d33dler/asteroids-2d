@@ -1,6 +1,6 @@
 package nl.rug.aoop.asteroids.control.actions;
 
-import nl.rug.aoop.asteroids.model.Game;
+import nl.rug.aoop.asteroids.model.game.Game;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -33,7 +33,7 @@ public class NewGameAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent event) {
         game.quit(); // Try to stop the game if it's currently running.
-        game.initializeGameData(); // Resets the game's objects to their default state.
+        game.initializeGameThreads(); // Resets the game's objects to their default state.
         game.start(); // Spools up the game's engine and starts the main game loop.
     }
 }

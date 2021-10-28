@@ -1,7 +1,7 @@
 package nl.rug.aoop.asteroids;
 
 import nl.rug.aoop.asteroids.control.updaters.GameUpdater;
-import nl.rug.aoop.asteroids.model.Game;
+import nl.rug.aoop.asteroids.model.game.Game;
 import nl.rug.aoop.asteroids.view.AsteroidsFrame;
 import nl.rug.aoop.asteroids.view.panels.AsteroidsPanel;
 import com.formdev.flatlaf.FlatDarculaLaf;

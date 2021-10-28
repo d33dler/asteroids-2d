@@ -1,7 +1,7 @@
 package nl.rug.aoop.asteroids.model.gameobjects.asteroid;
 
 import nl.rug.aoop.asteroids.model.AsteroidSize;
-import nl.rug.aoop.asteroids.model.Game;
+import nl.rug.aoop.asteroids.model.game.Game;
 import nl.rug.aoop.asteroids.model.obj_factory.FactoryCommand;
 import nl.rug.aoop.asteroids.model.obj_factory.ObjectCommand;
 import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
@@ -15,7 +15,7 @@ public class AsteroidMaker implements FactoryCommand {
 
     @Override
     public void updatePassiveObjects(Game game, Tuple.T2<String, List<double[]>> parameters) {
-        if (parameters.b.size() != game.getAsteroids().size()) {
+        if (parameters.b.size() != game.getResources().getAsteroids().size()) {
             List<Asteroid> cacheBuff = new ArrayList<>();
             parameters.b.forEach(param -> {
                 cacheBuff.add(new Asteroid(new Point.Double(param[0], param[1]),
@@ -23,7 +23,7 @@ public class AsteroidMaker implements FactoryCommand {
             });
             while (true) {
                 if (game.rendererDeepCloner.cycleDone) {
-                    game.setAsteroids(cacheBuff);
+                    game.getResources().setAsteroids(cacheBuff);
                     break;
                 }
 

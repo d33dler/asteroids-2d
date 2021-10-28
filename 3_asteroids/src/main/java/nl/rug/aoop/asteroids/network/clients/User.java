@@ -5,29 +5,21 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.java.Log;
 import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
-import nl.rug.aoop.asteroids.model.Game;
+import nl.rug.aoop.asteroids.model.game.Game;
 import nl.rug.aoop.asteroids.model.MultiplayerGame;
 import nl.rug.aoop.asteroids.model.MultiplayerManager;
-import nl.rug.aoop.asteroids.model.gameobjects.GameObject;
+import nl.rug.aoop.asteroids.model.game.GameResources;
 import nl.rug.aoop.asteroids.network.data.ConnectionParameters;
 import nl.rug.aoop.asteroids.network.data.PackageHandler;
 import nl.rug.aoop.asteroids.network.data.deltas_changes.GameplayDeltas;
-import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
 import nl.rug.aoop.asteroids.network.protocol.DefaultHandshake;
 import nl.rug.aoop.asteroids.network.protocol.IOProtocol;
 import nl.rug.aoop.asteroids.util.Randomizer;
-import org.apache.commons.lang3.SerializationUtils;
 
-import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 
 @Log
 public class User implements Runnable, GameUpdateListener {
@@ -38,7 +30,7 @@ public class User implements Runnable, GameUpdateListener {
     private ConnectionParameters connectionParameters;
     private MultiplayerManager multiplayerManager;
     private Game game;
-
+    private GameResources resources;
     private final Randomizer randomizer = new Randomizer(6);
     public String USER_ID = "Host";
 
@@ -47,6 +39,7 @@ public class User implements Runnable, GameUpdateListener {
 
     private User(Game game, InetSocketAddress address) {
         this.game = game;
+        this.resources = game.getResources();
         game.addListener(this);
         initSocket();
         initClientMultiplayer();
@@ -104,15 +97,12 @@ public class User implements Runnable, GameUpdateListener {
 
 
     public synchronized void send(GameplayDeltas data) {
-        game.setUserSerializing(true);
+        resources.setUserSerializing(true);
         io.updateOutPackage(data);
-        game.setUserSerializing(false);
+        resources.setUserSerializing(false);
         io.send();
     }
 
-    public void receive() {
-        io.receive();
-    }
 
     public boolean isConnected() {
         return (!userSocket.isClosed());
@@ -128,18 +118,24 @@ public class User implements Runnable, GameUpdateListener {
         public synchronized void run() {
             while (isConnected()) {
                 if (!game.isEngineBusy()) {
-                    receive();
-                    updateGame();
-                    try {
-                        wait(5);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    if (io.receive()) {
+                        updateGame();
+                        try {
+                            wait(5);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        userSocket.close();
+                        multiplayerManager.notifyDisconnect();
                     }
+
                 }
             }
         }
 
     }
+
     @SneakyThrows
     @Override
     public synchronized void run() {

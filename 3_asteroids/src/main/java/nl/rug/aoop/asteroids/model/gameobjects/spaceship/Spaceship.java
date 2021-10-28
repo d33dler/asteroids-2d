@@ -2,7 +2,6 @@ package nl.rug.aoop.asteroids.model.gameobjects.spaceship;
 
 import lombok.SneakyThrows;
 import nl.rug.aoop.asteroids.control.PlayerKeyListener;
-import nl.rug.aoop.asteroids.model.Game;
 import nl.rug.aoop.asteroids.model.gameobjects.GameObject;
 import nl.rug.aoop.asteroids.model.gameobjects.KeyInput;
 import nl.rug.aoop.asteroids.util.ReflectionUtils;
@@ -12,13 +11,8 @@ import lombok.Setter;
 import nl.rug.aoop.asteroids.view.viewmodels.GameObjectViewModel;
 import nl.rug.aoop.asteroids.view.viewmodels.SpaceshipViewModel;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**

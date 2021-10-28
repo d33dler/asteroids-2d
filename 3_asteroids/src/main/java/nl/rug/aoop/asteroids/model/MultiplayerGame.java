@@ -3,6 +3,7 @@ package nl.rug.aoop.asteroids.model;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
+import nl.rug.aoop.asteroids.model.game.Game;
 import nl.rug.aoop.asteroids.network.clients.User;
 import nl.rug.aoop.asteroids.network.data.DeltaProcessor;
 import nl.rug.aoop.asteroids.network.data.types.DeltaManager;
@@ -19,6 +20,7 @@ public class MultiplayerGame implements MultiplayerManager, GameUpdateListener {
     private User user;
     @Getter
     private Game game;
+
     @Getter
     private HostingDevice hostingDevice = null;
     @Getter
@@ -74,6 +76,9 @@ public class MultiplayerGame implements MultiplayerManager, GameUpdateListener {
         return game.isEngineBusy();
     }
 
+    public void notifyDisconnect() {
+       game.updateGameOverDisconnection();
+    }
 
     @SneakyThrows
     @Override

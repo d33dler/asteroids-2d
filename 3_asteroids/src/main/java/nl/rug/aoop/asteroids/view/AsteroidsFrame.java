@@ -1,19 +1,15 @@
 package nl.rug.aoop.asteroids.view;
 
-import lombok.Getter;
 import lombok.Setter;
 import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.control.actions.NewGameAction;
 import nl.rug.aoop.asteroids.control.PlayerKeyListener;
 import nl.rug.aoop.asteroids.control.actions.QuitAction;
 import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
-import nl.rug.aoop.asteroids.model.Game;
-import nl.rug.aoop.asteroids.view.panels.SpecialComponent;
+import nl.rug.aoop.asteroids.model.game.Game;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.util.Set;
 
 /**
@@ -62,11 +58,6 @@ public class AsteroidsFrame extends JFrame {
         setSize(WINDOW_SIZE);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Add a key listener that can control the game's spaceship.
-        playerKeyListener = new PlayerKeyListener(game, viewController, game.getSpaceShip());
-
-        addKeyListener(playerKeyListener);
-
         // Add a menu bar with some simple actions.
         JMenuBar menuBar = new JMenuBar();
         JMenu menu = new JMenu("Game");
@@ -80,6 +71,12 @@ public class AsteroidsFrame extends JFrame {
         setVisible(true);
     }
 
+    // Add a key listener that can control the game's spaceship.
+    public void activateKeyListener() {
+        playerKeyListener = new PlayerKeyListener(game, viewController, game.getUserSpaceship());
+        addKeyListener(playerKeyListener);
+    }
+
 
     public void resetGame(Game game) {
         Set<GameUpdateListener> listenerSet = this.game.getListeners();
@@ -88,9 +85,11 @@ public class AsteroidsFrame extends JFrame {
         resetPlayerKeyListener();
     }
 
+
+
     private void resetPlayerKeyListener() {
         removeKeyListener(playerKeyListener);
-        playerKeyListener = new PlayerKeyListener(game, viewController, game.getSpaceShip());
+        playerKeyListener = new PlayerKeyListener(game, viewController, game.getUserSpaceship());
         addKeyListener(playerKeyListener);
     }
 

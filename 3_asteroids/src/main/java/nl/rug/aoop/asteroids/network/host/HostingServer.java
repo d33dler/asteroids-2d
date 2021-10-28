@@ -1,10 +1,9 @@
 package nl.rug.aoop.asteroids.network.host;
 
 import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
-import nl.rug.aoop.asteroids.model.Game;
+import nl.rug.aoop.asteroids.model.game.Game;
 import nl.rug.aoop.asteroids.model.MultiplayerManager;
 import nl.rug.aoop.asteroids.network.clients.ClientConnection;
-import nl.rug.aoop.asteroids.network.clients.User;
 import nl.rug.aoop.asteroids.network.data.ConnectionParameters;
 import nl.rug.aoop.asteroids.network.data.deltas_changes.ConfigData;
 import nl.rug.aoop.asteroids.network.data.deltas_changes.GameplayDeltas;
@@ -15,7 +14,6 @@ import nl.rug.aoop.asteroids.network.statistics.StatisticCalculator;
 import nl.rug.aoop.asteroids.util.Randomizer;
 import org.apache.commons.lang3.SerializationUtils;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
@@ -124,12 +122,6 @@ public class HostingServer implements HostingDevice, Runnable, GameUpdateListene
         }
     }
 
-    @Override
-    public void playerEliminated(String id) {
-        notifyEliminated(id);
-    }
-
-
     private class HostingUserUpdater implements Runnable {
 
         @Override
@@ -149,6 +141,11 @@ public class HostingServer implements HostingDevice, Runnable, GameUpdateListene
         }
     }
 
+
+    @Override
+    public void playerEliminated(String id) {
+        notifyEliminated(id);
+    }
     @Override
     public DatagramSocket getServerSocket() {
         return server_socket;
@@ -170,12 +167,12 @@ public class HostingServer implements HostingDevice, Runnable, GameUpdateListene
 
     @Override
     public void notifyDisconnected(String id) {
-        deltasMap.remove(id);
+        multiplayerGame.getGame().requestPlayerRemoval(id);
     }
 
     @Override
     public void notifyEliminated(String id) {
-        notifyDisconnected(id);
+        deltasMap.remove(id);
     }
 
     @Override

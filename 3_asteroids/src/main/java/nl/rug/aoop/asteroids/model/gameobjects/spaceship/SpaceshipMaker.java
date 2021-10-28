@@ -1,11 +1,10 @@
 package nl.rug.aoop.asteroids.model.gameobjects.spaceship;
 
-import nl.rug.aoop.asteroids.model.Game;
+import nl.rug.aoop.asteroids.model.game.Game;
 import nl.rug.aoop.asteroids.model.obj_factory.FactoryCommand;
 import nl.rug.aoop.asteroids.model.obj_factory.ObjectCommand;
 import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,7 +15,7 @@ public class SpaceshipMaker implements FactoryCommand {
     @Override
     public void updateActiveObject(Game game, Tuple.T3<String, HashSet<Integer>, double[]> playerData) {
         if (!playerData.a.equals(game.getUSER_ID())) {
-            game.getSpaceshipCache().put(playerData.a, Tuple.T3.lstT2(playerData));
+            game.getResources().getSpaceshipCache().put(playerData.a, Tuple.T3.lstT2(playerData));
         }
     }
 
@@ -28,7 +27,7 @@ public class SpaceshipMaker implements FactoryCommand {
         cacheBuff.remove(game.getUSER_ID()); //trim user's clone
         while (true) {
             if (!game.isEngineBusy()) { //avoiding chance of modification exception
-                game.setSpaceshipCache(cacheBuff);
+                game.getResources().setSpaceshipCache(cacheBuff);
                 break;
             }
         }

@@ -3,7 +3,7 @@ package nl.rug.aoop.asteroids.control;
 import lombok.Getter;
 import lombok.Setter;
 import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
-import nl.rug.aoop.asteroids.model.Game;
+import nl.rug.aoop.asteroids.model.game.Game;
 import nl.rug.aoop.asteroids.util.ReflectionUtils;
 import nl.rug.aoop.asteroids.view.AsteroidsFrame;
 import nl.rug.aoop.asteroids.view.menus.EndgameMenu;
@@ -62,6 +62,7 @@ public class ViewController implements GameUpdateListener{
 
     public void displayGame() {
         removePanels();
+        frame.activateKeyListener();
         asteroidsPanel = new AsteroidsPanel(this, game);
         validatePanel(asteroidsPanel);
     }
@@ -74,7 +75,7 @@ public class ViewController implements GameUpdateListener{
 
     public void displayEndGame() {
         removePanels();
-        EndgameMenu egMenu = new EndgameMenu(this, game.getSpaceShip().getScore(), GAME_OVER_BG);
+        EndgameMenu egMenu = new EndgameMenu(this, game.getUserSpaceship().getScore(), GAME_OVER_BG);
         validatePanel(egMenu);
     }
 

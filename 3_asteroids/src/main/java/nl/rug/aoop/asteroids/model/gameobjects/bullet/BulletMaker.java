@@ -1,6 +1,6 @@
 package nl.rug.aoop.asteroids.model.gameobjects.bullet;
 
-import nl.rug.aoop.asteroids.model.Game;
+import nl.rug.aoop.asteroids.model.game.Game;
 import nl.rug.aoop.asteroids.model.obj_factory.FactoryCommand;
 import nl.rug.aoop.asteroids.model.obj_factory.ObjectCommand;
 import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;

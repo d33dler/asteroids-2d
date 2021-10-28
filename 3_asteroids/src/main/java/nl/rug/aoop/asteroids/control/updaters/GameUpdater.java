@@ -2,7 +2,8 @@ package nl.rug.aoop.asteroids.control.updaters;
 
 import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.model.AsteroidSize;
-import nl.rug.aoop.asteroids.model.Game;
+import nl.rug.aoop.asteroids.model.game.Game;
+import nl.rug.aoop.asteroids.model.game.GameResources;
 import nl.rug.aoop.asteroids.model.gameobjects.GameObject;
 import nl.rug.aoop.asteroids.model.gameobjects.asteroid.Asteroid;
 import nl.rug.aoop.asteroids.model.gameobjects.bullet.Bullet;
@@ -11,7 +12,6 @@ import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -77,6 +77,7 @@ public class GameUpdater implements Runnable {
     public static double diff = 300;
     public double diffNow = diff;
 
+    private final GameResources resources;
     /**
      * Constructs a new game updater with the given game.
      *
@@ -86,6 +87,7 @@ public class GameUpdater implements Runnable {
         this.isOnlineHost = onlineHost;
         this.online = online;
         this.game = game;
+        this.resources = game.getResources();
         this.viewController = viewController;
         updateCounter = 0;
         asteroidsLimit = ASTEROIDS_LIMIT_DEFAULT;
@@ -112,15 +114,15 @@ public class GameUpdater implements Runnable {
             timeSinceLastDisplayFrame += elapsedTime;
 
             if (timeSinceLastTick >= MILLISECONDS_PER_TICK) {// Check if enough time has passed to update the physics.
-                game.setEngineBusy(true);
+                resources.setEngineBusy(true);
                 while (true) {
-                    if (game.isDrawingDone()) {
+                    if (resources.isDrawingDone()) {
                         updatePhysics();
                         break;
                     }
                 }
                 timeSinceLastTick = 0L;
-                game.setEngineBusy(false);
+                resources.setEngineBusy(false);
                 game.checkEndGame();
             }
 
@@ -144,9 +146,9 @@ public class GameUpdater implements Runnable {
      */
     private void updatePhysics() {
         game.rendererDeepCloner.loadCache();
-        Collection<Bullet> bullets = game.getBullets();
-        Collection<Asteroid> asteroids = game.getAsteroids();
-        Collection<Spaceship> players = game.getPlayers().values();
+        Collection<Bullet> bullets = resources.getBullets();
+        Collection<Asteroid> asteroids = resources.getAsteroids();
+        Collection<Spaceship> players = resources.getPlayers().values();
         players.forEach(Spaceship::nextStep);
         asteroids.forEach(GameObject::nextStep);
         bullets.forEach(GameObject::nextStep);
@@ -187,7 +189,7 @@ public class GameUpdater implements Runnable {
     private void addRandomAsteroid() {
         ThreadLocalRandom rng = ThreadLocalRandom.current();
         Point.Double newAsteroidLocation;
-        Point.Double shipLocation = game.getSpaceShip().getLocation();
+        Point.Double shipLocation = resources.getSpaceShip().getLocation();
         double distanceX, distanceY;
         do { // Iterate until a point is found that is far enough away from the player.
             newAsteroidLocation = new Point.Double(rng.nextDouble(0.0, 800.0), rng.nextDouble(0.0, 800.0));
@@ -206,7 +208,7 @@ public class GameUpdater implements Runnable {
             randomSize = AsteroidSize.SMALL;
         }
         Asteroid a = new Asteroid(newAsteroidLocation, randomVelocity, randomSize);
-        game.getAsteroidsCache().add(a);
+        resources.getAsteroidsCache().add(a);
     }
 
     /**
@@ -216,9 +218,9 @@ public class GameUpdater implements Runnable {
     private void checkCollisions() {
         // First check collisions between bullets and other objects.
         diffNow = diff;
-        Collection<Spaceship> players = game.getPlayers().values();
-        game.getBullets().forEach(bullet -> {
-            game.getAsteroids().forEach(asteroid -> { // Check collision with any of the asteroids.
+        Collection<Spaceship> players = resources.getPlayers().values();
+        resources.getBullets().forEach(bullet -> {
+            resources.getAsteroids().forEach(asteroid -> { // Check collision with any of the asteroids.
                 if (asteroid.collides(bullet)) {
                     asteroid.destroy();
                     bullet.destroy();
@@ -233,10 +235,10 @@ public class GameUpdater implements Runnable {
 
         });
         // Next check for collisions between asteroids and the spaceship.
-        double x = game.getSpaceShip().getLocation().x;
-        double y = game.getSpaceShip().getLocation().y;
+        double x = resources.getSpaceShip().getLocation().x;
+        double y = resources.getSpaceShip().getLocation().y;
 
-        game.getAsteroids().forEach(asteroid -> {
+        resources.getAsteroids().forEach(asteroid -> {
             recheckProxyAsteroids(asteroid, x, y);
             players.forEach(ship -> {
                 if (ship.collides(asteroid)) {
@@ -245,7 +247,7 @@ public class GameUpdater implements Runnable {
                 }
             });
             if (KESSLER_SYNDROME) { // Only check for asteroid - asteroid collisions if we allow kessler syndrome.
-                game.getAsteroids().forEach(secondAsteroid -> {
+                resources.getAsteroids().forEach(secondAsteroid -> {
                     if (!asteroid.equals(secondAsteroid) && asteroid.collides(secondAsteroid)) {
                         asteroid.destroy();
                         secondAsteroid.destroy();
@@ -275,8 +277,8 @@ public class GameUpdater implements Runnable {
      * Increment the player's score, and for every five score points, the asteroids limit is incremented.
      */
     private void increaseScore() {
-        game.getSpaceShip().increaseScore();
-        if (game.getSpaceShip().getScore() % 5 == 0) {
+        resources.getSpaceShip().increaseScore();
+        if (resources.getSpaceShip().getScore() % 5 == 0) {
             asteroidsLimit++;
         }
     }
@@ -289,22 +291,21 @@ public class GameUpdater implements Runnable {
      */
     private void removeDestroyedObjects() {
         // Avoid reallocation and assume every asteroid spawns successors.
-        Collection<Asteroid> newAsteroids = new ArrayList<>(game.getAsteroids().size() * 2);
-        game.getAsteroids().forEach(asteroid -> {
+        Collection<Asteroid> newAsteroids = new ArrayList<>(resources.getAsteroids().size() * 2);
+        resources.getAsteroids().forEach(asteroid -> {
             if (asteroid.isDestroyed()) {
                 increaseScore();
                 newAsteroids.addAll(asteroid.getSuccessors());
             }
         });
-        game.getAsteroids().addAll(newAsteroids);
+        resources.getAsteroids().addAll(newAsteroids);
         // Remove all asteroids that are destroyed.
-        game.getAsteroids().removeIf(GameObject::isDestroyed);
+        resources.getAsteroids().removeIf(GameObject::isDestroyed);
         // Remove any bullets that are destroyed.
-        game.getBullets().removeIf(GameObject::isDestroyed);
-        //game.getOnlineBullets().removeIf(GameObject::isDestroyed);
+        resources.getBullets().removeIf(GameObject::isDestroyed);
 
-        ConcurrentHashMap<String, Spaceship> playersMap = game.getPlayers();
-        playersMap.forEach((s, spaceship) -> {
+        ConcurrentHashMap<String, Spaceship> playersMap = resources.getPlayers();
+        playersMap.forEach(( s, spaceship) -> {
             if (spaceship.isDestroyed()) {
                 playersMap.remove(s);
             }

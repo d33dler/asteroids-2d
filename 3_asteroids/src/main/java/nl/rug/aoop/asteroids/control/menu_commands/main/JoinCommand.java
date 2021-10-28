@@ -32,7 +32,7 @@ public class JoinCommand extends AbstractAction {
     private Tuple.T2<String, Integer> getUserInput() {
         String hostAddress = JOptionPane.showInputDialog(manager.getFrame(), "Enter host DNS/IP address");
         String port = JOptionPane.showInputDialog(manager.getFrame(), "Enter host port");
-        if(hostAddress != null && !port.isEmpty()){
+        if(hostAddress != null && port!=null){
             return new Tuple.T2<>(hostAddress, Integer.valueOf(port));
         }
         return null;

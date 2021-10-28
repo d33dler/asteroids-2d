@@ -1,10 +1,8 @@
 package nl.rug.aoop.asteroids.control;
 
-import nl.rug.aoop.asteroids.model.Game;
+import nl.rug.aoop.asteroids.model.game.Game;
 import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
-import nl.rug.aoop.asteroids.network.clients.User;
 
-import javax.swing.text.View;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -58,7 +56,6 @@ public class PlayerKeyListener implements KeyListener {
      */
     @Override
     public void keyPressed(KeyEvent event) {
-        System.out.println("GOT KEY READ");
         switch (event.getKeyCode()) {
             case ACCELERATION_KEY -> {
                 ship.setAccelerateKeyPressed(true);

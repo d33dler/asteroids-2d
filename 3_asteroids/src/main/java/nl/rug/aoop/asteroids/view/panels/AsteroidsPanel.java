@@ -1,12 +1,11 @@
 package nl.rug.aoop.asteroids.view.panels;
 
-import lombok.Getter;
 import lombok.Setter;
 import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
-import nl.rug.aoop.asteroids.model.Game;
+import nl.rug.aoop.asteroids.model.game.Game;
+import nl.rug.aoop.asteroids.model.game.GameResources;
 import nl.rug.aoop.asteroids.model.gameobjects.gameui.InteractionHud;
-import nl.rug.aoop.asteroids.view.menus.pause_menu.PauseMenu;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -32,7 +31,7 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
      * The game model that this panel will draw to the screen.
      */
     private final Game game;
-
+    private final GameResources resources;
     /**
      * Number of milliseconds since the last time the game's physics were updated. This is used to continue drawing all
      * game objects as if they have kept moving, even in between game ticks.
@@ -56,6 +55,7 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
     public AsteroidsPanel(ViewController controller, Game game) {
         this.viewController = controller;
         this.game = game;
+        this.resources = game.getResources();
         this.interactionHud = new InteractionHud(game);
         game.addListener(this);
         loadPauseBg();
@@ -105,7 +105,7 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
     private void drawShipInformation(Graphics2D graphics2D) {
         graphics2D.setColor(Color.WHITE);
         graphics2D.drawString(
-                String.valueOf(game.getSpaceShip().getScore()),
+                String.valueOf(resources.getSpaceShip().getScore()),
                 SCORE_INDICATOR_POSITION.x,
                 SCORE_INDICATOR_POSITION.y
         );
@@ -113,7 +113,7 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
         graphics2D.drawRect(SCORE_INDICATOR_POSITION.x, SCORE_INDICATOR_POSITION.y + 20,
                 100, ENERGY_BAR_HEIGHT);
         graphics2D.fillRect(SCORE_INDICATOR_POSITION.x, SCORE_INDICATOR_POSITION.y + 20,
-                (int) game.getSpaceShip().getEnergyPercentage(), ENERGY_BAR_HEIGHT);
+                (int) resources.getSpaceShip().getEnergyPercentage(), ENERGY_BAR_HEIGHT);
     }
 
     /**
@@ -124,14 +124,14 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
     private void drawGameObjects(Graphics2D graphics2D) {
         synchronized (game) {
             if (!game.isGameOver()) {
-                game.setDrawingDone(false);
+                resources.setDrawingDone(false);
                 while (true) {
                     if (game.rendererDeepCloner.cycleDone) {
                         try {
                             game.rendererDeepCloner.clonedObjects
                                     .forEach(object
                                             -> object.getViewModel(object).drawObject(graphics2D, timeSinceLastTick));
-                            game.setDrawingDone(true);
+                            resources.setDrawingDone(true);
                             break;
                         } catch (ConcurrentModificationException ignored) {
                         }

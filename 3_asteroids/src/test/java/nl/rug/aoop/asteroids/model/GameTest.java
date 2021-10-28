@@ -1,5 +1,7 @@
 package nl.rug.aoop.asteroids.model;
 
+import nl.rug.aoop.asteroids.model.game.Game;
+import nl.rug.aoop.asteroids.model.game.GameResources;
 import nl.rug.aoop.asteroids.model.gameobjects.asteroid.Asteroid;
 import nl.rug.aoop.asteroids.model.gameobjects.bullet.Bullet;
 import org.junit.jupiter.api.Test;
@@ -17,12 +19,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class GameTest {
 	/**
 	 * Tests the constructor of the Game model. This isn't really much, besides creating the spaceship object. The rest
-	 * is handled by the testing for initializeGameData().
+	 * is handled by the testing for initializeGameThreads().
 	 */
 	@Test
 	void testConstructor() {
 		Game game = new Game();
-		assertNotNull(game.getSpaceShip());
+		GameResources resources = game.getResources();
+		assertNotNull(resources.getSpaceShip());
 	}
 
 	/**
@@ -31,30 +34,31 @@ class GameTest {
 	 */
 	@Test
 	void testInitializeGameData() {
-		Game game = new Game(); // The constructor calls initializeGameData().
-		assertTrue(game.getBullets().isEmpty());
-		assertTrue(game.getAsteroids().isEmpty());
+		Game game = new Game(); // The constructor calls initializeGameThreads().
+		GameResources resources = game.getResources();
+		assertTrue(resources.getBullets().isEmpty());
+		assertTrue(resources.getAsteroids().isEmpty());
 		// We test the spaceship's reset functionality in a separate test, so don't worry too much about testing it here.
-		assertFalse(game.getSpaceShip().isDestroyed());
-		assertEquals(0, game.getSpaceShip().getScore());
+		assertFalse(resources.getSpaceShip().isDestroyed());
+		assertEquals(0, resources.getSpaceShip().getScore());
 
 		// Now mess up the model a bit, and re-initialize it, then test again.
-		game.getAsteroids().add(new Asteroid(
+		resources.getAsteroids().add(new Asteroid(
 				new Point.Double(400.0, 400.0),
 				new Point.Double(5.0, 5.0),
 				AsteroidSize.MEDIUM
 		));
-		game.getBullets().add(new Bullet(400.0, 400.0, 25.0, -25.0));
-		game.getSpaceShip().destroy();
+		resources.getBullets().add(new Bullet(400.0, 400.0, 25.0, -25.0));
+		resources.getSpaceShip().destroy();
 		for (int i = 0; i < 10; i++) {
-			game.getSpaceShip().increaseScore();
+			resources.getSpaceShip().increaseScore();
 		}
-		game.initializeGameData();
+		game.initializeGameThreads();
 		// Test once more that everything has returned to normal.
-		assertTrue(game.getBullets().isEmpty());
-		assertTrue(game.getAsteroids().isEmpty());
-		assertFalse(game.getSpaceShip().isDestroyed());
-		assertEquals(0, game.getSpaceShip().getScore());
+		assertTrue(resources.getBullets().isEmpty());
+		assertTrue(resources.getAsteroids().isEmpty());
+		assertFalse(resources.getSpaceShip().isDestroyed());
+		assertEquals(0, resources.getSpaceShip().getScore());
 	}
 
 	/**
@@ -64,8 +68,9 @@ class GameTest {
 	@Test
 	void testIsGameOver() {
 		Game game = new Game();
+		GameResources resources = game.getResources();
 		assertFalse(game.isGameOver());
-		game.getSpaceShip().destroy();
+		resources.getSpaceShip().destroy();
 		assertTrue(game.isGameOver());
 	}
 

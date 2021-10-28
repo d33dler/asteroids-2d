@@ -1,6 +1,6 @@
 package nl.rug.aoop.asteroids.model.obj_factory;
 
-import nl.rug.aoop.asteroids.model.Game;
+import nl.rug.aoop.asteroids.model.game.Game;
 import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
 
 import java.util.HashSet;
