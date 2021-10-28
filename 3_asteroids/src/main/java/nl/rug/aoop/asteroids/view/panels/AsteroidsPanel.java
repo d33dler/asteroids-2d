@@ -1,5 +1,6 @@
 package nl.rug.aoop.asteroids.view.panels;
 
+import lombok.Getter;
 import lombok.Setter;
 import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
@@ -40,7 +41,8 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
 
     private InteractionHud interactionHud;
     @Setter
-    private boolean paused = false;
+    @Getter
+    private boolean paused;
     private final static String PAUSE_BG = "images/pause_bg.png";
     private BufferedImage pauseImg;
 
@@ -80,21 +82,21 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
 		/* The parent method is first called. Here's an excerpt from the documentation stating why we do this:
 		"...if you do not invoke super's implementation you must honor the opaque property, that is if this component is
 		opaque, you must completely fill in the background in an opaque color. If you do not honor the opaque property
-		you will likely see visual artifacts." Just a little FYI.
-		 */
-        super.paintComponent(graphics);
-
-        // The Graphics2D class offers some more advanced options when drawing, so before doing any drawing, this is obtained simply by casting.
+		you will likely see visual artifacts." Just a little FYI. */
         Graphics2D graphics2D = (Graphics2D) graphics;
-        // Set some key-value options for the graphics object. In this case, this just sets antialiasing to true.
-        graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        // Since the game takes place in space, it is efficient to just lazily make the background black.
-        setBackground(Color.BLACK);
-        drawGameObjects(graphics2D);
-        drawShipInformation(graphics2D);
-        if (paused) {
-            paintPauseMenu(graphics2D);
-        }
+
+        if (!paused) {
+            super.paintComponent(graphics);
+
+            // The Graphics2D class offers some more advanced options when drawing, so before doing any drawing, this is obtained simply by casting.
+
+            // Set some key-value options for the graphics object. In this case, this just sets antialiasing to true.
+            graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            // Since the game takes place in space, it is efficient to just lazily make the background black.
+            setBackground(Color.BLACK);
+            drawGameObjects(graphics2D);
+            drawShipInformation(graphics2D);
+        } else paintPauseMenu(graphics2D);
     }
 
     /**
@@ -145,8 +147,9 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
 
 
     private void paintPauseMenu(Graphics2D graphics2D) {
+        System.out.println("PAINTING pause");
         graphics2D.drawImage(pauseImg, 0, 0, null);
-        viewController.getPMenu().paintOnCustomCanvas(graphics2D);
+       viewController.getPMenu().paintOnCustomCanvas(graphics2D);
     }
 
     /**

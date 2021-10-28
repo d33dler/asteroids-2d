@@ -36,9 +36,7 @@ public class ScoreboardPanel extends JPanel {
         JButton returnButton = new JButton(new AbstractAction("Return") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                viewController.getFrame().dispose();
-                AsteroidsFrame af = new AsteroidsFrame(viewController.getGame());
-                viewController.setFrame(af);
+                viewController.displayMainMenu();
             }
         });
         setLayout(new BorderLayout(40, 30));

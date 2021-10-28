@@ -54,7 +54,6 @@ public class Game extends ObservableGame {
 
     public Asteroid closestAsteroid;
     public boolean proxy = false;
-    public static List<BufferedImage> spriteImgList = new ArrayList<>();
 
     @Getter
     private final GameResources resources;
@@ -150,9 +149,9 @@ public class Game extends ObservableGame {
 
     public void checkEndGame() {
         if ((isGameOver() || !resources.isRunProcesses()) && !notifyEnd) {
-            notifyGameOver();
             notifyEnd = true;
             dbManager.addScore(new Score("player", resources.getSpaceShip().getScore()));
+            notifyGameOver();
         }
     }
 

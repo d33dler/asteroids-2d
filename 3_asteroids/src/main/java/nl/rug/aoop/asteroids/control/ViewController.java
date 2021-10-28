@@ -16,7 +16,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ViewController implements GameUpdateListener{
+public class ViewController implements GameUpdateListener {
     @Getter
     @Setter
     private Game game;
@@ -39,8 +39,7 @@ public class ViewController implements GameUpdateListener{
     private AsteroidsPanel asteroidsPanel;
 
     private final List<JPanel> activePanels = new ArrayList<>();
-    private JDialog pauseMenu;
-    private JLayeredPane layeredPane;
+
     public ViewController(Game game, AsteroidsFrame frame) {
         this.game = game;
         this.frame = frame;
@@ -56,6 +55,7 @@ public class ViewController implements GameUpdateListener{
 
     public void displayMainMenu() {
         removePanels();
+        frame.setFocusable(true);
         MainMenu menu = new MainMenu(this, mainMenuActions, MAIN_M_BG);
         validatePanel(menu);
     }
@@ -68,8 +68,8 @@ public class ViewController implements GameUpdateListener{
     }
 
     public void displayScoreBoard() {
-       removePanels();
-      ScoreboardPanel scoreboardPanel = new ScoreboardPanel(this, SCOREBOARD);
+        removePanels();
+        ScoreboardPanel scoreboardPanel = new ScoreboardPanel(this, SCOREBOARD);
         validatePanel(scoreboardPanel);
     }
 
@@ -80,15 +80,20 @@ public class ViewController implements GameUpdateListener{
     }
 
     public void displayPauseMenu() {
-        asteroidsPanel.add(pMenu);
-        validatePanel(pMenu);
         asteroidsPanel.setPaused(true);
+        asteroidsPanel.add(pMenu);
+        asteroidsPanel.validate();
+    }
+    public void returnToGame(){
+        asteroidsPanel.setPaused(false);
+        asteroidsPanel.remove(pMenu);
+        asteroidsPanel.validate();
     }
 
     private void validatePanel(JPanel menu) {
         activePanels.add(menu);
         frame.add(menu);
-       frame.revalidate();
+        frame.validate();
     }
 
     private void requestGameReset() {
@@ -109,15 +114,14 @@ public class ViewController implements GameUpdateListener{
     }
 
 
-    private boolean paused = false;
-
     public void requestPauseMenu() {
-        if (paused) {
-            displayGame();
-        } else {
-            displayPauseMenu();
+        if(asteroidsPanel!=null){
+            if (asteroidsPanel.isPaused()) {
+                returnToGame();
+            } else {
+                displayPauseMenu();
+            }
         }
-        paused = !paused;
     }
 
 }
