@@ -17,78 +17,74 @@
 
 
 
-
-    <packaging>jar</packaging>
+    <packaging>  jar                    </packaging>
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>16</maven.compiler.source>
-        <maven.compiler.target>16</maven.compiler.target>
-        <maven.assembly.plugin.version>2.4</maven.assembly.plugin.version>
-        <!-- dependencies -->
-        <dep.version>1.0-SNAPSHOT</dep.version>
+        <project.build.sourceEncoding>  UTF-8   </project.build.sourceEncoding>
+        <maven.compiler.source>         16     </maven.compiler.source>
+        <maven.compiler.target>         16  </maven.compiler.target>
     </properties>
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <source>16</source>
-                    <target>16</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-            </plugin>
-            <!-- Maven support for JUnit5 Testing -->
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
-            </plugin>
-            <plugin>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.22.2</version>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.0.0</version>
-                <configuration>
-                    <mainClass>nl.rug.aoop.asteroids.Asteroids</mainClass>
-                </configuration>
-            </plugin>
+        <plugin>
+            <groupId>       org.apache.maven.plugins    </groupId>
+            <artifactId>    maven-compiler-plugin       </artifactId>
+            <version>       3.6.1                       </version>
+            <configuration>
+                <encoding>  ${project.build.sourceEncoding} </encoding>
+                <!-- If you need compiler flags, add them here -->
+                <compilerArgs>
+                    <arg>   -Xlint:unchecked    </arg>
+                </compilerArgs>
+            </configuration>
+        </plugin>
+
+        <plugin>
+            <!-- Executable JAR configuration. -->
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>2.4</version>
+            <configuration>
+                <archive>
+                    <manifest>
+                        <mainClass>aoop.asteroids.Asteroids</mainClass>
+                    </manifest>
+                </archive>
+            </configuration>
+        </plugin>
+
+        <plugin>
+            <!-- Javadoc configuration. -->
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.10.4</version>
+            <configuration>
+                <show>private</show>
+            </configuration>
+        </plugin>
+
+        <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>single</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <descriptorRefs>
+                    <descriptorRef>jar-with-dependencies</descriptorRef>
+                </descriptorRefs>
+                <archive>
+                    <manifest>
+                        <mainClass>aoop.asteroids.Asteroids</mainClass>
+                    </manifest>
+                </archive>
+            </configuration>
+        </plugin>
         </plugins>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-assembly-plugin</artifactId>
-                    <version>${maven.assembly.plugin.version}</version>
-                    <configuration>
-                        <descriptorRefs>
-                            <descriptorRef>jar-with-dependencies</descriptorRef>
-                        </descriptorRefs>
-                        <archive>
-                            <manifest>
-                                <mainClass>Asteroids</mainClass>
-                            </manifest>
-                        </archive>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>make-assembly</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>single</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-            </plugins>
-        </pluginManagement>
 
     </build>
 
@@ -160,7 +156,7 @@
         <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf</artifactId>
-            <version>1.6</version>
+            <version>1.6.1</version>
         </dependency>
 
         <!-- Apache Library for HTTP Requests -->
