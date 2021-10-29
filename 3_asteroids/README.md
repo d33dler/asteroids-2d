@@ -81,9 +81,76 @@ the resources were divided in these main packages (Model, View, Control)
 supported by a gameobserver, a network and a util package. Each of these
 packages addresses a main concern: Model handles the the states of the game and
 keeps track of changes; the view handles the UI of the program; the control
-handles the interaction between the user and UI the; 
+handles the interaction between the user and UI the; the gameobserver simply
+implements listener support for the game; the network package contains
+everything needed for the game to support multiplayer features; the util package
+contains resources that are needed across all the packages.
+
+### View
+
+The view package contains all the GUI classes of the program. Classes are divided
+into some sub-packages depending on their characteristics. For this program,
+Java Swing was used. This means there is a frame and many panels that are added
+to it. Some panels are supported by model classes.
+
+### Controller
+
+Following the MVC design we have a Controller package which is used by the user
+to interact with the game. Hence, here we can find subpackages for all the
+(clickable) buttons and the menu actions. These actions generally call the
+ViewController which is the main class that is concerned with switching all
+panels in the frame according to user input. In particular, this class was
+implemented using a Command pattern. All the controls are implemented in terms
+of a Control abstract class which enforces the programmer to implement a display
+function that will be called by the View Controller. Besides making the code
+much cleaner and understandable, this allows further controls to be added with
+ease and work right away with the View Controller.
+
+Furthermore, in this package we have the keylistener implementation to make the
+view responsive to the keyboard and a game updater, tasked with running the main
+game loop and update each step of the game.
+
+### Model
+
+The model package collects the models of the game and the objects in the game.
+The game package contains a game class which is concerned with starting, pausing
+and stopping the game, while the helper class gameResources manages the game
+objects. 
+
+Game objects are defined in the gameobjects package and they define all the
+characteristics of the objects such as position, velocity etc. Game objects are
+created into a game using a factory pattern design. Its implementation is found
+in the obj_factory package and comprises some interfaces and a class which
+spawns and updates game objects.
+
+Finally there is the Multiplayer game helper class which uses resources from the
+networking package to update the model in multiplayer games.
+
+### Networking 
+
+Networking
+
+### Util
+
+The Util package contains classes to implement randomizer suport, coordinates
+computation and reflection (used for menu buttons). Furthermore, It contains a
+database package which implements persistence support to keep track of the
+scores.
+
+#### Database
+The database package is fairly essential. It has a class to represent a "Score"
+entity to be stored and a class which implements a manager to makes it easy to
+manipulate the database. The Database used for this project is ObjectDB. The
+choice was driven mainly by the really basic needs (no relations etc) of the
+data representation and the ease of use of the API. 
+
+The manager is implemented using the singleton pattern so that only one instance
+is ever created and used. This was a natural solution for such a class since
+the game only interacts with a unique database. By implementing synchronized
+methods for querying and posting, racing conditions are avoided as well.
 
 <!-- Write this section yourself -->
+<!--  
 Expected length: as much as you need to explain the above. This will likely be the longest section (it is also the most important one).
 
 A good way to split this section would be by packages (e.g. model/view/controller). Then discuss the (functionality of) relevant components in each package and how they interact with each other. Make sure to treat every package/module.
@@ -97,6 +164,7 @@ Two questions we would like you to answer somewhere in this section is the follo
 ### ExamplePackageA
 
 ### ExamplePackageB
+-->
 
 ## Evaluation
 
