@@ -1,5 +1,6 @@
 package nl.rug.aoop.asteroids.network.host;
 
+import lombok.extern.java.Log;
 import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
 import nl.rug.aoop.asteroids.model.game.Game;
 import nl.rug.aoop.asteroids.model.MultiplayerManager;
@@ -10,7 +11,6 @@ import nl.rug.aoop.asteroids.network.data.deltas_changes.GameplayDeltas;
 import nl.rug.aoop.asteroids.network.data.types.DeltasData;
 import nl.rug.aoop.asteroids.network.host.listeners.HostListener;
 import nl.rug.aoop.asteroids.network.statistics.ConnectionStatistic;
-import nl.rug.aoop.asteroids.network.statistics.StatisticCalculator;
 import nl.rug.aoop.asteroids.util.IOUtils;
 import nl.rug.aoop.asteroids.util.Randomizer;
 import org.apache.commons.lang3.SerializationUtils;
@@ -23,7 +23,12 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class HostingServer implements HostingDevice, Runnable, GameUpdateListener {
+/**
+ * HostingServer - provides all networking functionality for the hosting user. It implements HostingDevice
+ * which enforces basic hosting requirements.
+ */
+@Log
+public class HostingServer implements HostingDevice, GameUpdateListener {
 
     private final MultiplayerManager multiplayerGame;
     private final List<HostListener> hostListeners = new ArrayList<>();
@@ -85,6 +90,9 @@ public class HostingServer implements HostingDevice, Runnable, GameUpdateListene
         executorService.shutdown();
     }
 
+    /**
+     * U
+      */
     private void acceptConnections() {
         while (multiplayerGame.getGame().isRunning() && hostListeners.size() < multiplayerGame.getMAX_CLIENTS()) {
             byte[] data = new byte[ConnectionParameters.PKG_SIZE_LIM];
@@ -93,29 +101,36 @@ public class HostingServer implements HostingDevice, Runnable, GameUpdateListene
                 server_socket.receive(handshakePacket);
                 addNewClient(handshakePacket);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.info("Error adding new client");
             }
         }
     }
 
+    /**
+     *
+     * Reads the clients address data and send back and ACK packet
+     * with a generated clientID and the private port on which the client communicates with the host
+     * A private socket is created for each connection to separate IO flux
+     * @param handshake packet received from the client
+     */
     private void addNewClient(DatagramPacket handshake) {
         String clientID = randomizer.generateId();
         DatagramSocket privateSocket = null;
         try {
             privateSocket = new DatagramSocket();
         } catch (SocketException e) {
-            e.printStackTrace();
+           log.warning("Failed to create client's private socket");
         }
         if (privateSocket != null) {
             InetSocketAddress inetAddress = new InetSocketAddress(handshake.getAddress(), handshake.getPort());
             String add = privateSocket.getLocalAddress().getCanonicalHostName();
-            System.out.println("NEW CONNECTION ASSIGNED");
+            log.info("NEW CONNECTION ASSIGNED!");
             byte[] data = SerializationUtils.serialize(new ConfigData(clientID, add, privateSocket.getLocalPort()));
             DatagramPacket ACK = new DatagramPacket(data, data.length, inetAddress.getAddress(), inetAddress.getPort());
             try {
                 server_socket.send(ACK);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.info("Error sending ACK packet to client.");
             }
             ClientConnection newListener = new ClientConnection(this, privateSocket, clientID, inetAddress, handshake.getData());
             executorService.execute(newListener);
@@ -123,6 +138,11 @@ public class HostingServer implements HostingDevice, Runnable, GameUpdateListene
         }
     }
 
+    /**
+     * HostingUserUpdater - updates the host's state with all the collected deltas from the client pool
+     * This state is reflected in the hostDeltas byte array which is sent back to all connected clients
+     *
+     */
     private class HostingUserUpdater implements Runnable {
 
         @Override
@@ -131,11 +151,11 @@ public class HostingServer implements HostingDevice, Runnable, GameUpdateListene
             while (hostGame.isRunning()) {
                 if (!hostGame.isEngineBusy()) {
                     multiplayerGame.getDeltaManager().collectPlayerDeltas(deltasMap);
-                    hostDeltas = multiplayerGame.getDeltaManager().getHostDeltas(); //TODO modification?
+                    hostDeltas = multiplayerGame.getDeltaManager().getHostDeltas();
                     try {
                         wait(2);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        log.info("Host cache updater thread was interrupted.");
                     }
                 }
             }
@@ -153,6 +173,10 @@ public class HostingServer implements HostingDevice, Runnable, GameUpdateListene
         return server_socket;
     }
 
+    /**
+     *
+     * @return true if the hostDeltas have finished loading
+     */
     public boolean updateReady() {
         return !multiplayerGame.isUpdating();
     }
@@ -162,24 +186,33 @@ public class HostingServer implements HostingDevice, Runnable, GameUpdateListene
         return hostDeltas;
     }
 
+
+    /**
+     *
+     * @param clientID - id of the connection
+     * @param data - new delta data to be remapped in the hashmap
+     */
     @Override
-    public void addNewDelta(String clientIp, DeltasData data) {
-        deltasMap.put(clientIp, (GameplayDeltas) data);
+    public void addNewDelta(String clientID, DeltasData data) {
+        deltasMap.put(clientID, (GameplayDeltas) data);
     }
 
+    /**
+     *
+     * @param id - id of the disconnected user to be removed from the pool
+     */
     @Override
     public void notifyDisconnected(String id) {
         multiplayerGame.getGame().requestPlayerRemoval(id);
     }
 
+    /**
+     *
+     * @param id - if of the eliminated user during gameplay
+     */
     @Override
     public void notifyEliminated(String id) {
         deltasMap.remove(id);
-    }
-
-    @Override
-    public StatisticCalculator getStatisticCalculator() {
-        return connectionStatistic;
     }
 
     @Override

@@ -69,7 +69,7 @@ public class GameResources {
     protected Collection<Bullet> bulletCache;
     @Getter
     @Setter
-    protected HashMap<String, Tuple.T3<String,HashSet<Integer>, double[]>> spaceshipCache;
+    protected ConcurrentHashMap<String, Tuple.T3<String,HashSet<Integer>, double[]>> spaceshipCache;
 
     @Getter
     protected HashSet<String> destroyedShipsCache = new HashSet<>();
@@ -85,7 +85,7 @@ public class GameResources {
      */
     @Setter
     @Getter
-    private volatile boolean isEngineBusy = true;
+    private volatile boolean isEngineBusy = false;
 
 
     /**
@@ -238,7 +238,7 @@ public class GameResources {
     public void initializeGameData() {
         bullets = new ArrayList<>();
         bulletCache = new ArrayList<>();
-        spaceshipCache = new HashMap<>();
+        spaceshipCache = new ConcurrentHashMap<>();
         asteroidsCache = new ArrayList<>();
         asteroids = new ArrayList<>();
         spaceShip.reset();

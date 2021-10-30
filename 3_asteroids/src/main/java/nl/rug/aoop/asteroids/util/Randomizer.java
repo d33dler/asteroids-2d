@@ -7,7 +7,8 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Randomizers class - used to generate random cargo freight ID keys;
+ * Randomizers class -  utility class used to generate random alphanumeric ID keys,
+ * random ints, doubles,longs ;
  */
 public class Randomizer {
     /**

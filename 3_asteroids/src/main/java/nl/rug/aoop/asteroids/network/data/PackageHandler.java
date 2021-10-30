@@ -11,7 +11,9 @@ import java.net.InetAddress;
 
 
 /**
- * PackageHolder class : (uses Decorator pattern)
+ * PackageHolder class : (uses Decorator pattern) to handle the incoming and outgoing data
+ * This class is used to serialize, deserialize and set up the packet sizes according to
+ * connection parameters.
  */
 @Log
 public class PackageHandler {
@@ -53,10 +55,18 @@ public class PackageHandler {
         return null;
     }
 
+    /**
+     *
+     * @param data new incoming deltas data in byte format to be deserialized
+     */
     public void updateInDataPackage(byte[] data) {
         dataPkgUpdate(inPackage, data);
     }
 
+    /**
+     *
+     * @param data new outgoing deltas data to be serialized
+     */
     public void updateOutDataPackage(DeltasData data) {
         outPackage.setData(data, parameters.LAT_MAX_millis);
     }
@@ -75,6 +85,12 @@ public class PackageHandler {
         return parameters.getReceptorPort();
     }
 
+    /**
+     *
+     * @param handshake handshake packet configs
+     *                  Update the user's id according to the data
+     *                  specified by the host
+     */
 
     public void initHandler(ConfigData handshake) {
         this.ownerId = handshake.id;

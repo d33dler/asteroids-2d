@@ -7,12 +7,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
+/**
+ * A class for simplifying the use of custom drawn strings
+ * on a frame as buttons.
+ */
 public class MenuButton implements InterfaceMotions {
 
-    /**
-     * A class for simplifying the use of custom drawn strings
-     * on a frame as buttons.
-     */
     /**
      * The text of the button.
      */
@@ -57,6 +57,13 @@ public class MenuButton implements InterfaceMotions {
     private final Rectangle rectangle;
     private Font font;
 
+    /**
+     *
+     * @param blueprint menu extending the blueprint class
+     * @param a - button action
+     * @param rect size of the drawn button
+     * @param font - text font
+     */
     public MenuButton(MenuBlueprint blueprint, AbstractAction a, Rectangle rect, Font font) {
         this.rectangle = rect;
         this.blueprint = blueprint;
@@ -65,6 +72,10 @@ public class MenuButton implements InterfaceMotions {
         this.font = font;
     }
 
+    /**
+     *
+     * @param customHlColor custom highlighting color
+     */
     public MenuButton(MenuBlueprint blueprint, AbstractAction a, Rectangle rect, Font font, Color customHlColor) {
         this(blueprint, a, rect, font);
         this.customColor = customHlColor;

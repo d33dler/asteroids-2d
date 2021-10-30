@@ -42,13 +42,18 @@ public class DatabaseManager {
      * @param score The score to add to the database
      */
     public synchronized void addScore(Score score){
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory(dbPath.toString());
-        EntityManager manager = emf.createEntityManager();
-        manager.getTransaction().begin();
-        manager.persist(score);
-        manager.getTransaction().commit();
-        manager.close();
-        emf.close();
+        try{
+            EntityManagerFactory emf = Persistence.createEntityManagerFactory(dbPath.toString());
+            EntityManager manager = emf.createEntityManager();
+            manager.getTransaction().begin();
+            manager.persist(score);
+            manager.getTransaction().commit();
+            manager.close();
+            emf.close();
+        } catch (javax.persistence.PersistenceException | com.objectdb.o.UserException e){
+            //This exception occurs when running multiple instances on one machine -
+            // only when multiple players are eliminated simultaneously;
+        }
     }
 
     /**

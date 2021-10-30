@@ -59,7 +59,7 @@ mvn install
 ```
 3. Run the `Main` method of Asteroids using:
 ```sh
-mvn exec:java
+mvn exec:java -Dexec.mainClass="nl.rug.aoop.asteroids.Asteroids"
 ```
 4. Alternatively you can run the `main` method in `Asteroids.java` using an IDE of your choice (e.g. IntelliJ)
 
@@ -75,6 +75,9 @@ The JAR file will appear in the `/target` directory.
 <!-- 
 Describe your program's structure (classes and packages) in detail, addressing all but the most trivial features, and provide ample reasoning for why you chose a certain structure, or why you implemented something a certain way. What design patterns did you use? Describe how and where they've been applied. And finally, how does your game handle networking? Give a description of the protocol or messages that the clients use to communicate with servers. Including a diagram here can help! 
 -->
+In-Game Controls: We added Escape button mapping to activate a pause menu during the game.
+Rest of the controls are default. 
+
 
 The project structure follows the Model-View-Controller pattern. This means that
 the resources were divided in these main packages (Model, View, Control)
@@ -93,6 +96,7 @@ into some sub-packages depending on their characteristics. For this program,
 Java Swing was used. This means there is a frame and many panels that are added
 to it. Some panels are supported by model classes.
 
+
 ### Controller
 
 Following the MVC design we have a Controller package which is used by the user
@@ -108,7 +112,8 @@ ease and work right away with the View Controller.
 
 Furthermore, in this package we have the keylistener implementation to make the
 view responsive to the keyboard and a game updater, tasked with running the main
-game loop and update each step of the game.
+game loop and update each step of the game. We also added a secondary keylistener
+adapted specifying a different set of recorded inputs (for a different activity mode)
 
 ### Model
 
@@ -130,6 +135,30 @@ networking package to update the model in multiplayer games.
 
 Networking
 
+Networking :
+The classes responsible for networking are:\
+User , DeltaProcessor , HostingServer , ClientConnection, IO , GameplayDeltas, ConfigData
+
+User.class - client side device used to handle incoming and outgoing packets by delegating 
+tasks to the IOProtocol inteface implementing class that focuses on actually packaging and sending. 
+User.class runs on two threads: - the class object itself acts as producer for the host, 
+by looping with timed intervals and sending GameplayDeltas; 
+- 2nd one is the Consumer inner-class which reads incoming packets using the same technique.
+User.class comunicates with the DeltaProcessor.\
+
+DeltaProcessor.class - is used by both client and server side and it’s role is to update the gameplay/ game state 
+based on the incoming packet data.  Any transmitted object which wraps essential data
+must also implement the DeltasData interface which includes the injectDeltas method required a DeltaDevice interface
+inplementing class, and by setting this constraint of contract2contact communication we establish protocol boundaries
+of what changes can  DeltasData apply with DeltasDevice on the app (game). This also allows further abstraction for 
+expanding the applet eith a dispatcher coordinating which module would be changed and each module having it’s own 
+version of a “DeltaDevice” and the injectChanges method here would first call by some reference for 
+the apropiate “DeltaDevice” .\
+
+ClientConnection.class - similar in behaviour to User.class,  but adapted to the host's demands;
+
+GamePlayDeltas.class & ConfigData.class both are used to relay different types of states.
+
 ### Util
 
 The Util package contains classes to implement randomizer suport, coordinates
@@ -149,21 +178,7 @@ is ever created and used. This was a natural solution for such a class since
 the game only interacts with a unique database. By implementing synchronized
 methods for querying and posting, racing conditions are avoided as well.
 
-<!-- Write this section yourself -->
-<!--  
-Expected length: as much as you need to explain the above. This will likely be the longest section (it is also the most important one).
 
-A good way to split this section would be by packages (e.g. model/view/controller). Then discuss the (functionality of) relevant components in each package and how they interact with each other. Make sure to treat every package/module.
-
-Two questions we would like you to answer somewhere in this section is the following:
-
-- What does the network communication look like between the host and the players?
-- How did you deal with the different packet types and made sure it would be easy to add support for new types of packets?
-
-
-### ExamplePackageA
-
-### ExamplePackageB
 -->
 
 ## Evaluation

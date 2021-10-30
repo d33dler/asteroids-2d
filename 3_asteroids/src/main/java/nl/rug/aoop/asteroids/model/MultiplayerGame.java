@@ -14,6 +14,10 @@ import nl.rug.aoop.asteroids.util.IOUtils;
 import java.net.InetAddress;
 import java.util.HashMap;
 
+/**
+ * MultiplayerGame acts as mediator and handler for multiplayer environment
+ * preparation .
+ */
 public class MultiplayerGame implements MultiplayerManager, GameUpdateListener {
 
     @Getter
@@ -41,20 +45,36 @@ public class MultiplayerGame implements MultiplayerManager, GameUpdateListener {
         return new MultiplayerGame(game, user);
     }
 
+    /**
+     *
+     * @param game current game
+     * @param user owner
+     * @param address hosting address
+     * @return MultiplayerManager set up for hosting
+     */
     public static MultiplayerManager multiplayerServer(Game game, User user, InetAddress address) {
         MultiplayerGame multiplayerManager = new MultiplayerGame(game, user);
         multiplayerManager.launchAsHost(address);
         return multiplayerManager;
     }
 
+    /**
+     *
+     * @param address hosting address
+     */
     private void launchAsHost(InetAddress address) {
         initHostingDevice(address);
     }
 
 
+    /**
+     *  Initializes the HostingServer class as hosting device for the current user
+     *  Sets it on a thread and starts it.
+     * @param address hosting adress
+     */
     private void initHostingDevice(InetAddress address) {
         hostingDevice = new HostingServer(this, address);
-        hostingDeviceThread = new Thread((Runnable) hostingDevice);
+        hostingDeviceThread = new Thread(hostingDevice);
         hostingDeviceThread.start();
     }
 
