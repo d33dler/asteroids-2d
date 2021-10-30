@@ -38,6 +38,14 @@ public class GameResources {
     @Getter
     private Spaceship spaceShip;
 
+
+    /**
+     * HashMap of all players active during the multiplayer game
+     * We override the remove(Object key) method to add side effects:
+     * Notify listeners about the removal
+     * Record the ship as destroyed to avoid cache remnants
+     * Remove from the current cache
+     */
     @Getter
     protected final ConcurrentHashMap<String, Spaceship> players = new ConcurrentHashMap<>() {
         @Override
@@ -48,6 +56,11 @@ public class GameResources {
             return super.remove(key);
         }
 
+        /**
+         * We override the clear method so that upon resetting the player map during the cache loading
+         * @see RendererDeepCloner  loadCache()
+         *
+         */
         @Override
         public void clear() {
             super.clear();

@@ -73,15 +73,13 @@ public class RendererDeepCloner implements Runnable {
                 ship.updateParameters(deltas.c);
                 bufferCache.put(s,ship);
             } else {
-                if(!resources.destroyedShipsCache.contains(s)){ // Dealing with conflicting delta leaving remnant spaceship
+                if(!resources.destroyedShipsCache.contains(s)){    // Dealing with conflicting delta leaving remnant spaceship
                    bufferCache.put(s,Spaceship.newMultiplayerSpaceship(deltas.a, resources));
-                    System.out.println("Added new player!");
                 }
             }
         }
         resources.players.clear();
         resources.players.putAll(bufferCache);
-       // resources.players.put(s, Spaceship.newMultiplayerSpaceship(deltas.a, resources));
         resources.asteroids.addAll(resources.asteroidsCache);
         resources.asteroidsCache.clear();
         resources.spaceshipCache.clear();
