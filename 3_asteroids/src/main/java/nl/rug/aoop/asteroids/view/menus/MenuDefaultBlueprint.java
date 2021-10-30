@@ -1,10 +1,8 @@
 package nl.rug.aoop.asteroids.view.menus;
 
 import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
-import nl.rug.aoop.asteroids.control.ViewController;
 
 import javax.imageio.ImageIO;
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -16,18 +14,20 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class offers a potentially re-usable blueprint to create different menus in the game
+ */
 public abstract class MenuDefaultBlueprint extends JPanel implements MouseListener, MouseMotionListener, MenuBlueprint {
 
-
     public BufferedImage background;
-    private final ViewController viewController;
     private Graphics g;
     protected int ITEMS_DIST_X = 0, ITEM_DIST_Y = 110;
     private Color defaultHlColor = MenuButton.defaultCol;
 
-
-    public MenuDefaultBlueprint(ViewController viewController) {
-        this.viewController = viewController;
+    /**
+     * Adds the menu to mouse listeners
+     */
+    public MenuDefaultBlueprint() {
         addMouseListener(this);
         addMouseMotionListener(this);
     }
@@ -37,19 +37,25 @@ public abstract class MenuDefaultBlueprint extends JPanel implements MouseListen
     private final List<Tuple.T3<String, Integer, Integer>> labels = new ArrayList<>();
     private int buff_x = 0, buff_y = 0;
 
-    public void addNewButton(AbstractAction r, int w, int h, Font f, Color c) {
-        this.defaultHlColor = c;
-        buttons.add(new Tuple.T3<>(r, new Rectangle(w + buff_x, h + buff_y), f));
-        buff_x += ITEMS_DIST_X;
-        buff_y += ITEM_DIST_Y;
-    }
-
+    /**
+     * Adds new button to the panel and updates distance
+     *
+     * @param r The action object
+     * @param w The width of the button
+     * @param h The height of the button
+     * @param f The font to be used for the text
+     */
     public void addNewButton(AbstractAction r, int w, int h, Font f) {
         buttons.add(new Tuple.T3<>(r, new Rectangle(w + buff_x, h + buff_y), f));
         buff_x += ITEMS_DIST_X;
         buff_y += ITEM_DIST_Y;
     }
 
+    /**
+     * Loads the image from the given url to be used as background
+     *
+     * @param url The location of the image file
+     */
     public void addBackground(String url) {
         try {
             background = ImageIO.read(Path.of(url).toFile());
@@ -58,10 +64,23 @@ public abstract class MenuDefaultBlueprint extends JPanel implements MouseListen
         }
     }
 
+    /**
+     * Adds a label to display text to the panel
+     *
+     * @param text Text to be displayed
+     * @param x X-position of the label
+     * @param y Y-position of the label
+     */
     protected void addText(String text, int x, int y) {
         labels.add(new Tuple.T3<>(text, x, y));
     }
 
+    /**
+     * This method executes all the Swing operations needed to add components to the menu and finally renders it
+     *
+     * @param w Width of the panel
+     * @param h Height of the panel
+     */
     public void render(int w, int h) {
         for (Tuple.T3<AbstractAction, Rectangle, Font> t : buttons) {
             MenuButton menuButton = new MenuButton(this, t.a, t.b, t.c, defaultHlColor);
@@ -76,6 +95,7 @@ public abstract class MenuDefaultBlueprint extends JPanel implements MouseListen
         setSize(w, h);
         setVisible(true);
     }
+
     public final static Font labelFont = new Font("Tahoma", Font.BOLD, 30);
 
     @Override
@@ -98,12 +118,12 @@ public abstract class MenuDefaultBlueprint extends JPanel implements MouseListen
         }
     }
 
+    /**
+     * Repaints panel when updated
+     */
     public synchronized void refresh() {
         repaint();
         revalidate();
-    }
-    public synchronized void paintOnCustomCanvas(Graphics g) {
-         paintComponent(g);
     }
 
     @Override

@@ -20,7 +20,7 @@ public class PauseMenu extends MenuDefaultBlueprint {
 
     public PauseMenu(ViewController viewController) {
 
-        super(viewController);
+        super();
         addNewButton(new ReturnCommand(viewController), BUTTON_X, BUTTON_Y, font);
         addText("PAUSED", 450,400);
         render(FRAME_W, FRAME_H);

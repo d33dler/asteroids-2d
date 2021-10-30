@@ -28,7 +28,7 @@ public class MainMenuControl extends Control {
 
     @Override
     public void display() {
-        MainMenu menu = new MainMenu(controller, mainMenuActions, MAIN_M_BG);
+        MainMenu menu = new MainMenu(mainMenuActions, MAIN_M_BG);
         super.display(menu);
     }
 }

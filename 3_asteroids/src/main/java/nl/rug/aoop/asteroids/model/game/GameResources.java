@@ -26,7 +26,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * graphical output & engine states
  * It is used to store, update and terminate acting threads;
  */
-
 public class GameResources {
 
     /**
@@ -149,11 +148,19 @@ public class GameResources {
 
     private final Game game;
 
+    /**
+     * This constructor assigns a model to this and initializes game data
+     *
+     * @param game The model to be assigned
+     */
     public GameResources(Game game) {
         this.game = game;
         init();
     }
 
+    /**
+     * This method intializes game data and loads the sprites
+     */
     private void init() {
         loadSprites();
         this.spaceShip = new Spaceship(USER_ID, this);
@@ -188,23 +195,46 @@ public class GameResources {
 
     }
 
+    /**
+     * Checks conditions to determine whether a game is over or not
+     *
+     * @return True if conditions for game over are met, false otherwise
+     */
     public boolean isGameOver() {
         return spaceShip.isDestroyed() && !spaceShip.isSpectatorShip();
     }
 
+    /**
+     * Initializes and starts the game engine in a new thread
+     *
+     * @param online Informs the engine whether the game is online
+     * @param onlineHost Informs the engine whether this instance is the host
+     */
     public void initGameEngine(boolean online, boolean onlineHost) {
         gameUpdaterThread = new Thread(new GameUpdater(game, viewController, online, onlineHost));
         gameUpdaterThread.start();
     }
 
+    /**
+     * Adds a new user to the game
+     *
+     * @param id the ID of the new user
+     */
     public void addUser(String id) {
         players.put(id, spaceShip);
     }
 
+    /**
+     * This method sets what object factory to be used
+     */
     public void setDefaultFactory() {
         objectFactory = new GeneralObjectsFactory(game, default_OBJ_PKG);
     }
 
+    /**
+     * This method initializes all the lists needed to keep track of game objects and
+     * data
+     */
     public void initializeGameData() {
         bullets = new ArrayList<>();
         bulletCache = new ArrayList<>();

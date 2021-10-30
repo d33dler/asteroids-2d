@@ -241,6 +241,11 @@ public class Game extends ObservableGame {
         resources.updateUsersId(USER_ID);
     }
 
+    /**
+     * Updates User NickName
+     *
+     * @param USER_NICKNAME New User nickname
+     */
     public void updateUSER_NICK(String USER_NICKNAME) {
         this.USER_NICK = USER_NICKNAME;
         resources.updateUserNick(USER_NICKNAME);
