@@ -31,11 +31,11 @@ public class DeltaProcessor implements DeltaManager {
         this.factory = resources.getObjectFactory();
     }
 
-    private void collectPlayers(List<Tuple.T3<String, HashSet<Integer>, double[]>> playerKeySets) {
+    private void collectPlayers(List<Tuple.T3<Tuple.T2<String,String>, HashSet<Integer>, double[]>> playerKeySets) {
         factory.updateAllActiveObjects("spaceship", playerKeySets);
     }
 
-    private void collectPlayer(Tuple.T3<String, HashSet<Integer>, double[]> playerKeySet) {
+    private void collectPlayer(Tuple.T3<Tuple.T2<String,String>, HashSet<Integer>, double[]> playerKeySet) {
         factory.updateActiveObject("spaceship", playerKeySet);
     }
 
@@ -43,33 +43,35 @@ public class DeltaProcessor implements DeltaManager {
         factory.updatePassiveObjects(objectVectors);
     }
 
-    public Tuple.T3<String, HashSet<Integer>, double[]> getPlayerDeltas() {
-        return new Tuple.T3<>(user.USER_ID, resources.getSpaceShip().getKeyEventSet(), resources.getSpaceShip().getObjParameters());
+    public Tuple.T3<Tuple.T2<String,String>, HashSet<Integer>, double[]> getPlayerDeltas() {
+        return new Tuple.T3<>(new Tuple.T2<>(user.USER_ID, user.USER_NICK),
+                resources.getSpaceShip().getKeyEventSet(), resources.getSpaceShip().getObjParameters());
     }
 
-    public List<Tuple.T3<String, HashSet<Integer>, double[]>> getAllPlayerDeltas() {
-        List<Tuple.T3<String, HashSet<Integer>, double[]>> keyList = new ArrayList<>();
+    public List<Tuple.T3<Tuple.T2<String,String>, HashSet<Integer>, double[]>> getAllPlayerDeltas() {
+        List<Tuple.T3<Tuple.T2<String,String>, HashSet<Integer>, double[]>> keyList = new ArrayList<>();
         resources.getPlayers().forEach((s, spaceship) ->
-                keyList.add(new Tuple.T3<>(s, spaceship.getKeyEventSet(), spaceship.getObjParameters())));
+                keyList.add(new Tuple.T3<>(new Tuple.T2<>(s,spaceship.getNickId()),
+                        spaceship.getKeyEventSet(), spaceship.getObjParameters())));
         return keyList;
     }
 
     public byte[] getHostDeltas() {
         List<Tuple.T2<String, List<double[]>>> objectList = new ArrayList<>(game.objectDeltaMapper.mappedObjects);
-        List<Tuple.T3<String, HashSet<Integer>, double[]>> keyEventList = getAllPlayerDeltas();
+        List<Tuple.T3<Tuple.T2<String,String>, HashSet<Integer>, double[]>> keyEventList = getAllPlayerDeltas();
         return SerializationUtils.serialize(
-                new GameplayDeltas(System.currentTimeMillis(), keyEventList, objectList));
+                new GameplayDeltas(keyEventList, objectList));
     }
 
     @Override
     public void injectDeltas(GameplayDeltas gameplayDeltas) {
-        collectPlayers(gameplayDeltas.keyEventList);
-        updateObjects(gameplayDeltas.objectList);
+        collectPlayers(gameplayDeltas.clientsPoolDeltas);
+        updateObjects(gameplayDeltas.objectMapping);
     }
 
     public synchronized void collectPlayerDeltas(HashMap<String, GameplayDeltas> deltas) {
         for (GameplayDeltas delta : deltas.values()) {
-            collectPlayer(delta.clientKeyEvents);
+            collectPlayer(delta.ownerClientDeltas);
         }
     }
 

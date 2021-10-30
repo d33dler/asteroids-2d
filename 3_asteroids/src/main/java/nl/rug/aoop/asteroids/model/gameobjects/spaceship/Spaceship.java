@@ -155,10 +155,11 @@ public class Spaceship extends GameObject {
 
     @Setter
     @Getter
-    private String nickId;
+    private String nickId = "joe";
     @Getter
     private Color color = new Color(246, 246, 246, 255);
 
+    private int spriteId;
     @Getter
     @Setter
     private BufferedImage sprite_img;
@@ -168,6 +169,7 @@ public class Spaceship extends GameObject {
     private boolean spectatorShip = false;
 
     private GameResources resources;
+
     /**
      * Constructs a new spaceship with default values. It starts in the middle of the window, facing directly upwards,
      * with no velocity.
@@ -178,7 +180,7 @@ public class Spaceship extends GameObject {
         reset();
     }
 
-    public Spaceship(String nick) {
+    private Spaceship(String nick) {
         this();
         setNickId(nick);
     }
@@ -186,7 +188,13 @@ public class Spaceship extends GameObject {
     public Spaceship(String nick, GameResources resource) {
         this(nick);
         this.resources = resource;
-        sprite_img = resource.getSpriteImgList().get(ThreadLocalRandom.current().nextInt(0,5));
+        setUpTexture();
+    }
+
+    public static Spaceship newMultiplayerSpaceship(String nickId, GameResources resources) {
+        Spaceship s = new Spaceship(nickId);
+        s.resources = resources;
+        return s;
     }
 
     public Spaceship(double locationX, double locationY, double velocityX, double velocityY) {
@@ -224,6 +232,11 @@ public class Spaceship extends GameObject {
         dampenVelocity();
         restWeapon();
         rechargeEnergy();
+    }
+
+    private void setUpTexture() {
+        spriteId = ThreadLocalRandom.current().nextInt(0, 5);
+        sprite_img = resources.getSpriteImgList().get(spriteId);
     }
 
     @SneakyThrows
@@ -316,7 +329,7 @@ public class Spaceship extends GameObject {
 
     @Override
     public double[] getObjParameters() {
-        return new double[]{getLocation().x, getLocation().y, getVelocity().x, getVelocity().y, getDirection()};
+        return new double[]{getLocation().x, getLocation().y, getVelocity().x, getVelocity().y, getDirection(), spriteId};
     }
 
     @Override
@@ -378,10 +391,10 @@ public class Spaceship extends GameObject {
         return sh;
     }
 
-    public void updateAsSpectator(){
+    public void updateAsSpectator() {
         spectatorShip = true;
         color = new Color(0, 0, 0, 0);
-        updatePosition(0,0);
+        updatePosition(0, 0);
         sprite_img = resources.getSpectatorImg();
     }
 
@@ -389,6 +402,12 @@ public class Spaceship extends GameObject {
         updatePosition(params[0], params[1]);
         updateVelocity(params[2], params[3]);
         direction = params[4];
+        setSpriteId((int) params[5]);
+    }
+
+    public void setSpriteId(int spriteId) {
+        this.spriteId = spriteId;
+        this.sprite_img = resources.getSpriteImgList().get(spriteId);
     }
 
     public void updatePosition(double x, double y) {

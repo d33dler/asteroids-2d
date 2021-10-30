@@ -1,5 +1,6 @@
 package nl.rug.aoop.asteroids.model.game;
 
+import com.objectdb.o.SLV;
 import lombok.Getter;
 import lombok.Setter;
 import nl.rug.aoop.asteroids.control.ViewController;
@@ -62,7 +63,7 @@ public class GameResources {
     protected Collection<Bullet> bulletCache;
     @Getter
     @Setter
-    protected HashMap<String, Tuple.T2<HashSet<Integer>, double[]>> spaceshipCache;
+    protected HashMap<String, Tuple.T3<String,HashSet<Integer>, double[]>> spaceshipCache;
 
     /**
      * Indicates whether the game is running. Setting this to false causes the game to exit its loop and quit.
@@ -204,6 +205,8 @@ public class GameResources {
         players.remove(this.USER_ID, spaceShip);
         this.USER_ID = USER_ID;
         players.put(USER_ID, spaceShip);
-        spaceShip.setNickId(USER_ID);
+    }
+    public void updateUserNick(String USER_NICK){
+        spaceShip.setNickId(USER_NICK);
     }
 }

@@ -33,7 +33,7 @@ public class User implements Runnable, GameUpdateListener {
     private GameResources resources;
     private final Randomizer randomizer = new Randomizer(6);
     public String USER_ID = "Host";
-
+    public String USER_NICK;
 
     private Thread clientConsumerThread;
     private Thread thisUserThread;
@@ -41,6 +41,7 @@ public class User implements Runnable, GameUpdateListener {
     private User(Game game) {
         this.game = game;
         this.resources = game.getResources();
+        this.USER_NICK = resources.getSpaceShip().getNickId();
         game.addListener(this);
     }
 
@@ -148,7 +149,6 @@ public class User implements Runnable, GameUpdateListener {
                 }
             }
         }
-
     }
 
     @SneakyThrows
@@ -156,8 +156,7 @@ public class User implements Runnable, GameUpdateListener {
     public synchronized void run() {
         while (isConnected() && !game.isGameOver()) {
             if (!game.isEngineBusy()) {
-                send(new GameplayDeltas(System.currentTimeMillis(),
-                        multiplayerManager.getDeltaManager().getPlayerDeltas()));
+                send(new GameplayDeltas(multiplayerManager.getDeltaManager().getPlayerDeltas()));
                 try {
                     wait(5);
                 } catch (InterruptedException e) {

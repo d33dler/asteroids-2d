@@ -46,9 +46,7 @@ public class ClientConnection implements HostListener, Runnable {
         try {
             String message = SerializationUtils.deserialize(msg);
             spectator = (Objects.equals(message, "spectator"));
-            System.out.println("USERTYPE: " + message);
-        } catch (SerializationException ignored) {
-        }
+        } catch (SerializationException ignored) {}
     }
 
     private void initParameters(InetSocketAddress clientAddress) {
@@ -82,8 +80,7 @@ public class ClientConnection implements HostListener, Runnable {
 
         private synchronized void listen() {
             while (connected) {
-                boolean success = io.receive();
-                if (success) {
+                if (io.receive()) {
                     hostingDevice.addNewDelta(clientID, io.getLastDataPackage().getData());
                 } else {
                     disconnect();

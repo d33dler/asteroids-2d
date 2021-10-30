@@ -28,7 +28,7 @@ public class GeneralObjectsFactory implements GameObjectFactory, GameUpdateListe
     }
 
     @Override
-    public void updateActiveObject(String objId, Tuple.T3<String, HashSet<Integer>, double[]> playerKeySet) { //objId here
+    public void updateActiveObject(String objId, Tuple.T3<Tuple.T2<String,String>, HashSet<Integer>, double[]> playerKeySet) { //objId here
         FactoryCommand command = objFactoryMap.get(objId);
         if (command != null) {
             command.updateActiveObject(game, playerKeySet);
@@ -36,7 +36,8 @@ public class GeneralObjectsFactory implements GameObjectFactory, GameUpdateListe
     }
 
     @Override
-    public void updateAllActiveObjects(String objId, List<Tuple.T3<String, HashSet<Integer>, double[]>> playerKeySet) {
+    public void updateAllActiveObjects(String objId, List<Tuple.T3<Tuple.T2<String,String>, HashSet<Integer>,
+            double[]>> playerKeySet) {
         FactoryCommand command = objFactoryMap.get(objId);
         if (command != null) {
             command.updateAllObjects(game, playerKeySet);

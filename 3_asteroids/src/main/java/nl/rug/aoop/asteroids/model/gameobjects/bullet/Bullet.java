@@ -90,7 +90,7 @@ public class Bullet extends GameObject {
 
     @Override
     public double[] getObjParameters() {
-        return super.getObjParameters(); //TODO stepsleft??
+        return super.getObjParameters();
     }
 
     @Override

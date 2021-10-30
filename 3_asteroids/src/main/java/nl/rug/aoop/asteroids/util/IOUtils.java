@@ -5,6 +5,7 @@ import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class IOUtils {
 
@@ -16,5 +17,14 @@ public class IOUtils {
             return new Tuple.T2<>(hostAddress, Integer.valueOf(port));
         }
         return null;
+    }
+
+
+    public static String getUserNick(Component parent) {
+        return JOptionPane.showInputDialog(parent, "Input your NickName");
+    }
+
+    public static String getUserInputDNS(Component parent) {
+        return JOptionPane.showInputDialog(parent, "Input your DNS/IP address");
     }
 }

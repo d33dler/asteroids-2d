@@ -10,7 +10,7 @@ import java.util.List;
 public interface DeltaManager {
     void injectDeltas(GameplayDeltas gameplayDeltas);
     void collectPlayerDeltas(HashMap<String, GameplayDeltas> deltas);
-    List<Tuple.T3<String, HashSet<Integer>, double[]>> getAllPlayerDeltas();
+    List<Tuple.T3<Tuple.T2<String,String>, HashSet<Integer>, double[]>> getAllPlayerDeltas();
     byte[] getHostDeltas();
-    Tuple.T3<String, HashSet<Integer>,double[]> getPlayerDeltas();
+    Tuple.T3<Tuple.T2<String,String>, HashSet<Integer>,double[]> getPlayerDeltas();
 }

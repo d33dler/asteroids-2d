@@ -9,20 +9,20 @@ import java.util.List;
 public class GameplayDeltas implements DeltasData {
 
     public final long timestamp;
+    public Tuple.T3<Tuple.T2<String,String>, HashSet<Integer>,double[]> ownerClientDeltas;
+    public final List<Tuple.T3<Tuple.T2<String,String>, HashSet<Integer>, double[]>> clientsPoolDeltas;
+    public final List<Tuple.T2<String, List<double[]>>> objectMapping;
 
-    public Tuple.T3<String, HashSet<Integer>,double[]> clientKeyEvents;
-    public final List<Tuple.T3<String, HashSet<Integer>, double[]>> keyEventList;
-    public final List<Tuple.T2<String, List<double[]>>> objectList;
-
-    public GameplayDeltas(long timestamp, List<Tuple.T3<String, HashSet<Integer>, double[]>> kList, List<Tuple.T2<String, List<double[]>>> objectList) {
-        this.timestamp = timestamp;
-        this.keyEventList = kList;
-        this.objectList = objectList;
+    public GameplayDeltas(List<Tuple.T3<Tuple.T2<String,String>, HashSet<Integer>, double[]>> kList,
+                          List<Tuple.T2<String, List<double[]>>> objectMapping) {
+        this.timestamp = System.currentTimeMillis();
+        this.clientsPoolDeltas = kList;
+        this.objectMapping = objectMapping;
     }
 
-    public GameplayDeltas(long timestamp, Tuple.T3<String, HashSet<Integer>, double[]> clientKeyEvents) {
-        this(timestamp, null, null);
-        this.clientKeyEvents = clientKeyEvents;
+    public GameplayDeltas(Tuple.T3<Tuple.T2<String,String>, HashSet<Integer>, double[]> ownerClientDeltas) {
+        this(null, null);
+        this.ownerClientDeltas = ownerClientDeltas;
     }
     @Override
     public long getTimeStamp() {

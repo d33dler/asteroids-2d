@@ -23,6 +23,8 @@ public class JoinCommand extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        String in = IOUtils.getUserNick(manager.getFrame());
+        manager.getGame().updateUSER_NICK(in);
         Tuple.T2<String, Integer> input = getUserInput();
         if (input!=null) {
             InetSocketAddress address = new InetSocketAddress(input.a, input.b);

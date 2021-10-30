@@ -20,7 +20,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.image.BufferedImage;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.List;
@@ -53,7 +52,7 @@ public class Game extends ObservableGame {
     @Getter
     private String USER_ID = "Host";
     @Setter
-    private String nickname;
+    private String USER_NICK;
 
     public Asteroid closestAsteroid;
     public boolean proxy = false;
@@ -146,7 +145,7 @@ public class Game extends ObservableGame {
         getObjFactory();
         resources.getSpaceShip().updateAsSpectator();
         viewController.getFrame().changeKeyListener(new
-                UserKeyListener(resources.getSpaceShip(),this,viewController));
+                UserKeyListener(resources.getSpaceShip(), this, viewController));
         resources.setUser(User.newSpectatorUser(this, address));
     }
 
@@ -159,7 +158,7 @@ public class Game extends ObservableGame {
     public void checkEndGame() {
         if ((isGameOver() || !resources.isRunProcesses()) && !notifyEnd) {
             notifyEnd = true;
-            dbManager.addScore(new Score(nickname, resources.getSpaceShip().getScore()));
+            dbManager.addScore(new Score(USER_NICK, resources.getSpaceShip().getScore()));
             notifyGameOver();
         }
     }
@@ -223,16 +222,16 @@ public class Game extends ObservableGame {
 
         public synchronized void loadCache() {
 
-            for (Map.Entry<String, Tuple.T2<HashSet<Integer>, double[]>> entry : resources.spaceshipCache.entrySet()) {
+            for (Map.Entry<String, Tuple.T3<String, HashSet<Integer>, double[]>> entry : resources.spaceshipCache.entrySet()) {
                 String s = entry.getKey();
-                Tuple.T2<HashSet<Integer>, double[]> keySet = entry.getValue();
+                Tuple.T3<String, HashSet<Integer>, double[]> deltas = entry.getValue();
                 if (resources.players.containsKey(s)) {
                     Spaceship ship = resources.players.get(s);
-                    ship.setKeyEventSet(keySet.a);
-                    ship.updateParameters(keySet.b);
+                    ship.setKeyEventSet(deltas.b);
+                    ship.updateParameters(deltas.c);
                 } else {
-                    resources.players.put(s, new Spaceship(s, resources));
-                    System.out.println("Added new player");
+                    resources.players.put(s, Spaceship.newMultiplayerSpaceship(deltas.a, resources));
+                    System.out.println("Added new player!");
                 }
             }
             resources.asteroids.addAll(resources.asteroidsCache);
@@ -306,5 +305,10 @@ public class Game extends ObservableGame {
     public void setUSER_ID(String USER_ID) {
         this.USER_ID = USER_ID;
         resources.updateUsersId(USER_ID);
+    }
+
+    public void updateUSER_NICK(String USER_NICKNAME) {
+        this.USER_NICK = USER_NICKNAME;
+        resources.updateUserNick(USER_NICKNAME);
     }
 }

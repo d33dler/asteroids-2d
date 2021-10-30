@@ -4,13 +4,11 @@ import lombok.extern.java.Log;
 import nl.rug.aoop.asteroids.control.controls.GameControl;
 import nl.rug.aoop.asteroids.control.menu_commands.MenuCommands;
 import nl.rug.aoop.asteroids.control.ViewController;
-import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
+import nl.rug.aoop.asteroids.util.IOUtils;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
 @MenuCommands(id = "host")
@@ -26,7 +24,9 @@ public class HostCommand extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String input = getUserInput();
+        String input = IOUtils.getUserNick(manager.getFrame());
+        manager.getGame().updateUSER_NICK(input);
+        input = IOUtils.getUserInputDNS(manager.getFrame());
         InetAddress address;
         try {
             address = InetAddress.getByName(input);
@@ -37,7 +37,5 @@ public class HostCommand extends AbstractAction {
         }
     }
 
-    private String getUserInput() {
-        return JOptionPane.showInputDialog(manager.getFrame(), "Input your DNS/IP address");
-    }
+
 }
