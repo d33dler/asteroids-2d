@@ -7,6 +7,11 @@ import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
 
 import java.util.*;
 
+/**
+ * RendererDeepCloner class is used to create clones that are used by
+ * the asteroidsPanel to display graphics.
+ * By loading clones we avoid ConcurrentModificationExceptions
+ */
 public class RendererDeepCloner implements Runnable {
 
     @Getter
@@ -23,6 +28,9 @@ public class RendererDeepCloner implements Runnable {
         recloneAll();
     }
 
+    /**
+     * Cloning cycle method
+     */
     private synchronized void recloneAll() {
 
         while (resources.isRunProcesses()) {
@@ -50,6 +58,10 @@ public class RendererDeepCloner implements Runnable {
         this.notify();
     }
 
+    /**
+     * Second task of the class is to load deltas caches at each game tick to update the game state for the
+     * multiplayer modes. It loads player key inputs & vectors + environment objects
+     */
     public synchronized void loadCache() {
 
         for (Map.Entry<String, Tuple.T3<String, HashSet<Integer>, double[]>> entry : resources.spaceshipCache.entrySet()) {
