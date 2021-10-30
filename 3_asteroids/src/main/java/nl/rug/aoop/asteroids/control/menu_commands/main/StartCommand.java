@@ -9,17 +9,26 @@ import nl.rug.aoop.asteroids.util.IOUtils;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
+/**
+ * StartCommand - abstract action class attached to menu button; Activated upon click
+ */
 @MenuCommands(id = "start_default")
 public class StartCommand extends AbstractAction {
 
     private final ViewController manager;
-
+    /**
+     *  Constructor is called through reflection; All commands must have
+     *  the view controller as single parameter;
+     * @param manager view controller class
+     */
     public StartCommand(ViewController manager) {
         super("ARCADE");
         this.manager = manager;
     }
 
-
+    /**
+     * Reads user's nickname and initiates a single player game.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         String input = IOUtils.getUserNick(manager.getFrame());

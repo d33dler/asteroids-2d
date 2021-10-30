@@ -67,10 +67,8 @@ public class PlayerKeyListener extends UserKeyListener {
                 ship.setFiring(true);
                 ship.getKeyEventSet().add(FIRE_WEAPON_KEY);
             }
-            case pauseMenu -> {
-                controller.requestPauseMenu();
-            }
         }
+        super.keyPressed(event);
     }
 
     /**

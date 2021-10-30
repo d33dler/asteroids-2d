@@ -9,6 +9,7 @@ import nl.rug.aoop.asteroids.network.data.DeltaProcessor;
 import nl.rug.aoop.asteroids.network.data.types.DeltaManager;
 import nl.rug.aoop.asteroids.network.host.HostingDevice;
 import nl.rug.aoop.asteroids.network.host.HostingServer;
+import nl.rug.aoop.asteroids.util.IOUtils;
 
 import java.net.InetAddress;
 import java.util.HashMap;
@@ -46,10 +47,6 @@ public class MultiplayerGame implements MultiplayerManager, GameUpdateListener {
         return multiplayerManager;
     }
 
-
-    private void launchAsSpectator() {
-    }
-
     private void launchAsHost(InetAddress address) {
         initHostingDevice(address);
     }
@@ -77,6 +74,7 @@ public class MultiplayerGame implements MultiplayerManager, GameUpdateListener {
     }
 
     public void notifyDisconnect() {
+        IOUtils.reportMessage(game.getViewController().getFrame(),"Host has terminated the connection" );
        game.updateGameOverDisconnection();
     }
 
@@ -88,6 +86,5 @@ public class MultiplayerGame implements MultiplayerManager, GameUpdateListener {
             hostingDevice = null;
         }
         if (hostingDeviceThread != null) hostingDeviceThread.join(100);
-        //deltaManager = null;
     }
 }

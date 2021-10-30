@@ -12,6 +12,7 @@ public class BulletMaker implements FactoryCommand {
 
     @Override
     public void updatePassiveObjects(Game game, Tuple.T2<String, List<double[]>> parameters){
-     //bullets are not created, any new object can use this class to create obj from delta skeletons
+     //bullets are not created online, their creation is governed by online key inputs,
+        // any new object can use this class to create obj from delta skeletons
     }
 }

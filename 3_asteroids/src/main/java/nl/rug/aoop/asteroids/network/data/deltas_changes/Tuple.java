@@ -3,6 +3,12 @@ package nl.rug.aoop.asteroids.network.data.deltas_changes;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+
+/**
+ * Tuple - generic class implementing the tuple data structure
+ * used for convenience of coupling bound data / objects.
+ * @param <K> - any object held by the tuple data structure
+ */
 @NoArgsConstructor
 public class Tuple<K> implements Serializable {
     public K a;

@@ -1,4 +1,4 @@
-package nl.rug.aoop.asteroids.model.gameobjects.gameui;
+package nl.rug.aoop.asteroids.view.viewmodels.gameui;
 
 import nl.rug.aoop.asteroids.model.game.Game;
 import nl.rug.aoop.asteroids.model.game.GameResources;
@@ -7,6 +7,9 @@ import nl.rug.aoop.asteroids.model.gameobjects.asteroid.Asteroid;
 import java.awt.*;
 import java.awt.geom.Point2D;
 
+/**
+ * InteractionHud - adds additional asteroid panel graphical effects
+ */
 public class InteractionHud {
 
     public Game game;
@@ -25,9 +28,10 @@ public class InteractionHud {
         drawProximityLine(g);
     }
 
+    
     private void drawProximityLine(Graphics g) {
-        Asteroid a = game.closestAsteroid;
-        if (a != null && !a.isDestroyed() && game.proxy ) {
+        Asteroid a = resources.closestAsteroid;
+        if (a != null && !a.isDestroyed() && resources.proxy ) {
             Point2D.Double p = resources.getSpaceShip().getLocation();
             Point2D.Double ap = a.getLocation();
             double diff = Math.abs(ap.x - p.x) + Math.abs(ap.y - p.y);

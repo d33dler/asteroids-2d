@@ -55,12 +55,6 @@ public class ViewController implements GameUpdateListener {
         frame.validate();
     }
 
-    // TODO Useless??
-    private void requestGameReset() {
-        this.game = new Game();
-        frame.setGame(game);
-    }
-
     /**
      * This method clears the frame from the tracked panels
      */

@@ -53,7 +53,7 @@ public class GameUpdater implements Runnable {
     /**
      * The number of ticks between asteroid spawns
      */
-    private static final int ASTEROID_SPAWN_RATE = 500; // -> 200
+    private static final int ASTEROID_SPAWN_RATE = 1000; // -> 200
 
     /**
      * The game that this updater works for.
@@ -239,6 +239,7 @@ public class GameUpdater implements Runnable {
         double y = resources.getSpaceShip().getLocation().y;
 
         resources.getAsteroids().forEach(asteroid -> {
+            // Added new interface feature
             recheckProxyAsteroids(asteroid, x, y);
             players.forEach(ship -> {
                 if (ship.collides(asteroid)) {
@@ -255,16 +256,22 @@ public class GameUpdater implements Runnable {
                 });
             }
         });
-        game.proxy = (recheckProxyAsteroids(game.closestAsteroid, x, y) < diff);
+        resources.proxy = (recheckProxyAsteroids(resources.closestAsteroid, x, y) < diff);
     }
 
-
+    /**
+     *
+     * @param a active asteroid
+     * @param x - ship coordinate
+     * @param y - ship coordinate
+     * @return distance to the closest asteroid from the user's spaceship
+     */
     public double recheckProxyAsteroids(Asteroid a, double x, double y) {
         if (a != null) {
             Point.Double p = a.getLocation();
             double diff = Math.abs(p.x - x) + Math.abs(p.y - y);
             if (diff < diffNow) {
-                game.closestAsteroid = a;
+                resources.closestAsteroid = a;
                 diffNow = diff;
             }
             return diff;
@@ -306,7 +313,7 @@ public class GameUpdater implements Runnable {
 
         ConcurrentHashMap<String, Spaceship> playersMap = resources.getPlayers();
         playersMap.forEach(( s, spaceship) -> {
-            if (spaceship.isDestroyed()) {
+            if (spaceship.isDestroyed() || resources.getDestroyedShipsCache().contains(s)) {
                 playersMap.remove(s);
             }
         });

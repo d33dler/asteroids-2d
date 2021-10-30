@@ -6,6 +6,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 
 public class IOUtils {
 
@@ -21,10 +23,24 @@ public class IOUtils {
 
 
     public static String getUserNick(Component parent) {
-        return JOptionPane.showInputDialog(parent, "Input your NickName");
+        return JOptionPane.showInputDialog(parent, "Input your nickname");
     }
 
     public static String getUserInputDNS(Component parent) {
         return JOptionPane.showInputDialog(parent, "Input your DNS/IP address");
     }
+
+    public static void reportMessage(Component parent, String msg){
+        JOptionPane.showMessageDialog(parent,msg, "ASTEROIDS",JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public static void reportHostPort(Component parent, int port) {
+        JOptionPane.showMessageDialog(parent, "Assigned port was copied to clipboard!",
+                "ASTEROIDS HOSTING", JOptionPane.INFORMATION_MESSAGE);
+        StringSelection stringSelection = new StringSelection(Integer.toString(port));
+        Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clpbrd.setContents(stringSelection, null);
+    }
+
+
 }

@@ -4,6 +4,9 @@ import nl.rug.aoop.asteroids.network.data.types.DeltasData;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * ConfigData is a wrapper class for data sent during the handshake process
+ */
 public class ConfigData implements DeltasData {
     //public int data_size; //TODO
     public List<Tuple.T2<String, Integer >> setup;

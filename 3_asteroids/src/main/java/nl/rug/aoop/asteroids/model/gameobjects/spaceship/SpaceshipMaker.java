@@ -9,9 +9,19 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+/**
+ * Spaceship - mini-factory command of GeneralObjectsFactory
+ * Creates new spaceship objects from online received delta data
+ * and adds them to the local cache;
+ */
 @ObjectCommand(id = "spaceship")
 public class SpaceshipMaker implements FactoryCommand {
 
+    /**
+     * Method used by the host to update its caches based on player pool deltas
+     * @param game - current game
+     * @param data - set of client connection deltas
+     */
     @Override
     public void updateActiveObject(Game game, Tuple.T3<Tuple.T2<String,String>, HashSet<Integer>, double[]> data) {
         if (!data.a.a.equals(game.getUSER_ID())) {
@@ -19,6 +29,11 @@ public class SpaceshipMaker implements FactoryCommand {
         }
     }
 
+    /**
+     * Method used by the client to updated its caches based on the host's deltas data set
+     * @param game - current game
+     * @param playersData - set of all players
+     */
     public void updateAllObjects(Game game, List<Tuple.T3<Tuple.T2<String,String>, HashSet<Integer>, double[]>> playersData) {
         HashMap<String, Tuple.T3<String,HashSet<Integer>, double[]>> cacheBuff = new HashMap<>();
         for (Tuple.T3<Tuple.T2<String,String>, HashSet<Integer>, double[]> data : playersData) {

@@ -39,24 +39,18 @@ public class Game extends ObservableGame {
      */
     private DatabaseManager dbManager;
 
-    /**
-     * Number of milliseconds to wait for the game updater to exit its game loop.
-     */
-    private static final int EXIT_TIMEOUT_MILLIS = 100;
+    public RendererDeepCloner rendererDeepCloner;
+    public ObjectDeltaMapper objectDeltaMapper;
+    private Thread rendererDeepClonerThread, objectDeltaMapperThread;
 
-    public RendererDeepCloner rendererDeepCloner = new RendererDeepCloner();
-    public ObjectDeltaMapper objectDeltaMapper = new ObjectDeltaMapper();
     @Setter
+    @Getter
     private ViewController viewController;
 
     @Getter
     private String USER_ID = "Host";
     @Setter
     private String USER_NICK = "unknown";
-
-    public Asteroid closestAsteroid;
-    public boolean proxy = false;
-
     @Getter
     private final GameResources resources;
 
@@ -66,6 +60,8 @@ public class Game extends ObservableGame {
 
     public Game() {
         this.resources = new GameResources(this);
+        rendererDeepCloner = new RendererDeepCloner(resources);
+        objectDeltaMapper = new ObjectDeltaMapper(resources);
         dbManager = DatabaseManager.getInstance();
     }
 
@@ -75,8 +71,10 @@ public class Game extends ObservableGame {
      * default starting state before beginning a new game.
      */
     public void initializeGameThreads() {
-        new Thread(rendererDeepCloner).start();
-        new Thread(objectDeltaMapper).start();
+        rendererDeepClonerThread = new Thread(rendererDeepCloner);
+        objectDeltaMapperThread = new Thread(objectDeltaMapper);
+        rendererDeepClonerThread.start();
+        objectDeltaMapperThread.start();
     }
 
     /**
@@ -105,42 +103,48 @@ public class Game extends ObservableGame {
         }
     }
 
-    public void start() {                    //TODO clean ugly mess
+    public void start() {
         start(false, false);
     }
 
-    public void startOnline(InetSocketAddress address) {
-        start(true, false);
-        initializeGameThreads();
-        initMultiplayerAsClient(address);
-    }
-
-    public void startSpectating(InetSocketAddress address) {
-        start(true, false);
-        initializeGameThreads();
-        initMultiplayerAsSpectator(address);
-    }
-
-    public void startHosting(InetAddress address) {
-        start(true, true);
-        initializeGameThreads();
-        initMultiplayerAsHost(address);
-    }
-
+    /**
+     * Initiates the object factory
+     * Initiates a new user that acts as host
+     *
+     * @param address specified hosting address
+     */
     public void initMultiplayerAsHost(InetAddress address) {
         getObjFactory();
         resources.setUser(User.newHostUser(this, address));
     }
 
-    private void getObjFactory() {
-        resources.setDefaultFactory();
-    }
-
+    /**
+     * Initiates the object factory
+     * Initiates a new user that acts as client
+     *
+     * @param address specified host's address
+     */
     public void initMultiplayerAsClient(InetSocketAddress address) {
         getObjFactory();
         resources.setUser(User.newClientUser(this, address));
     }
 
+    /**
+     * Factory class used for creation of objects
+     * generated in multiplayer environment
+     */
+    private void getObjFactory() {
+        resources.setDefaultFactory();
+    }
+
+    /**
+     * Initiates the object factory
+     * Sets the user's spaceship to spectator settings
+     * Updates view controller key listener to a new key listener class mapping
+     * Initiates a new user that acts as spectator
+     *
+     * @param address pecified host's address
+     */
     public void initMultiplayerAsSpectator(InetSocketAddress address) {
         getObjFactory();
         resources.getSpaceShip().updateAsSpectator();
@@ -155,6 +159,9 @@ public class Game extends ObservableGame {
 
     private boolean notifyEnd = false;
 
+    /**
+     * Verifies if the spaceship is destroyed, or client is disconnected from server;
+     */
     public void checkEndGame() {
         if ((isGameOver() || !resources.isRunProcesses()) && !notifyEnd) {
             notifyEnd = true;
@@ -163,6 +170,9 @@ public class Game extends ObservableGame {
         }
     }
 
+    /**
+     * Updates database score set, if user wasn't a spectator.
+     */
     private void updateDatabaseScore() {
         if (!resources.getSpaceShip().isSpectatorShip())
             dbManager.addScore(new Score(USER_NICK, resources.getSpaceShip().getScore()));
@@ -183,131 +193,49 @@ public class Game extends ObservableGame {
         if (resources.isRunning()) {
             resources.releaseResources();
             listeners.forEach(GameUpdateListener::onGameExit);
-        }
-    }
-
-
-    @NoArgsConstructor
-    public class RendererDeepCloner implements Runnable {
-
-        @Getter
-        public Collection<GameObject> clonedObjects = new ArrayList<>();
-        public volatile boolean cycleDone = true;
-
-        @Override
-        public synchronized void run() {
-            recloneAll();
-        }
-
-        private synchronized void recloneAll() {
-
-            while (resources.isRunProcesses()) {
-                cycleDone = false;
-                clonedObjects.clear();
-                reclone(resources.bullets);
-                reclone(resources.asteroids);
-                reclone(resources.players.values());
-                cycleDone = true;
+            if (objectDeltaMapperThread != null) {
                 try {
-                    wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                    objectDeltaMapperThread.join(100);
+                    rendererDeepClonerThread.join(100);
+                } catch (InterruptedException ignored) {}
             }
-        }
-
-        private synchronized void reclone(Collection<? extends GameObject> c) {
-            for (GameObject origin : c) {
-                clonedObjects.add(origin.clone());
-            }
-        }
-
-        public synchronized void wakeup() {
-            this.notify();
-        }
-
-        public synchronized void loadCache() {
-
-            for (Map.Entry<String, Tuple.T3<String, HashSet<Integer>, double[]>> entry : resources.spaceshipCache.entrySet()) {
-                String s = entry.getKey();
-                Tuple.T3<String, HashSet<Integer>, double[]> deltas = entry.getValue();
-                if (resources.players.containsKey(s)) {
-                    Spaceship ship = resources.players.get(s);
-                    ship.setKeyEventSet(deltas.b);
-                    ship.updateParameters(deltas.c);
-                } else {
-                    resources.players.put(s, Spaceship.newMultiplayerSpaceship(deltas.a, resources));
-                    System.out.println("Added new player!");
-                }
-            }
-            resources.asteroids.addAll(resources.asteroidsCache);
-            resources.asteroidsCache.clear();
-            resources.spaceshipCache.clear();
-        }
-
-    }
-
-    public class ObjectDeltaMapper implements Runnable {
-        public List<Tuple.T2<String, List<double[]>>> mappedObjects = new ArrayList<>();
-        public volatile boolean cycleDone = true;
-
-        @Override
-        public void run() {
-            remapAll();
-        }
-
-        private synchronized void remapAll() {
-            while (resources.runProcesses) {
-                cycleDone = false;
-                mappedObjects.clear();
-                remap(Asteroid.OBJECT_ID, resources.asteroids);
-                cycleDone = true;
-                try {
-                    wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        private void remap(String objId, Collection<? extends GameObject> collection) {
-            List<double[]> mappedCollection = new ArrayList<>();
-            for (GameObject object : collection) {
-                mappedCollection.add(object.getObjParameters());
-            }
-            mappedObjects.add(new Tuple.T2<>(objId, mappedCollection));
-        }
-
-        public synchronized void wakeup() {
-            this.notify();
         }
     }
 
-    public void reportHostPort(int port) {
-        JOptionPane.showMessageDialog(viewController.getFrame(), "Assigned port was copied to clipboard!", //TODO refactor garbage
-                "ASTEROIDS HOSTING", JOptionPane.INFORMATION_MESSAGE);
-        StringSelection stringSelection = new StringSelection(Integer.toString(port));
-        Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clpbrd.setContents(stringSelection, null);
-    }
-
+    /**
+     * Kills all processes upon disconnection from server notification
+     */
     public void updateGameOverDisconnection() {
-        JOptionPane.showMessageDialog(viewController.getFrame(), "Host has terminated the connection");
         resources.runProcesses = false;
     }
 
+    /**
+     * @param id users id to be removed from the game's local pool of players
+     */
     public void requestPlayerRemoval(String id) {
         resources.players.remove(id);
     }
 
+    /**
+     * Used to avoid concurrent modification exceptions
+     *
+     * @return true if engine is busy computing physics
+     */
     public boolean isEngineBusy() {
         return resources.isEngineBusy();
     }
 
+    /**
+     * @return local user's spaceship
+     */
     public Spaceship getUserSpaceship() {
         return resources.getSpaceShip();
     }
 
+    /**
+     * Below are user's id and nickname updates that include side effects:
+     * Calling GameResources to include additional side effects upon property changes.
+     */
     public void setUSER_ID(String USER_ID) {
         this.USER_ID = USER_ID;
         resources.updateUsersId(USER_ID);

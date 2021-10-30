@@ -6,14 +6,10 @@ import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
 import nl.rug.aoop.asteroids.model.game.Game;
 import nl.rug.aoop.asteroids.model.game.GameResources;
-import nl.rug.aoop.asteroids.model.gameobjects.gameui.InteractionHud;
+import nl.rug.aoop.asteroids.view.viewmodels.gameui.InteractionHud;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ConcurrentModificationException;
 
 /**

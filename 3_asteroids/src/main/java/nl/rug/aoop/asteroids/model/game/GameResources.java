@@ -1,11 +1,9 @@
 package nl.rug.aoop.asteroids.model.game;
 
-import com.objectdb.o.SLV;
 import lombok.Getter;
 import lombok.Setter;
 import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.control.updaters.GameUpdater;
-import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
 import nl.rug.aoop.asteroids.model.gameobjects.asteroid.Asteroid;
 import nl.rug.aoop.asteroids.model.gameobjects.bullet.Bullet;
 import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
@@ -23,9 +21,17 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class GameResources {
-    List<Tuple.T2<BufferedImage, BufferedImage>> spriteImages;
+/**
+ * GameResource - contains all transient memory data regarding game,
+ * graphical output & engine states
+ * It is used to store, update and terminate acting threads;
+ */
 
+public class GameResources {
+
+    /**
+     * Package patch to game objects factory methods classes
+     */
     public final static String default_OBJ_PKG = "nl.rug.aoop.asteroids.model.gameobjects";
     /**
      * The spaceship object that the player is in control of.
@@ -38,6 +44,7 @@ public class GameResources {
         @Override
         public synchronized Spaceship remove(@NotNull Object key) {
             game.getListeners().forEach(listener -> listener.playerEliminated((String) key));
+            destroyedShipsCache.add((String) key);
             spaceshipCache.remove(key);
             return super.remove(key);
         }
@@ -65,6 +72,8 @@ public class GameResources {
     @Setter
     protected HashMap<String, Tuple.T3<String,HashSet<Integer>, double[]>> spaceshipCache;
 
+    @Getter
+    protected HashSet<String> destroyedShipsCache = new HashSet<>();
     /**
      * Indicates whether the game is running. Setting this to false causes the game to exit its loop and quit.
      */
@@ -79,13 +88,24 @@ public class GameResources {
     @Getter
     private volatile boolean isEngineBusy = true;
 
+
+    /**
+     * True if user is currently serializing local data before sending it.
+     */
     @Setter
     @Getter
     private volatile boolean isUserSerializing = false;
 
+    /**
+     * True if asteroidsPanel is currently drawing objects
+     */
     @Getter
     @Setter
     private volatile boolean isDrawingDone = false;
+
+    /**
+     * True if game processes are still intact
+     */
     @Getter
     @Setter
     protected volatile boolean runProcesses = true;
@@ -115,10 +135,13 @@ public class GameResources {
 
     @Getter
     private String USER_ID = "Host";
-    @Getter
-    protected Asteroid closestAsteroid;
-    protected boolean proxy = false;
 
+    public Asteroid closestAsteroid;
+    public boolean proxy = false;
+
+    /**
+     * List of all buffered sprite images
+     */
     @Getter
     private List<BufferedImage> spriteImgList;
     @Getter
@@ -137,6 +160,9 @@ public class GameResources {
         initializeGameData();
     }
 
+    /**
+     * Loads sprite textures for the game
+     */
     private void loadSprites() {
         if (spriteImgList == null) {
             spriteImgList = new ArrayList<>();
@@ -188,6 +214,9 @@ public class GameResources {
         spaceShip.reset();
     }
 
+    /**
+     * Upon exiting, terminate all processes and joint threads
+     */
     public void releaseResources() {
         try {
             // Attempt to wait for the game updater to exit its game loop.
@@ -201,6 +230,11 @@ public class GameResources {
         user = null;
     }
 
+    /**
+     * Bellow are setters with side effects, changing players id will change it's mapping
+     * in the hash map of player pool mappings;
+     * @param USER_ID new user id
+     */
     public void updateUsersId(String USER_ID) {
         players.remove(this.USER_ID, spaceShip);
         this.USER_ID = USER_ID;

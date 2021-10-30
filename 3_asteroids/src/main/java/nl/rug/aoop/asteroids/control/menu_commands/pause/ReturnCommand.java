@@ -8,6 +8,9 @@ import nl.rug.aoop.asteroids.model.game.Game;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
+/**
+ * ViewStats - abstract action class attached to menu button; Activated upon click
+ */
 @MenuCommands(id = "return")
 public class ReturnCommand extends AbstractAction {
 
@@ -18,6 +21,10 @@ public class ReturnCommand extends AbstractAction {
         this.manager = manager;
     }
 
+    /**
+     * Quits the game , creates a new one and updates the instance for
+     * superior model classes. Finally, displays the main menu.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         manager.getGame().quit();

@@ -11,6 +11,7 @@ import nl.rug.aoop.asteroids.network.data.types.DeltasData;
 import nl.rug.aoop.asteroids.network.host.listeners.HostListener;
 import nl.rug.aoop.asteroids.network.statistics.ConnectionStatistic;
 import nl.rug.aoop.asteroids.network.statistics.StatisticCalculator;
+import nl.rug.aoop.asteroids.util.IOUtils;
 import nl.rug.aoop.asteroids.util.Randomizer;
 import org.apache.commons.lang3.SerializationUtils;
 
@@ -59,8 +60,8 @@ public class HostingServer implements HostingDevice, Runnable, GameUpdateListene
         executorService = Executors.newFixedThreadPool(multiplayerGame.getMAX_CLIENTS());
         try {
             server_socket = new DatagramSocket();
-            server_port = server_socket.getLocalPort(); //TODO this is for local networks
-            multiplayerGame.getGame().reportHostPort(server_port);
+            server_port = server_socket.getLocalPort();
+            IOUtils.reportHostPort(null, server_port);
         } catch (SocketException e) {
             e.printStackTrace();
         }
@@ -146,6 +147,7 @@ public class HostingServer implements HostingDevice, Runnable, GameUpdateListene
     public void playerEliminated(String id) {
         notifyEliminated(id);
     }
+
     @Override
     public DatagramSocket getServerSocket() {
         return server_socket;
