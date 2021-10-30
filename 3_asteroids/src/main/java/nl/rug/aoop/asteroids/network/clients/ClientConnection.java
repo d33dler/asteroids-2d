@@ -14,6 +14,10 @@ import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.util.Objects;
 
+/**
+ * ClientConnection class - acts as server side client communication handler
+ * A new instance is created for each new client
+ */
 public class ClientConnection implements HostListener, Runnable {
 
     private final HostingDevice hostingDevice;
@@ -66,6 +70,9 @@ public class ClientConnection implements HostListener, Runnable {
         initFlux();
     }
 
+    /**
+     * Consumer inner class that works on a separate thread to read client incoming packets
+     */
     private class Consumer implements Runnable {
         private final int LATENCY_ms;
 
@@ -77,7 +84,10 @@ public class ClientConnection implements HostListener, Runnable {
         public void run() {
             listen();
         }
-
+        /**
+         * Receives packets with a set timeout (which results in termination of comms.
+         * Adds the clients received deltas to the hosting device caches
+         */
         private synchronized void listen() {
             while (connected) {
                 if (io.receive()) {
@@ -89,28 +99,43 @@ public class ClientConnection implements HostListener, Runnable {
         }
     }
 
+    /**
+     * While the socket is responsive send last state from the host
+     * Notice that we set a 10ms interval to allow any close-incoming changes
+     * to record into the state and not be ignored
+     */
     public synchronized void initFlux() {
         while (connected) {
             if (hostingDevice.updateReady()) {
                 fireUpdate(hostingDevice.getLastDeltas());
                 try {
-                    wait(10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                    wait(INTERVAL_ms);
+                } catch (InterruptedException ignored) {}
             }
         }
     }
 
+    /**
+     *
+     * @param id - of client that is not responsive/ is disconnected
+     */
     @Override
     public void notifyDisconnected(String id) {
         hostingDevice.notifyDisconnected(id);
     }
 
+    /**
+     *
+     * @param data current server state of the game in bytes sent to the client
+     */
     public void fireUpdate(byte[] data) {
         io.send(data);
     }
 
+    /**
+     * Disconnect if the server is closing or the client is not responsive (SO timeout)
+     * Kills consumer thread
+     */
     public synchronized void disconnect() {
         try {
             connected = false;
@@ -118,9 +143,7 @@ public class ClientConnection implements HostListener, Runnable {
                 consumerThread.join(100);
             }
             notifyDisconnected(clientID);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        } catch (InterruptedException ignored) {}
     }
 
     public DeltasData getClientDeltas() {

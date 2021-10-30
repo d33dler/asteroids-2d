@@ -13,7 +13,7 @@ public interface MultiplayerManager {
     int getMAX_CLIENTS();
     DeltaManager getDeltaManager();
     Game getGame();
-    public void notifyDisconnect();
+    void notifyDisconnect();
     HostingDevice getHostingDevice();
     boolean isUpdating();
 }

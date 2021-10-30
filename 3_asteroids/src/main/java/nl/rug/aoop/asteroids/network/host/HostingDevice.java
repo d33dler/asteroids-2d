@@ -8,7 +8,11 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
-public interface HostingDevice {
+/**
+ * HostingDevice interface - implementing by any hosting device which shares data with a pool of
+ * clients . A hosting device will extend Runnable to be able to launch on a separate thread.
+ */
+public interface HostingDevice extends Runnable {
     DatagramSocket getServerSocket();
     int getHostDefaultLatency();
     int getHostMaxLatency();
@@ -19,6 +23,5 @@ public interface HostingDevice {
     void notifyEliminated(String id);
     void run();
     void shutdown();
-    StatisticCalculator getStatisticCalculator();
     ConnectionParameters getRawConnectionParameters();
 }

@@ -8,6 +8,10 @@ import org.apache.commons.lang3.SerializationUtils;
 import javax.swing.text.Utilities;
 import java.io.Serializable;
 
+/**
+ * DataPackage is another decorator to manage DeltasData, currently used as a wrapper
+ * since latency is not an issue on local networks.
+ */
 public class DataPackage implements Serializable {
 
     @Getter
@@ -35,12 +39,10 @@ public class DataPackage implements Serializable {
     }
 
     public long getLatency(DeltasData data) {
-        System.out.println("LATENCY: " + (data.getTimeStamp()));
         return System.currentTimeMillis() - data.getTimeStamp();
     }
 
     public long getLatency() {
-        System.out.println("LATENCY: " + (data.getTimeStamp()));
         return System.currentTimeMillis() - data.getTimeStamp();
     }
 
