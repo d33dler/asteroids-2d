@@ -167,8 +167,11 @@ public class Spaceship extends GameObject {
 
     @Getter
     private boolean spectatorShip = false;
-
+    @Getter
+    @Setter
     private GameResources resources;
+
+    private SpaceshipViewModel viewModel;
 
     /**
      * Constructs a new spaceship with default values. It starts in the middle of the window, facing directly upwards,
@@ -192,7 +195,7 @@ public class Spaceship extends GameObject {
     }
 
     public static Spaceship newMultiplayerSpaceship(String nickId, GameResources resources) {
-        Spaceship s = new Spaceship(nickId);
+        Spaceship s = new Spaceship(nickId, resources);
         s.resources = resources;
         return s;
     }
@@ -334,7 +337,8 @@ public class Spaceship extends GameObject {
 
     @Override
     public GameObjectViewModel<? extends GameObject> getViewModel(GameObject object) {
-        return new SpaceshipViewModel((Spaceship) object);
+        if (viewModel == null) viewModel = new SpaceshipViewModel(this);
+        return viewModel;
     }
 
     @Override
@@ -388,6 +392,7 @@ public class Spaceship extends GameObject {
         sh.color = color;
         sh.setFiring(isFiring);
         sh.setNickId(nickId);
+        sh.setResources(resources);
         return sh;
     }
 

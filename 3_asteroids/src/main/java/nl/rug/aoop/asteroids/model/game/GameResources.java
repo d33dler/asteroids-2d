@@ -28,6 +28,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class GameResources {
 
+    @Setter
+    @Getter
+    private ViewController viewController;
+
     /**
      * Package patch to game objects factory methods classes
      */
@@ -148,8 +152,6 @@ public class GameResources {
      */
     private static final int EXIT_TIMEOUT_MILLIS = 100;
 
-    @Setter
-    private ViewController viewController;
 
     @Getter
     private String USER_ID = "Host";
@@ -164,7 +166,7 @@ public class GameResources {
     private List<BufferedImage> spriteImgList;
     @Getter
     private BufferedImage spectatorImg;
-
+    @Getter
     private final Game game;
 
     /**

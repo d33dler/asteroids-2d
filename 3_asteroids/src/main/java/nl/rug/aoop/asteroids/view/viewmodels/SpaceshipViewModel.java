@@ -4,6 +4,7 @@ import nl.rug.aoop.asteroids.model.game.Game;
 import nl.rug.aoop.asteroids.model.game.GameResources;
 import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
 import nl.rug.aoop.asteroids.util.PolarCoordinate;
+import nl.rug.aoop.asteroids.view.panels.AsteroidsPanel;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -30,6 +31,7 @@ public class SpaceshipViewModel extends GameObjectViewModel<Spaceship> {
         }
     }
 
+    private AsteroidsPanel graphicOut;
     /**
      * Constructs a new view model with the given game object.
      *
@@ -37,6 +39,7 @@ public class SpaceshipViewModel extends GameObjectViewModel<Spaceship> {
      */
     public SpaceshipViewModel(Spaceship gameObject) {
         super(gameObject);
+        this.graphicOut = gameObject.getResources().getViewController().getGraphicOut();
     }
 
     /**
@@ -76,9 +79,12 @@ public class SpaceshipViewModel extends GameObjectViewModel<Spaceship> {
         graphics2D.drawImage(rotated, (int) location.x, (int) location.y, size, size, null);
         graphics2D.setTransform(new AffineTransform());
 
-        Spaceship o = getGameObject();
-        graphics2D.setColor(spaceship.getColor());
-        graphics2D.drawString(o.getNickId(), (int) o.getLocation().x + 20, (int) o.getLocation().y - 10);
+        if(graphicOut.isDisplayPlayersInfo()){
+            Spaceship o = getGameObject();
+            graphics2D.setColor(spaceship.getColor());
+            graphics2D.drawString(o.getNickId(), (int) o.getLocation().x + 20, (int) o.getLocation().y - 10);
+        }
+
     }
 
     /**

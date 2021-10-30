@@ -15,11 +15,13 @@ public class GameControl extends Control {
      */
     public GameControl(ViewController controller) {
         super(controller);
+
     }
 
     @Override
     public void display() {
         AsteroidsPanel pane = new AsteroidsPanel(controller, controller.getGame());
+        controller.setGraphicOut(pane);
         super.display(pane);
         controller.getFrame().setFocusable(true);
     }

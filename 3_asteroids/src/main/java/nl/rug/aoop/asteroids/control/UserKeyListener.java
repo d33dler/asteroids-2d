@@ -14,6 +14,7 @@ import java.awt.event.KeyListener;
 public class UserKeyListener implements KeyListener {
 
     protected final static int pauseMenu = KeyEvent.VK_ESCAPE;
+    protected final static int tweakNicks = KeyEvent.VK_N;
     /**
      * The spaceship that will respond to key events caught by this listener.
      */
@@ -41,6 +42,9 @@ public class UserKeyListener implements KeyListener {
         switch (e.getKeyCode()) {
             case pauseMenu -> {
                 controller.requestPauseMenu();
+            }
+            case tweakNicks -> {
+                controller.tweakNicknames();
             }
         }
     }

@@ -41,6 +41,10 @@ public class AsteroidsPanel extends JPanel implements GameUpdateListener {
     private boolean paused = false;
     private final static String PAUSE_BG = "images/pause_bg.png";
 
+    @Getter
+    @Setter
+    private boolean displayPlayersInfo = true;
+
     private ViewController viewController;
 
     /**

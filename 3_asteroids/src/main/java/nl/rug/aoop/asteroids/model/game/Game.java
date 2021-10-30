@@ -43,17 +43,17 @@ public class Game extends ObservableGame {
     public ObjectDeltaMapper objectDeltaMapper;
     private Thread rendererDeepClonerThread, objectDeltaMapperThread;
 
-    @Setter
+
     @Getter
     private ViewController viewController;
 
     @Getter
     private String USER_ID = "Host";
+
     @Setter
     private String USER_NICK = "unknown";
     @Getter
     private final GameResources resources;
-
     /**
      * Constructs a new game, with a new spaceship and all other model data in its default starting state.
      */
@@ -249,5 +249,10 @@ public class Game extends ObservableGame {
     public void updateUSER_NICK(String USER_NICKNAME) {
         this.USER_NICK = USER_NICKNAME;
         resources.updateUserNick(USER_NICKNAME);
+    }
+
+    public void setViewController(ViewController viewController) {
+        this.viewController = viewController;
+        resources.setViewController(viewController);
     }
 }

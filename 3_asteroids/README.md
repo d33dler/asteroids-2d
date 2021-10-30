@@ -70,13 +70,20 @@ mvn clean package
 ```
 The JAR file will appear in the `/target` directory.
 
-## Design Description
+
+##Note: 
+#####Hosting work only for local networks . Input "localhost" into hosting address !
+
 
 <!-- 
 Describe your program's structure (classes and packages) in detail, addressing all but the most trivial features, and provide ample reasoning for why you chose a certain structure, or why you implemented something a certain way. What design patterns did you use? Describe how and where they've been applied. And finally, how does your game handle networking? Give a description of the protocol or messages that the clients use to communicate with servers. Including a diagram here can help! 
 -->
-In-Game Controls: We added Escape button mapping to activate a pause menu during the game.
-Rest of the controls are default. 
+###In-Game Controls:
+#### New keybindings:
+- `Escape` button mapping to activate a pause menu during the game.
+- `N` - turn on-off player name icons. 
+
+## Design Description
 
 
 The project structure follows the Model-View-Controller pattern. This means that

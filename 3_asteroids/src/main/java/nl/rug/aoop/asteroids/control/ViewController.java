@@ -27,10 +27,14 @@ public class ViewController implements GameUpdateListener {
     private AsteroidsFrame frame;
 
     private final List<JPanel> activePanels = new ArrayList<>();
+    @Setter
+    @Getter
+    private  AsteroidsPanel graphicOut;
 
     public ViewController(Game game, AsteroidsFrame frame) {
         this.game = game;
         this.frame = frame;
+
         game.setViewController(this);
         game.addListener(this);
     }
@@ -73,6 +77,12 @@ public class ViewController implements GameUpdateListener {
     @Setter
     private volatile boolean paused = false;
 
+
+    public void tweakNicknames(){
+        if(graphicOut!=null) {
+            graphicOut.setDisplayPlayersInfo(!graphicOut.isDisplayPlayersInfo());
+        }
+    }
     /**
      * This method handles the pause menu, making it so the game can only
      * be paused while the game is actually running
