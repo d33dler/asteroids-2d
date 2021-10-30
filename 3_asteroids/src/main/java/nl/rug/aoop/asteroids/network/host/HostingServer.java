@@ -109,14 +109,14 @@ public class HostingServer implements HostingDevice, Runnable, GameUpdateListene
             InetSocketAddress inetAddress = new InetSocketAddress(handshake.getAddress(), handshake.getPort());
             String add = privateSocket.getLocalAddress().getCanonicalHostName();
             System.out.println("NEW CONNECTION ASSIGNED");
-            byte[] data = SerializationUtils.serialize(new ConfigData(clientID, add, privateSocket.getLocalPort())); //TODO refactor;
+            byte[] data = SerializationUtils.serialize(new ConfigData(clientID, add, privateSocket.getLocalPort()));
             DatagramPacket ACK = new DatagramPacket(data, data.length, inetAddress.getAddress(), inetAddress.getPort());
             try {
                 server_socket.send(ACK);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            ClientConnection newListener = new ClientConnection(this, privateSocket, clientID, inetAddress);
+            ClientConnection newListener = new ClientConnection(this, privateSocket, clientID, inetAddress, handshake.getData());
             executorService.execute(newListener);
             hostListeners.add(newListener);
         }

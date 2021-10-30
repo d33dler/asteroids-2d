@@ -8,7 +8,11 @@ import nl.rug.aoop.asteroids.control.controls.GameControl;
 import nl.rug.aoop.asteroids.control.controls.PauseControl;
 import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
 import nl.rug.aoop.asteroids.model.game.Game;
+import nl.rug.aoop.asteroids.util.ReflectionUtils;
 import nl.rug.aoop.asteroids.view.AsteroidsFrame;
+import nl.rug.aoop.asteroids.view.menus.EndgameMenu;
+import nl.rug.aoop.asteroids.view.menus.pause_menu.PauseMenu;
+import nl.rug.aoop.asteroids.view.panels.AsteroidsPanel;
 
 import javax.swing.*;
 import java.util.ArrayList;

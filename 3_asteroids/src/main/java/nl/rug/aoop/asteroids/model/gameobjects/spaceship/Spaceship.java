@@ -2,6 +2,7 @@ package nl.rug.aoop.asteroids.model.gameobjects.spaceship;
 
 import lombok.SneakyThrows;
 import nl.rug.aoop.asteroids.control.PlayerKeyListener;
+import nl.rug.aoop.asteroids.model.game.GameResources;
 import nl.rug.aoop.asteroids.model.gameobjects.GameObject;
 import nl.rug.aoop.asteroids.model.gameobjects.KeyInput;
 import nl.rug.aoop.asteroids.util.ReflectionUtils;
@@ -11,6 +12,8 @@ import lombok.Setter;
 import nl.rug.aoop.asteroids.view.viewmodels.GameObjectViewModel;
 import nl.rug.aoop.asteroids.view.viewmodels.SpaceshipViewModel;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -156,10 +159,15 @@ public class Spaceship extends GameObject {
     @Getter
     private String nickId;
 
+    private Color color = new Color(246, 246, 246, 255);
+
     @Getter
     @Setter
-    private int sprite_img_code ;
+    private BufferedImage sprite_img = GameResources.spriteImgList.get(3);
 
+
+    @Getter
+    private boolean spectatorShip = false;
     /**
      * Constructs a new spaceship with default values. It starts in the middle of the window, facing directly upwards,
      * with no velocity.
@@ -192,7 +200,6 @@ public class Spaceship extends GameObject {
         getLocation().y = AsteroidsFrame.WINDOW_SIZE.height / 2;
         getVelocity().x = 0;
         getVelocity().y = 0;
-        sprite_img_code = ThreadLocalRandom.current().nextInt(5);
         direction = 0;
         isFiring = false;
         accelerateKeyPressed = false;
@@ -367,6 +374,11 @@ public class Spaceship extends GameObject {
         sh.setOnline(online);
         sh.setNickId(nickId);
         return sh;
+    }
+
+    public void updateAsSpectator(){
+        spectatorShip = true;
+        sprite_img = GameResources.spriteImgList.get(5);
     }
 
     public void updateParameters(double[] params) {

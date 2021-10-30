@@ -2,6 +2,7 @@ package nl.rug.aoop.asteroids.control;
 
 import nl.rug.aoop.asteroids.model.game.Game;
 import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
+import nl.rug.aoop.asteroids.network.clients.User;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -9,34 +10,29 @@ import java.awt.event.KeyListener;
 /**
  * This class is responsible for handling keyboard input for a single player that is bound to a ship.
  */
-public class PlayerKeyListener implements KeyListener {
+public class PlayerKeyListener extends UserKeyListener {
     /**
      * The key that, when pressed, causes the ship to accelerate.
      */
-    private static final int ACCELERATION_KEY = KeyEvent.VK_W;
+    protected static final int ACCELERATION_KEY = KeyEvent.VK_W;
 
     /**
      * The key that turns the ship left, or counter-clockwise.
      */
-    private static final int LEFT_KEY = KeyEvent.VK_A;
+    protected static final int LEFT_KEY = KeyEvent.VK_A;
 
     /**
      * The key that turns the ship right, or clockwise.
      */
-    private static final int RIGHT_KEY = KeyEvent.VK_D;
+    protected static final int RIGHT_KEY = KeyEvent.VK_D;
 
     /**
      * The key that causes the ship to fire its weapon.
      */
-    private static final int FIRE_WEAPON_KEY = KeyEvent.VK_SPACE;
+    protected static final int FIRE_WEAPON_KEY = KeyEvent.VK_SPACE;
 
-    public final static int pauseMenu = KeyEvent.VK_ESCAPE;
-    /**
-     * The spaceship that will respond to key events caught by this listener.
-     */
-    private final Spaceship ship;
-    private final Game game;
-    private ViewController controller;
+
+
 
     /**
      * Constructs a new player key listener to control the given ship.
@@ -44,9 +40,7 @@ public class PlayerKeyListener implements KeyListener {
      * @param ship The ship that this key listener will control.
      */
     public PlayerKeyListener(Game game, ViewController viewController, Spaceship ship) {
-        this.controller = viewController;
-        this.ship = ship;
-        this.game = game;
+        super(ship, game, viewController);
     }
 
     /**

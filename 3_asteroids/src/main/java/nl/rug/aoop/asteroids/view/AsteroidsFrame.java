@@ -11,6 +11,7 @@ import nl.rug.aoop.asteroids.model.game.Game;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyListener;
 import java.util.Set;
 
 /**
@@ -88,6 +89,10 @@ public class AsteroidsFrame extends JFrame {
 
 
 
+    public void changeKeyListener(KeyListener l){
+        removeKeyListener(playerKeyListener);
+        addKeyListener(l);
+    }
     private void resetPlayerKeyListener() {
         removeKeyListener(playerKeyListener);
         playerKeyListener = new PlayerKeyListener(game, viewController, game.getUserSpaceship());

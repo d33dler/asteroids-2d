@@ -4,6 +4,7 @@ import nl.rug.aoop.asteroids.control.controls.GameControl;
 import nl.rug.aoop.asteroids.control.menu_commands.MenuCommands;
 import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
+import nl.rug.aoop.asteroids.util.IOUtils;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -31,11 +32,6 @@ public class JoinCommand extends AbstractAction {
     }
 
     private Tuple.T2<String, Integer> getUserInput() {
-        String hostAddress = JOptionPane.showInputDialog(manager.getFrame(), "Enter host DNS/IP address");
-        String port = JOptionPane.showInputDialog(manager.getFrame(), "Enter host port");
-        if(hostAddress != null && port!=null){
-            return new Tuple.T2<>(hostAddress, Integer.valueOf(port));
-        }
-        return null;
+        return IOUtils.getStringIntegerT2(manager);
     }
 }

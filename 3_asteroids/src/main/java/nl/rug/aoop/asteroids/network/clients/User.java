@@ -36,27 +36,37 @@ public class User implements Runnable, GameUpdateListener {
 
 
     private Thread clientConsumerThread;
+    private Thread thisUserThread;
 
-    private User(Game game, InetSocketAddress address) {
+    private User(Game game) {
         this.game = game;
         this.resources = game.getResources();
         game.addListener(this);
-        initSocket();
-        initClientMultiplayer();
-        attemptConnect(address);
-    }
-
-    private User(Game game, InetAddress inetAddress) {
-        this.game = game;
-        initHostMultiplayer(inetAddress);
     }
 
     public static User newHostUser(Game game, InetAddress address) {
-        return new User(game, address);
+        User user = new User(game);
+        user.initHostMultiplayer(address);
+        return user;
     }
 
     public static User newClientUser(Game game, InetSocketAddress address) {
-        return new User(game, address);
+        User user = new User(game);
+        user.initSocket();
+        user.initClientMultiplayer();
+        user.attemptConnect(address, "default");
+        user.initConsumerThread();
+        user.initProduserThread();
+        return user;
+    }
+
+    public static User newSpectatorUser(Game game, InetSocketAddress address) {
+        User user = new User(game);
+        user.initSocket();
+        user.initClientMultiplayer();
+        user.attemptConnect(address, "spectator");
+        user.initConsumerThread();
+        return user;
     }
 
     private void initSocket() {
@@ -68,22 +78,28 @@ public class User implements Runnable, GameUpdateListener {
         }
     }
 
-    private void attemptConnect(InetSocketAddress address) {
+    private void attemptConnect(InetSocketAddress address, String message) {
         if (address != null) {
-            connectionParameters = new ConnectionParameters(userSocket, address, 0); //TODO !!!!!
+            connectionParameters = new ConnectionParameters(userSocket, address, 0, message);
             io = new DefaultHandshake(userSocket).handshake(connectionParameters);
         }
         if (io == null || io.getPackageHandler() == null) {
-            log.warning("Failed connection");               //TODO interface
+            log.warning("Failed connection");
         } else {
             USER_ID = io.getOwnerId();
             game.setUSER_ID(USER_ID);
-
             ioHandler = io.getPackageHandler();
-            clientConsumerThread = new Thread(new Consumer());
-            clientConsumerThread.start();
-            new Thread(this).start();
         }
+    }
+
+    private void initConsumerThread() {
+        clientConsumerThread = new Thread(new Consumer());
+        clientConsumerThread.start();
+    }
+
+    private void initProduserThread() {
+        thisUserThread = new Thread(this);
+        thisUserThread.start();
     }
 
     private void initClientMultiplayer() {
@@ -94,7 +110,6 @@ public class User implements Runnable, GameUpdateListener {
         multiplayerManager = MultiplayerGame.multiplayerServer(game, this, address);
         userSocket = multiplayerManager.getHostingDevice().getServerSocket();
     }
-
 
     public synchronized void send(GameplayDeltas data) {
         resources.setUserSerializing(true);
@@ -142,7 +157,7 @@ public class User implements Runnable, GameUpdateListener {
         while (isConnected() && !game.isGameOver()) {
             if (!game.isEngineBusy()) {
                 send(new GameplayDeltas(System.currentTimeMillis(),
-                        multiplayerManager.getDeltaManager().getPlayerKeyEvents()));
+                        multiplayerManager.getDeltaManager().getPlayerDeltas()));
                 try {
                     wait(5);
                 } catch (InterruptedException e) {
@@ -157,7 +172,11 @@ public class User implements Runnable, GameUpdateListener {
     @SneakyThrows
     @Override
     public void onGameExit() {
-        clientConsumerThread.join(100);
+        if (clientConsumerThread != null) {
+            clientConsumerThread.join(100);
+        }
+        if (thisUserThread != null)
+            thisUserThread.join(100);
     }
 
 }

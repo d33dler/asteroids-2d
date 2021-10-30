@@ -3,6 +3,7 @@ package nl.rug.aoop.asteroids.model.game;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import nl.rug.aoop.asteroids.control.UserKeyListener;
 import nl.rug.aoop.asteroids.control.ViewController;
 import nl.rug.aoop.asteroids.control.updaters.GameUpdater;
 import nl.rug.aoop.asteroids.gameobserver.GameUpdateListener;
@@ -128,8 +129,8 @@ public class Game extends ObservableGame {
     }
 
     public void initMultiplayerAsHost(InetAddress address) {
-        getObjFactory(); //TODO command pattern
-        resources.setUser(new Thread(User.newHostUser(this, address)));
+        getObjFactory();
+        resources.setUser(User.newHostUser(this, address));
     }
 
     private void getObjFactory() {
@@ -138,12 +139,15 @@ public class Game extends ObservableGame {
 
     public void initMultiplayerAsClient(InetSocketAddress address) {
         getObjFactory();
-        resources.setUser(new Thread(User.newClientUser(this, address)));
+        resources.setUser(User.newClientUser(this, address));
     }
 
     public void initMultiplayerAsSpectator(InetSocketAddress address) {
         getObjFactory();
-        resources.setUser(new Thread(User.newClientUser(this, address)));
+        resources.getSpaceShip().updateAsSpectator();
+        viewController.getFrame().changeKeyListener(new
+                UserKeyListener(resources.getSpaceShip(),this,viewController));
+        resources.setUser(User.newSpectatorUser(this, address));
     }
 
     /**
@@ -275,7 +279,7 @@ public class Game extends ObservableGame {
     }
 
     public void reportHostPort(int port) {
-        JOptionPane.showMessageDialog(viewController.getFrame(), "Assigned port was copied to clipboard!",
+        JOptionPane.showMessageDialog(viewController.getFrame(), "Assigned port was copied to clipboard!", //TODO refactor garbage
                 "ASTEROIDS HOSTING", JOptionPane.INFORMATION_MESSAGE);
         StringSelection stringSelection = new StringSelection(Integer.toString(port));
         Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();

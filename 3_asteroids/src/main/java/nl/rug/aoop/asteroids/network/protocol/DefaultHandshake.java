@@ -23,12 +23,10 @@ public class DefaultHandshake {
 
     public IOProtocol handshake(ConnectionParameters parameters) {
         IO io = new IO(parameters);
-        PackageHandler holder = io.getPackageHandler();
-        io.send();
-        byte[] data = new byte[HANDSHAKE_LEN];
-        DatagramPacket handshake = new DatagramPacket(data, data.length);
+        io.send(SerializationUtils.serialize(parameters.getConnectionTypeRequest()));
+        DatagramPacket handshake = new DatagramPacket(new byte[HANDSHAKE_LEN], HANDSHAKE_LEN);
         try {
-            socket.receive(handshake); //TODO add timeouts
+            socket.receive(handshake);
             System.out.println("got here");
         } catch (IOException e) {
             e.printStackTrace();
@@ -40,13 +38,11 @@ public class DefaultHandshake {
 
     private IO passNewIOConfigs(IO io, DatagramPacket handshake) {
         ConfigData configData = SerializationUtils.deserialize(handshake.getData());
-        System.out.println("YOUR new PORT"+configData.port);
+        System.out.println("YOUR private PORT: " +configData.port);
         IO privateIO = new IO(
                 new ConnectionParameters(io.getSocket(),
                         new InetSocketAddress(configData.hostAddress,configData.port),HANDSHAKE_LEN));
         privateIO.getPackageHandler().initHandler(configData);
-
-       // socket.connect(privateIO.getPackageHandler().getInet(), privateIO.getPackageHandler().getPort());
         return privateIO;
     }
 }

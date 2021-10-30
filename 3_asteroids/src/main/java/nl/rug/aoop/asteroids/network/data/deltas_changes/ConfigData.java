@@ -4,13 +4,16 @@ import nl.rug.aoop.asteroids.network.data.types.DeltasData;
 import java.io.Serializable;
 import java.util.List;
 
-public class ConfigData implements Serializable, DeltasData {
+public class ConfigData implements DeltasData {
     //public int data_size; //TODO
     public List<Tuple.T2<String, Integer >> setup;
 
-    public String id, hostAddress;
+    public String id, hostAddress, connectionRequest;
     public int port,data_size;
 
+    public ConfigData(String requestConnection) {
+        this.connectionRequest = requestConnection;
+    }
     public ConfigData(List<Tuple.T2<String, Integer >> setup) {
         this.setup = setup;
     }

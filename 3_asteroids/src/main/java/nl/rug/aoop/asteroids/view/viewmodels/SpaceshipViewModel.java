@@ -49,9 +49,10 @@ public class SpaceshipViewModel extends GameObjectViewModel<Spaceship> {
     public void draw(Graphics2D graphics2D, Point.Double location) {
         Spaceship spaceship = getGameObject();
         if (spaceship.isAccelerating()) {
-            drawExhaust(spaceship, graphics2D, new Point2D.Double(location.x , location.y));
+            drawExhaust(spaceship, graphics2D, new Point2D.Double(location.x, location.y));
         }
         drawMainBody(spaceship, graphics2D, location);
+
     }
 
     /**
@@ -66,13 +67,13 @@ public class SpaceshipViewModel extends GameObjectViewModel<Spaceship> {
         int size = Spaceship.SHIP_SIZE;
         double dir = spaceship.getDirection();
 
-        BufferedImage rotated = GameResources.spriteImgList.get(spaceship.getSprite_img_code());
+        BufferedImage rotated = spaceship.getSprite_img();
 
         AffineTransform transform = new AffineTransform();
-        transform.translate(-15.5,-15.5);
-        transform.rotate(dir,location.x + (size/2) , location.y + (size/2));
+        transform.translate(-15.5, -15.5);
+        transform.rotate(dir, location.x + (size / 2), location.y + (size / 2));
         graphics2D.setTransform(transform);
-        graphics2D.drawImage(rotated, (int)location.x , (int) location.y,size,size, null);
+        graphics2D.drawImage(rotated, (int) location.x, (int) location.y, size, size, null);
         graphics2D.setTransform(new AffineTransform());
 
         Spaceship o = getGameObject();
@@ -90,14 +91,14 @@ public class SpaceshipViewModel extends GameObjectViewModel<Spaceship> {
     private void drawExhaust(Spaceship spaceship, Graphics2D graphics2D, Point.Double location) {
         AffineTransform backup = graphics2D.getTransform();
         AffineTransform trans = new AffineTransform();
-        trans.translate(-15.5,-15.5);
-        trans.rotate(spaceship.getDirection(),spaceship.getLocation().x + Spaceship.SHIP_SIZE/2,
-                spaceship.getLocation().y + Spaceship.SHIP_SIZE/2);
+        trans.translate(-15.5, -15.5);
+        trans.rotate(spaceship.getDirection(), spaceship.getLocation().x + Spaceship.SHIP_SIZE / 2,
+                spaceship.getLocation().y + Spaceship.SHIP_SIZE / 2);
         graphics2D.transform(trans);
-        graphics2D.drawImage(exhaust, (int) (location.x+2) , (int) (location.y +
-                        + Spaceship.SHIP_SIZE - 1), 14,14, null);
+        graphics2D.drawImage(exhaust, (int) (location.x + 2), (int) (location.y +
+                +Spaceship.SHIP_SIZE - 1), 14, 14, null);
         graphics2D.drawImage(exhaust, (int) (location.x + 20), (int) (location.y +
-                Spaceship.SHIP_SIZE -1), 14,14, null);
+                Spaceship.SHIP_SIZE - 1), 14, 14, null);
         graphics2D.setTransform(backup);
 
     }

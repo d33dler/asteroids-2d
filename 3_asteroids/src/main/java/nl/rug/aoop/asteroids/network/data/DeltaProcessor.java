@@ -43,11 +43,11 @@ public class DeltaProcessor implements DeltaManager {
         factory.updatePassiveObjects(objectVectors);
     }
 
-    public Tuple.T3<String, HashSet<Integer>, double[]> getPlayerKeyEvents() {
+    public Tuple.T3<String, HashSet<Integer>, double[]> getPlayerDeltas() {
         return new Tuple.T3<>(user.USER_ID, resources.getSpaceShip().getKeyEventSet(), resources.getSpaceShip().getObjParameters());
     }
 
-    public List<Tuple.T3<String, HashSet<Integer>, double[]>> getAllPlayersKeyEvents() {
+    public List<Tuple.T3<String, HashSet<Integer>, double[]>> getAllPlayerDeltas() {
         List<Tuple.T3<String, HashSet<Integer>, double[]>> keyList = new ArrayList<>();
         resources.getPlayers().forEach((s, spaceship) ->
                 keyList.add(new Tuple.T3<>(s, spaceship.getKeyEventSet(), spaceship.getObjParameters())));
@@ -56,7 +56,7 @@ public class DeltaProcessor implements DeltaManager {
 
     public byte[] getHostDeltas() {
         List<Tuple.T2<String, List<double[]>>> objectList = new ArrayList<>(game.objectDeltaMapper.mappedObjects);
-        List<Tuple.T3<String, HashSet<Integer>, double[]>> keyEventList = getAllPlayersKeyEvents();
+        List<Tuple.T3<String, HashSet<Integer>, double[]>> keyEventList = getAllPlayerDeltas();
         return SerializationUtils.serialize(
                 new GameplayDeltas(System.currentTimeMillis(), keyEventList, objectList));
     }

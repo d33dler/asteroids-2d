@@ -10,6 +10,7 @@ import nl.rug.aoop.asteroids.model.gameobjects.bullet.Bullet;
 import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
 import nl.rug.aoop.asteroids.model.obj_factory.GameObjectFactory;
 import nl.rug.aoop.asteroids.model.obj_factory.GeneralObjectsFactory;
+import nl.rug.aoop.asteroids.network.clients.User;
 import nl.rug.aoop.asteroids.network.data.deltas_changes.Tuple;
 import nl.rug.aoop.asteroids.util.database.DatabaseManager;
 import org.jetbrains.annotations.NotNull;
@@ -93,7 +94,7 @@ public class GameResources {
     private Thread gameUpdaterThread;
 
     @Setter
-    private Thread user;
+    private User user;
 
     @Getter
     private GameObjectFactory objectFactory;
@@ -116,14 +117,14 @@ public class GameResources {
     @Getter
     protected Asteroid closestAsteroid;
     protected boolean proxy = false;
-    public static List<BufferedImage> spriteImgList;
+
+    public static final List<BufferedImage> spriteImgList = loadSprites();
 
     private final Game game;
 
     public GameResources(Game game) {
         this.game = game;
         init();
-        loadSprites();
     }
 
     private void init() {
@@ -131,9 +132,9 @@ public class GameResources {
         initializeGameData();
     }
 
-    private void loadSprites() {
-        if(spriteImgList==null){
-            spriteImgList = new ArrayList<>();
+    private static List<BufferedImage> loadSprites() {
+        if (spriteImgList == null) {
+            List<BufferedImage> sprites = new ArrayList<>();
             File folder = new File("images/ship_sprites/");
             File[] spriteFiles = folder.listFiles();
             assert spriteFiles != null;
@@ -141,19 +142,19 @@ public class GameResources {
                 if (file.isFile()) {
                     try {
                         BufferedImage img = ImageIO.read(file);
-                        spriteImgList.add(img);
+                        sprites.add(img);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
-                System.out.println(spriteImgList.size());
             }
+            return sprites;
         }
-
+        return null;
     }
 
     public boolean isGameOver() {
-        return spaceShip.isDestroyed();
+        return spaceShip.isDestroyed() && !spaceShip.isSpectatorShip();
     }
 
     public void initGameEngine(boolean online, boolean onlineHost) {
@@ -182,9 +183,6 @@ public class GameResources {
         try {
             // Attempt to wait for the game updater to exit its game loop.
             gameUpdaterThread.join(EXIT_TIMEOUT_MILLIS);
-            if (user != null) {
-                user.join(EXIT_TIMEOUT_MILLIS);
-            }
         } catch (InterruptedException exception) {
             System.err.println("Interrupted while waiting for the game updater thread to finish execution.");
         }

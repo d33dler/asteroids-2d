@@ -1,5 +1,6 @@
 package nl.rug.aoop.asteroids.network.data;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,7 +8,6 @@ import lombok.Setter;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-
 
 @NoArgsConstructor
 public class ConnectionParameters {
@@ -30,6 +30,10 @@ public class ConnectionParameters {
     @Getter
     public int MAX_PACKET_LOSS = 50;
 
+    @Getter
+    @NetworkParam(id = "request")
+    public String connectionTypeRequest;
+
     public final static int CONNECTION_TIMEOUT = 0x1388;
 
     public ConnectionParameters(DatagramSocket callerSocket,
@@ -37,7 +41,13 @@ public class ConnectionParameters {
         this.callerSocket = callerSocket;
         this.receptorAddress = receptor;
         this.receptorPort = receptor.getPort();
+        connectionTypeRequest = "default";
         updateDataLength(dataLength);
+    }
+    public ConnectionParameters(DatagramSocket callerSocket,
+                                InetSocketAddress receptor, int dataLength, String message){
+        this(callerSocket, receptor, dataLength);
+        this.connectionTypeRequest = message;
     }
 
     public static ConnectionParameters rawDataParameters(){
