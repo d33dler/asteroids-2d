@@ -77,7 +77,7 @@ public class SpaceshipViewModel extends GameObjectViewModel<Spaceship> {
         graphics2D.setTransform(new AffineTransform());
 
         Spaceship o = getGameObject();
-        graphics2D.setColor(Color.WHITE);
+        graphics2D.setColor(spaceship.getColor());
         graphics2D.drawString(o.getNickId(), (int) o.getLocation().x + 20, (int) o.getLocation().y - 10);
     }
 

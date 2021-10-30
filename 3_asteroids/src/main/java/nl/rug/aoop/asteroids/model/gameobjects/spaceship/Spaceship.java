@@ -152,22 +152,22 @@ public class Spaceship extends GameObject {
     @Getter
     @Setter
     private PlayerKeyListener keyListener;
-    @Setter
-    private boolean online = false;
 
     @Setter
     @Getter
     private String nickId;
-
+    @Getter
     private Color color = new Color(246, 246, 246, 255);
 
     @Getter
     @Setter
-    private BufferedImage sprite_img = GameResources.spriteImgList.get(3);
+    private BufferedImage sprite_img;
 
 
     @Getter
     private boolean spectatorShip = false;
+
+    private GameResources resources;
     /**
      * Constructs a new spaceship with default values. It starts in the middle of the window, facing directly upwards,
      * with no velocity.
@@ -183,9 +183,10 @@ public class Spaceship extends GameObject {
         setNickId(nick);
     }
 
-    public Spaceship(String nick, boolean online) {
+    public Spaceship(String nick, GameResources resource) {
         this(nick);
-        this.online = online;
+        this.resources = resource;
+        sprite_img = resource.getSpriteImgList().get(ThreadLocalRandom.current().nextInt(0,5));
     }
 
     public Spaceship(double locationX, double locationY, double velocityX, double velocityY) {
@@ -370,15 +371,18 @@ public class Spaceship extends GameObject {
         Spaceship sh = new Spaceship(getLocation().x, getLocation().y, getVelocity().x, getVelocity().y);
         sh.setDirection(direction);
         sh.setAccelerateKeyPressed(accelerateKeyPressed);
+        sh.setSprite_img(sprite_img);
+        sh.color = color;
         sh.setFiring(isFiring);
-        sh.setOnline(online);
         sh.setNickId(nickId);
         return sh;
     }
 
     public void updateAsSpectator(){
         spectatorShip = true;
-        sprite_img = GameResources.spriteImgList.get(5);
+        color = new Color(0, 0, 0, 0);
+        updatePosition(0,0);
+        sprite_img = resources.getSpectatorImg();
     }
 
     public void updateParameters(double[] params) {

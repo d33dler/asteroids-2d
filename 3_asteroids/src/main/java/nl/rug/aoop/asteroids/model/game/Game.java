@@ -231,7 +231,7 @@ public class Game extends ObservableGame {
                     ship.setKeyEventSet(keySet.a);
                     ship.updateParameters(keySet.b);
                 } else {
-                    resources.players.put(s, new Spaceship(s, true));
+                    resources.players.put(s, new Spaceship(s, resources));
                     System.out.println("Added new player");
                 }
             }
