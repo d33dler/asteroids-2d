@@ -46,6 +46,7 @@ public class HostingServer implements HostingDevice, GameUpdateListener {
 
 
     private byte[] hostDeltas;
+
     private final HashMap<String, GameplayDeltas> deltasMap = new HashMap<>();
 
     public HostingServer(MultiplayerManager multiplayer, InetAddress address) {
@@ -56,11 +57,17 @@ public class HostingServer implements HostingDevice, GameUpdateListener {
         init();
     }
 
+    /**
+     * Starts the hosting updater thread
+     */
     private void logHost() {
         hostingUserUpdater = new Thread(new HostingUserUpdater());
         hostingUserUpdater.start();
     }
 
+    /**
+     * Initializes a new socket for incoming new connections (a broadcast socket)
+     */
     private void init() {
         executorService = Executors.newFixedThreadPool(multiplayerGame.getMAX_CLIENTS());
         try {

@@ -71,6 +71,7 @@ public class RendererDeepCloner implements Runnable {
                 Spaceship ship = resources.players.get(s);
                 ship.setKeyEventSet(deltas.b);
                 ship.updateParameters(deltas.c);
+
             } else {
                 if(!resources.destroyedShipsCache.contains(s)){ // Dealing with conflicting delta leaving remnant spaceship
                     resources.players.put(s, Spaceship.newMultiplayerSpaceship(deltas.a, resources));
