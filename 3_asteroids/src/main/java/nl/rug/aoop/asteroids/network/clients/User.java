@@ -29,14 +29,18 @@ public class User implements Runnable, GameUpdateListener {
     private PackageHandler ioHandler;
     private ConnectionParameters connectionParameters;
     private MultiplayerManager multiplayerManager;
-    private Game game;
-    private GameResources resources;
-    private final Randomizer randomizer = new Randomizer(6);
+
     public String USER_ID = "Host";
     public String USER_NICK;
 
+    private final static String SPECTATOR_KEY = "spectator",
+            DEF_CONNECTION_KEY = "default";
+
     private Thread clientConsumerThread;
     private Thread thisUserThread;
+
+    private final Game game;
+    private final GameResources resources;
 
     private User(Game game) {
         this.game = game;
@@ -55,7 +59,7 @@ public class User implements Runnable, GameUpdateListener {
         User user = new User(game);
         user.initSocket();
         user.initClientMultiplayer();
-        user.attemptConnect(address, "default");
+        user.attemptConnect(address, DEF_CONNECTION_KEY);
         user.initConsumerThread();
         user.initProduserThread();
         return user;
@@ -65,7 +69,7 @@ public class User implements Runnable, GameUpdateListener {
         User user = new User(game);
         user.initSocket();
         user.initClientMultiplayer();
-        user.attemptConnect(address, "spectator");
+        user.attemptConnect(address, SPECTATOR_KEY);
         user.initConsumerThread();
         return user;
     }

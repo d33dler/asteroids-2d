@@ -52,7 +52,7 @@ public class Game extends ObservableGame {
     @Getter
     private String USER_ID = "Host";
     @Setter
-    private String USER_NICK;
+    private String USER_NICK = "unknown";
 
     public Asteroid closestAsteroid;
     public boolean proxy = false;
@@ -158,9 +158,15 @@ public class Game extends ObservableGame {
     public void checkEndGame() {
         if ((isGameOver() || !resources.isRunProcesses()) && !notifyEnd) {
             notifyEnd = true;
-            dbManager.addScore(new Score(USER_NICK, resources.getSpaceShip().getScore()));
+            updateDatabaseScore();
             notifyGameOver();
         }
+    }
+
+    private void updateDatabaseScore() {
+        if (!resources.getSpaceShip().isSpectatorShip())
+            dbManager.addScore(new Score(USER_NICK, resources.getSpaceShip().getScore()));
+
     }
 
     /**
