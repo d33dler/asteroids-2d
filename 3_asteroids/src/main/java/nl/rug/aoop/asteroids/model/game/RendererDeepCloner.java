@@ -63,7 +63,7 @@ public class RendererDeepCloner implements Runnable {
      * multiplayer modes. It loads player key inputs & vectors + environment objects
      */
     public synchronized void loadCache() {
-
+        HashMap<String,Spaceship> bufferCache = new HashMap<>();
         for (Map.Entry<String, Tuple.T3<String, HashSet<Integer>, double[]>> entry : resources.spaceshipCache.entrySet()) {
             String s = entry.getKey();
             Tuple.T3<String, HashSet<Integer>, double[]> deltas = entry.getValue();
@@ -71,14 +71,17 @@ public class RendererDeepCloner implements Runnable {
                 Spaceship ship = resources.players.get(s);
                 ship.setKeyEventSet(deltas.b);
                 ship.updateParameters(deltas.c);
-
+                bufferCache.put(s,ship);
             } else {
                 if(!resources.destroyedShipsCache.contains(s)){ // Dealing with conflicting delta leaving remnant spaceship
-                    resources.players.put(s, Spaceship.newMultiplayerSpaceship(deltas.a, resources));
+                   bufferCache.put(s,Spaceship.newMultiplayerSpaceship(deltas.a, resources));
                     System.out.println("Added new player!");
                 }
             }
         }
+        resources.players.clear();
+        resources.players.putAll(bufferCache);
+       // resources.players.put(s, Spaceship.newMultiplayerSpaceship(deltas.a, resources));
         resources.asteroids.addAll(resources.asteroidsCache);
         resources.asteroidsCache.clear();
         resources.spaceshipCache.clear();

@@ -47,6 +47,12 @@ public class GameResources {
             spaceshipCache.remove(key);
             return super.remove(key);
         }
+
+        @Override
+        public void clear() {
+            super.clear();
+            this.put(USER_ID,spaceShip);
+        }
     };
 
 
