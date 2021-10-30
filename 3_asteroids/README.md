@@ -136,15 +136,15 @@ networking package to update the model in multiplayer games.
 Networking
 
 Networking :
-The classes responsible for networking are:\
+The classes responsible for networking are:
 User , DeltaProcessor , HostingServer , ClientConnection, IO , GameplayDeltas, ConfigData
 
 User.class - client side device used to handle incoming and outgoing packets by delegating 
 tasks to the IOProtocol inteface implementing class that focuses on actually packaging and sending. 
 User.class runs on two threads: - the class object itself acts as producer for the host, 
-by looping with timed intervals and sending GameplayDeltas; 
-- 2nd one is the Consumer inner-class which reads incoming packets using the same technique.
-User.class comunicates with the DeltaProcessor.\
+by looping with timed intervals and sending GameplayDeltas. 
+2nd one is the Consumer inner-class which reads incoming packets using the same technique.
+User.class comunicates with the DeltaProcessor.
 
 DeltaProcessor.class - is used by both client and server side and it’s role is to update the gameplay/ game state 
 based on the incoming packet data.  Any transmitted object which wraps essential data
@@ -153,7 +153,7 @@ inplementing class, and by setting this constraint of contract2contact communica
 of what changes can  DeltasData apply with DeltasDevice on the app (game). This also allows further abstraction for 
 expanding the applet eith a dispatcher coordinating which module would be changed and each module having it’s own 
 version of a “DeltaDevice” and the injectChanges method here would first call by some reference for 
-the apropiate “DeltaDevice” .\
+the apropiate “DeltaDevice” .
 
 ClientConnection.class - similar in behaviour to User.class,  but adapted to the host's demands;
 
@@ -233,6 +233,9 @@ Expected length: ~150 words.
 ## Extras
 
 If you implemented any extras, you can list/mention them here.
+We fixed the concurrency modification exception by cloning the game objects
+We added a gameplay HUD proximity checker that uses the distance to tweak the RGB code scheme and opaqueness values.
+We added new spaceship sprites.
 <!-- Write this section yourself -->
 
 
