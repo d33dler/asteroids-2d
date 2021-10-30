@@ -168,14 +168,51 @@ Two questions we would like you to answer somewhere in this section is the follo
 
 ## Evaluation
 
-Discuss the stability of your implementation. What works well? Are there any bugs? Is everything tested properly? Are there still features that have not been implemented? Also, if you had the time, what improvements would you make to your implementation? Are there things which you would have done completely differently?
-<!-- Write this section yourself -->
-Expected length: ~300-500 words
+Our implementation of the game works in a fairly stable way. Menus interaction
+is responsive and flows well. The game works as desired and the database is
+updated correctly.
+By toying with the
+game we did not find any major bug. However, there are still some edge cases
+where unexpected behaviour from the user might cause some errors
+that are caught but not dealt with in a user-friendly way.
 
+We used Junit to test properly on database actions.
+
+Some feature that could be implemented in the future is customization. The game
+would get much more depth if the user could personalize the appearance as well
+as the experience of the game. By that we mean adding different sprites for
+game objects (which could be implemented by changing game object factory) or
+customizing some constance that influence the game experience such as the size
+and velocity of asteroids and the rate at which they spawn. These are not
+features that are difficult to implement but would require much work on the GUI
+to make it look "nice".
+
+<!--
+Discuss the stability of your implementation. What works well? Are there any bugs? Is everything tested properly? Are there still features that have not been implemented? Also, if you had the time, what improvements would you make to your implementation? Are there things which you would have done completely differently?
+<!-- Write this section yourself 
+Expected length: ~300-500 words -->
 ## Teamwork
 
+The size of this project made it essential to split concerns among team members,
+although communication still played a huge role.
+Radu worked on the networking part of the game as well as several parts of the
+view such as the main menu and its buttons, the pause menu and the interaction
+features among others.
+Furthermore, Radu built the structure of the controller and thus, the
+interaction between Model, View and Controller, and applied the factory pattern
+to game objects.
+
+Samuele worked on the database connection and management as well as some parts
+of the view such as the scoreboard panel. Furthermore, he applied the command
+pattern to the controller and wrote different sections of the README file.
+
+Team members worked on Refactoring, documentation and design description together
+
+
+<!---->
 What did each team member contribute to the assignment? Not just in terms of code, but also more abstractly, such as, "Tom upgraded the game model to support multiple ships.", or "Jerry designed the protocol that clients use for communicating with the server."
 <!-- Write this section yourself -->
+<!---->
 Expected length: ~150 words.
 
 ## Extras
