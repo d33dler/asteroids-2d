@@ -153,11 +153,17 @@ inplementing class, and by setting this constraint of contract2contact communica
 of what changes can  DeltasData apply with DeltasDevice on the app (game). This also allows further abstraction for 
 expanding the applet eith a dispatcher coordinating which module would be changed and each module having it’s own 
 version of a “DeltaDevice” and the injectChanges method here would first call by some reference for 
-the apropiate “DeltaDevice” .
+the apropiate “DeltaDevice” . 
+Any new packet type can implement DeltasData and include specific values which are injected 
+to different applet units.
 
-ClientConnection.class - similar in behaviour to User.class,  but adapted to the host's demands;
+ClientConnection.class - similar in behaviour to User.class,  but adapted to the host's demands.
+The server communicates with the each client through an instance of this class. It runs on two threads which
+concurrently read from and send data to the user with preset intervals.
 
 GamePlayDeltas.class & ConfigData.class both are used to relay different types of states.
+
+
 
 ### Util
 
