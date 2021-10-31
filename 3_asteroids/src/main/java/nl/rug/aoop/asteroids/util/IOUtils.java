@@ -17,9 +17,14 @@ public class IOUtils {
     @Nullable
     public static Tuple.T2<String, Integer> getStringIntegerT2(ViewController manager) {
         String hostAddress = JOptionPane.showInputDialog(manager.getFrame(), "Enter host DNS/IP address");
-        String port = JOptionPane.showInputDialog(manager.getFrame(), "Enter host port");
-        if(hostAddress != null && port!=null){
-            return new Tuple.T2<>(hostAddress, Integer.valueOf(port));
+        if(hostAddress!= null && !hostAddress.isBlank()){
+            String port = JOptionPane.showInputDialog(manager.getFrame(), "Enter host port");
+            if(port!=null && !port.isBlank()){
+                return new Tuple.T2<>(hostAddress, Integer.valueOf(port));
+            } else {
+                assert port != null;
+                if (port.isBlank()) reportMessage(manager.getFrame(), "Invalid port number");
+            }
         }
         return null;
     }
