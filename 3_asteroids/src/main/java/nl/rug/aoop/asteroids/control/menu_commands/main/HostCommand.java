@@ -42,15 +42,18 @@ public class HostCommand extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         String input = IOUtils.getUserNick(manager.getFrame());
-        manager.getGame().updateUSER_NICK(input);
-        input = IOUtils.getUserInputDNS(manager.getFrame());
-        InetAddress address;
-        try {
-            address = InetAddress.getByName(input);
-            hostingRoutine(manager.getGame(),address);
-            manager.displayPane(new GameControl(manager));
-        } catch (UnknownHostException ex) {
-           IOUtils.reportMessage(manager.getFrame(),"Unknown host address");
+
+            manager.getGame().updateUSER_NICK(input);
+            input = IOUtils.getUserInputDNS(manager.getFrame());
+            if(input!=null){
+            InetAddress address;
+            try {
+                address = InetAddress.getByName(input);
+                hostingRoutine(manager.getGame(),address);
+                manager.displayPane(new GameControl(manager));
+            } catch (UnknownHostException ex) {
+                IOUtils.reportMessage(manager.getFrame(),"Unknown host address");
+            }
         }
     }
 

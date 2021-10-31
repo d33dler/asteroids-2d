@@ -54,6 +54,7 @@ public class Game extends ObservableGame {
     private String USER_NICK = "unknown";
     @Getter
     private final GameResources resources;
+
     /**
      * Constructs a new game, with a new spaceship and all other model data in its default starting state.
      */
@@ -197,7 +198,8 @@ public class Game extends ObservableGame {
                 try {
                     objectDeltaMapperThread.join(100);
                     rendererDeepClonerThread.join(100);
-                } catch (InterruptedException ignored) {}
+                } catch (InterruptedException ignored) {
+                }
             }
         }
     }
@@ -247,8 +249,10 @@ public class Game extends ObservableGame {
      * @param USER_NICKNAME New User nickname
      */
     public void updateUSER_NICK(String USER_NICKNAME) {
-        this.USER_NICK = USER_NICKNAME;
-        resources.updateUserNick(USER_NICKNAME);
+        if (USER_NICKNAME != null) {
+            this.USER_NICK = USER_NICKNAME;
+            resources.updateUserNick(USER_NICKNAME);
+        }
     }
 
     public void setViewController(ViewController viewController) {
