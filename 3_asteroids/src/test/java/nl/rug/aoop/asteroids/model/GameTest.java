@@ -48,7 +48,7 @@ class GameTest {
 				new Point.Double(5.0, 5.0),
 				AsteroidSize.MEDIUM
 		));
-		resources.getBullets().add(new Bullet(400.0, 400.0, 25.0, -25.0));
+		resources.getBullets().add(new Bullet(null,400.0, 400.0, 25.0, -25.0));
 		resources.getSpaceShip().destroy();
 		for (int i = 0; i < 10; i++) {
 			resources.getSpaceShip().increaseScore();

@@ -30,7 +30,6 @@ public class SpaceshipViewModel extends GameObjectViewModel<Spaceship> {
             e.printStackTrace();
         }
     }
-
     private AsteroidsPanel graphicOut;
     /**
      * Constructs a new view model with the given game object.
@@ -83,6 +82,8 @@ public class SpaceshipViewModel extends GameObjectViewModel<Spaceship> {
             Spaceship o = getGameObject();
             graphics2D.setColor(spaceship.getColor());
             graphics2D.drawString(o.getNickId(), (int) o.getLocation().x + 20, (int) o.getLocation().y - 10);
+            graphics2D.setColor(spaceship.scoreCol);
+            graphics2D.drawString(String.valueOf(o.getScore()), (int) o.getLocation().x + 20, (int) o.getLocation().y - 25);
         }
 
     }

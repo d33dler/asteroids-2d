@@ -171,7 +171,7 @@ public class GameUpdater implements Runnable {
         ships.forEach(ship -> {
             if (ship.canFireWeapon()) {
                 double direction = ship.getDirection();
-                Bullet b = new Bullet(
+                Bullet b = new Bullet(ship,
                         ship.getLocation().getX(),
                         ship.getLocation().getY(),
                         ship.getVelocity().x + Math.sin(direction) * 15,
@@ -219,11 +219,14 @@ public class GameUpdater implements Runnable {
         // First check collisions between bullets and other objects.
         diffNow = diff;
         Collection<Spaceship> players = resources.getPlayers().values();
+
+
         resources.getBullets().forEach(bullet -> {
             resources.getAsteroids().forEach(asteroid -> { // Check collision with any of the asteroids.
                 if (asteroid.collides(bullet)) {
                     asteroid.destroy();
                     bullet.destroy();
+                    bullet.getOwner().increaseScore();
                 }
             });
             players.forEach(ship -> {
@@ -301,7 +304,6 @@ public class GameUpdater implements Runnable {
         Collection<Asteroid> newAsteroids = new ArrayList<>(resources.getAsteroids().size() * 2);
         resources.getAsteroids().forEach(asteroid -> {
             if (asteroid.isDestroyed()) {
-                increaseScore();
                 newAsteroids.addAll(asteroid.getSuccessors());
             }
         });

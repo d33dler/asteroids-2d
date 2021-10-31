@@ -1,6 +1,8 @@
 package nl.rug.aoop.asteroids.model.gameobjects.bullet;
 
+import lombok.Getter;
 import nl.rug.aoop.asteroids.model.gameobjects.GameObject;
+import nl.rug.aoop.asteroids.model.gameobjects.spaceship.Spaceship;
 import nl.rug.aoop.asteroids.view.viewmodels.BulletViewModel;
 import nl.rug.aoop.asteroids.view.viewmodels.GameObjectViewModel;
 
@@ -35,7 +37,8 @@ public class Bullet extends GameObject {
      * from the game model.
      */
     private int stepsLeft;
-
+@Getter
+    private Spaceship owner;
     /**
      * Constructs a new bullet using the given location and velocity parameters, and a default number of steps until the
      * bullet is destroyed.
@@ -45,10 +48,11 @@ public class Bullet extends GameObject {
      * @param velocityX velocity of the bullet as projected on the X-axis.
      * @param velocityY velocity of the bullet as projected on the Y-axis.
      */
-    public Bullet(double locationX, double locationY, double velocityX, double velocityY) {
+    public Bullet(Spaceship owner, double locationX, double locationY, double velocityX, double velocityY) {
 //        this(locationX, locationY, velocityX, velocityY, DEFAULT_BULLET_STEP_LIFETIME);
         super(locationX, locationY, velocityX, velocityY, BULLET_RADIUS);
         this.stepsLeft = DEFAULT_BULLET_STEP_LIFETIME;
+        this.owner = owner;
     }
 
     /**
@@ -60,8 +64,9 @@ public class Bullet extends GameObject {
      * @param velocityY Velocity of the bullet as projected on the Y-axis.
      * @param stepsLeft Amount of steps the bullet is allowed to live.
      */
-    private Bullet(double locationX, double locationY, double velocityX, double velocityY, int stepsLeft) {
+    private Bullet(Spaceship owner, double locationX, double locationY, double velocityX, double velocityY, int stepsLeft) {
         super(locationX, locationY, velocityX, velocityY, BULLET_RADIUS);
+        this.owner = owner;
         this.stepsLeft = stepsLeft;
     }
 
@@ -100,7 +105,7 @@ public class Bullet extends GameObject {
 
     @Override
     public GameObject clone() {
-        return new Bullet(getLocation().x,getLocation().y,getVelocity().x, getVelocity().y,stepsLeft);
+        return new Bullet(owner, getLocation().x,getLocation().y,getVelocity().x, getVelocity().y,stepsLeft);
     }
 
     @Override

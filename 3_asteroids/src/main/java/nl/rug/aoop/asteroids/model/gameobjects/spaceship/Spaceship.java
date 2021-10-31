@@ -159,6 +159,7 @@ public class Spaceship extends GameObject {
     @Getter
     private Color color = new Color(246, 246, 246, 255);
 
+    public Color scoreCol = new Color(187, 234, 34, 163);
     private int spriteId;
     @Getter
     @Setter
@@ -332,7 +333,8 @@ public class Spaceship extends GameObject {
 
     @Override
     public double[] getObjParameters() {
-        return new double[]{getLocation().x, getLocation().y, getVelocity().x, getVelocity().y, getDirection(), spriteId};
+        return new double[]{getLocation().x, getLocation().y, getVelocity().x,
+                getVelocity().y, getDirection(), spriteId, score};
     }
 
     @Override
@@ -393,6 +395,7 @@ public class Spaceship extends GameObject {
         sh.setFiring(isFiring);
         sh.setNickId(nickId);
         sh.setResources(resources);
+        sh.score = score;
         return sh;
     }
 
@@ -408,6 +411,7 @@ public class Spaceship extends GameObject {
         updateVelocity(params[2], params[3]);
         direction = params[4];
         setSpriteId((int) params[5]);
+        score = ((int)params[6]);
     }
 
     public void setSpriteId(int spriteId) {

@@ -18,7 +18,7 @@ class BulletTest {
 	 */
 	@Test
 	void testNextStep() {
-		Bullet bullet = new Bullet(400.0, 400.0, 30.0, -30.0);
+		Bullet bullet = new Bullet(null,400.0, 400.0, 30.0, -30.0);
 		for (int i = 0; i < Bullet.DEFAULT_BULLET_STEP_LIFETIME; i++) {
 			assertFalse(bullet.isDestroyed());
 			bullet.nextStep();
