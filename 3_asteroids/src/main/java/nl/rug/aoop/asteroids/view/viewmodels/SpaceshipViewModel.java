@@ -14,6 +14,7 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collection;
 
 /**
  * View model for displaying a spaceship object.
@@ -83,6 +84,9 @@ public class SpaceshipViewModel extends GameObjectViewModel<Spaceship> {
             graphics2D.setColor(spaceship.getColor());
             graphics2D.drawString(o.getNickId(), (int) o.getLocation().x + 20, (int) o.getLocation().y - 10);
             graphics2D.setColor(spaceship.scoreCol);
+            int score = Math.min(255, o.getScore()*5);
+
+            Color color = new Color(score,255-score,0,200);
             graphics2D.drawString(String.valueOf(o.getScore()), (int) o.getLocation().x + 20, (int) o.getLocation().y - 25);
         }
 
