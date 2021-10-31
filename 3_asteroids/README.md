@@ -72,7 +72,7 @@ The JAR file will appear in the `/target` directory.
 
 
 ##Note: 
-#####Hosting work only for local networks . Input "localhost" into hosting address !
+#####Hosting works only for local networks . Input "localhost" into hosting address !
 
 
 <!-- 
@@ -80,8 +80,8 @@ Describe your program's structure (classes and packages) in detail, addressing a
 -->
 ###In-Game Controls:
 #### New keybindings:
-- `Escape` button mapping to activate a pause menu during the game.
-- `N` - turn on-off player name icons. 
+- `Escape` : toggle the pause menu during the game.
+- `N` - toggle player name icons & score display. 
 
 ## Design Description
 
@@ -192,7 +192,6 @@ the game only interacts with a unique database. By implementing synchronized
 methods for querying and posting, racing conditions are avoided as well.
 
 
--->
 
 ## Evaluation
 
@@ -215,10 +214,6 @@ and velocity of asteroids and the rate at which they spawn. These are not
 features that are difficult to implement but would require much work on the GUI
 to make it look "nice".
 
-<!--
-Discuss the stability of your implementation. What works well? Are there any bugs? Is everything tested properly? Are there still features that have not been implemented? Also, if you had the time, what improvements would you make to your implementation? Are there things which you would have done completely differently?
-<!-- Write this section yourself 
-Expected length: ~300-500 words -->
 ## Teamwork
 
 The size of this project made it essential to split concerns among team members,
@@ -237,11 +232,7 @@ pattern to the controller and wrote different sections of the README file.
 Team members worked on Refactoring, documentation and design description together
 
 
-<!---->
-What did each team member contribute to the assignment? Not just in terms of code, but also more abstractly, such as, "Tom upgraded the game model to support multiple ships.", or "Jerry designed the protocol that clients use for communicating with the server."
-<!-- Write this section yourself -->
-<!---->
-Expected length: ~150 words.
+
 
 ## Extras
 
