@@ -227,6 +227,7 @@ public class GameUpdater implements Runnable {
                     asteroid.destroy();
                     bullet.destroy();
                     bullet.getOwner().increaseScore();
+                    updateAsteroidLimit();
                 }
             });
             players.forEach(ship -> {
@@ -284,10 +285,9 @@ public class GameUpdater implements Runnable {
 
 
     /**
-     * Increment the player's score, and for every five score points, the asteroids limit is incremented.
+     * For every five score points, the asteroids limit is incremented.
      */
-    private void increaseScore() {
-        resources.getSpaceShip().increaseScore();
+    private void updateAsteroidLimit() {
         if (resources.getSpaceShip().getScore() % 5 == 0) {
             asteroidsLimit++;
         }

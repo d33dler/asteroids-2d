@@ -38,7 +38,6 @@ public class HostingServer implements HostingDevice, GameUpdateListener {
     private final String host_name;
     private ExecutorService executorService = Executors.newFixedThreadPool(10);
     private Thread hostingUserUpdater;
-    private ConnectionStatistic connectionStatistic = new ConnectionStatistic();
 
 
     private final Randomizer randomizer = new Randomizer(6);
@@ -75,7 +74,7 @@ public class HostingServer implements HostingDevice, GameUpdateListener {
             server_port = server_socket.getLocalPort();
             IOUtils.reportHostPort(null, server_port);
         } catch (SocketException e) {
-            e.printStackTrace();
+            log.warning("Could not generate server socket");
         }
         parameters = ConnectionParameters.rawDataParameters();
     }

@@ -324,6 +324,16 @@ public class Spaceship extends GameObject {
     }
 
     /**
+     * Used to send client's state to the host.
+     * @return this object's set of parameters consisting of vectors and numerical data
+     */
+    @Override
+    public double[] getObjParameters() {
+        return new double[]{getLocation().x, getLocation().y, getVelocity().x,
+                getVelocity().y, getDirection(), spriteId, score};
+    }
+
+    /**
      * @return The number of steps, or game ticks, for which this object is immune from collisions.
      */
     @Override
@@ -331,11 +341,6 @@ public class Spaceship extends GameObject {
         return IMMUNITY_TICKS;
     }
 
-    @Override
-    public double[] getObjParameters() {
-        return new double[]{getLocation().x, getLocation().y, getVelocity().x,
-                getVelocity().y, getDirection(), spriteId, score};
-    }
 
     @Override
     public GameObjectViewModel<? extends GameObject> getViewModel(GameObject object) {
@@ -385,6 +390,10 @@ public class Spaceship extends GameObject {
         score++;
     }
 
+    /**
+     *
+     * @return a clone copying only essential fields from the original
+     */
     @Override
     public GameObject clone() {
         Spaceship sh = new Spaceship(getLocation().x, getLocation().y, getVelocity().x, getVelocity().y);
@@ -399,6 +408,9 @@ public class Spaceship extends GameObject {
         return sh;
     }
 
+    /**
+     * Changes the ship's parameters for a spectator mode session
+     */
     public void updateAsSpectator() {
         spectatorShip = true;
         color = new Color(0, 0, 0, 0);
@@ -406,6 +418,11 @@ public class Spaceship extends GameObject {
         sprite_img = resources.getSpectatorImg();
     }
 
+
+    /**
+     * Updates an online co-player's ship parameters
+     * @param params deltas passed from the server
+     */
     public void updateParameters(double[] params) {
         updatePosition(params[0], params[1]);
         updateVelocity(params[2], params[3]);
@@ -414,11 +431,18 @@ public class Spaceship extends GameObject {
         score = ((int)params[6]);
     }
 
+    /**
+     *
+     * @param spriteId the id of the sprite image for the spaceship
+     */
     public void setSpriteId(int spriteId) {
         this.spriteId = spriteId;
         this.sprite_img = resources.getSpriteImgList().get(spriteId);
     }
 
+    /**
+     * Bellow are setters to update object vectors location and velocity
+     */
     public void updatePosition(double x, double y) {
         getLocation().x = x;
         getLocation().y = y;

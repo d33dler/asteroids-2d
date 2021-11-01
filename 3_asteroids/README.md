@@ -168,7 +168,18 @@ ClientConnection.class - similar in behaviour to User.class,  but adapted to the
 The server communicates with the each client through an instance of this class. It runs on two threads which
 concurrently read from and send data to the user with preset intervals.
 
-GamePlayDeltas.class & ConfigData.class both are used to relay different types of states.
+GamePlayDeltas.class & ConfigData.class -  both are used to relay different types of states. 
+We do not send the game's full state or any class objects that are involved in the session, 
+since these contain redundancies and .java class files containing components and their 'meta-data'
+which is only relevant to the JVM. Instead, we send raw parametric data coupled with identifiers
+either for user or any session's passive object. To ensure that each client can receive
+and send precise information, we decided to send both : key input parameters & vectors (location,position)
+in order to compensate for any packet losses where either a key input was not recorder - vector data will correct
+the co-players state - and in order to compensate for packet loss where vector data is sent with small
+intervals causing visual stuttering during the session & affecting player interaction - 
+each player's machine computes the physics locally.
+Also, a client's own state is not altered by the host in our version. But it might be necessary to reset a players
+state if needed - to prevent lagging clients from abusing their high latency.
 
 
 

@@ -9,6 +9,11 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
+
+/**
+ * ConnectionParameters - class wrapping parameters relevant for the IO session
+ * between client and server
+ */
 @NoArgsConstructor
 public class ConnectionParameters {
     @Getter
